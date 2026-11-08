@@ -1,93 +1,66 @@
 # Texere
 
-**Research in one place.**
+**Research in one place**, inside [Obsidian](https://obsidian.md).
 
-> **This repository is the Texere plugin**, the code behind [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere). To start with everything ready (the plugin, the Philosophy map, templates and guides), download the vault. To add Texere to a vault you already have, install the plugin from here.
+> **This repository is the Texere plugin**, the base of [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere). The vault is the easiest start: the plugin, the Philosophy map, templates and guides, ready to open. Install the plugin from here to use Texere in a new or existing vault of your own.
 
 Research is usually scattered across many applications and places: Zotero, Mendeley or EndNote, Word or Google Docs, a laptop, the cloud, a phone, USB sticks and external drives. Moving between them costs time and loses things along the way.
 
-Texere is an Obsidian plugin for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, but you can reshape it for any discipline.
+Texere is a plugin for [Obsidian](https://obsidian.md), a free note-taking app, for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, but you can reshape it for any discipline.
 
 - **Anyone, without technical knowledge.** Install it (or download the ready-made vault), and a short setup does the rest. No code, no command line, no LaTeX.
 - **English and Romanian writers.** The interface, the setup, Help and the guide work in both languages. Notes have English names and Romanian aliases: type `[[Etică` and you get **Ethics**.
 - **University of Bucharest students.** Export templates for BA and MA theses at the Faculty of Philosophy, following the faculty's writing guide.
 
-Version 0.4.0 · desktop only · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
+## What you can do with it
 
----
+- **Add references** by title, DOI or ISBN, or import them from Zotero. Each one becomes a note, with its free PDF when there is one.
+- **Read and annotate PDFs.** What you highlight goes into the reference's note, with the page and a link back.
+- **Cite** by typing `@` and picking the reference, in APA, Chicago, MLA or any other style.
+- **Export** your paper or thesis to PDF or Word, with the bibliography and contents made for you.
+- **See how you write** (Insights, still experimental): how much you write, and what your notes say about a concept.
+- **Get help** inside [Obsidian](https://obsidian.md): the whole guide, in English and Romanian, with a search.
 
-## What Texere does
+No AI, no account, no subscription. Your notes stay plain files on your computer.
 
-One plugin with three modules; turn each on or off in **Settings → Texere → General**.
+## Get started
 
-**Texere (always on)**
-- **Home page** in every new tab (and the braid icon on the left): what needs fixing, your first week, your recent files, and a bar into References, Export, Insights and Help.
-- **Setup** on first run, a few short steps (see [First run](#first-run)).
-- **Quiet in your notes:** while you write you see only your text; marks appear only if you turn them on; everything Texere can do for a note is under right-click → **Texere**; nothing is written into a note without your click.
-- **Edit mode:** try versions of a word, sentence or paragraph right in the note, dim a passage, move text to the note's Cuts; marks for long sentences, hedges and overclaiming. No AI. Based on [Wordplay](https://github.com/ungatedlife/wordplay) by Rob Hardy, after Jason Fried's Write_On.
-- **Discipline map:** ready-made notes for the branches, subfields, periods, movements, theories, concepts and authors of a discipline (Philosophy for now), to use in your references' metadata.
-- **Help:** the **?** next to **+** on the home page. The whole guide by chapter, with a search that understands your own words.
-- **Templates:** New essay, New author, and the BA and MA thesis templates; two getting-started guides for philosophy. Added to your vault only if you want, never over a note you have.
+You need [Obsidian](https://obsidian.md) on a computer (Mac, Windows or Linux). It's free: [download it here](https://obsidian.md/download).
 
-**References**
-- **Search catalogs** (OpenAlex, Crossref, Semantic Scholar, Open Library, Google Books, ORCID, Wikipedia's citation service; Google Scholar with your own SerpApi key) and add a reference as a reading note, with its free PDF when there is one.
-- **Paste** a citation, BibTeX, RIS or a DOI, or **enter it manually**.
-- **Import from Zotero**, with PDFs and annotations; optionally the Zotero browser button saves into Texere when Zotero is closed.
-- **Cite** with `@` in any of 10,000+ styles; the bibliography keeps itself up to date.
-- **Annotations into notes:** annotate a PDF with PDF++ and the passage lands in the reading note, with its tag, the citation and a link back to the page.
-- **Distil:** your annotations in your own words, saved under each one, already cited.
-- **Reference stats:** how others cite a reference, whether it was retracted, and how its journal is rated (Norway and Finland's expert panels, ERIH PLUS, DOAJ).
+### The easy way: the ready-made vault
 
-**Export**
-- **Export a note** to PDF, Word or Markdown, with citations, bibliography, contents, page layout and thesis templates.
-- **Import documents** (Word, PDF, and .doc/.odt/.rtf when a converter is available) as notes.
-- **Clean paste** from Word or a PDF.
+1. Download [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) and unzip it.
+2. Open [Obsidian](https://obsidian.md), choose **Open folder as vault** and pick the unzipped folder.
+3. Click **Trust author and enable plugins**. The setup starts by itself.
 
-**Insights** (Lab: experimental, improves with each version)
-- **Words:** typed, pasted, inserted and deleted, per day, week and month; word targets and projects (a folder, a tag or a note).
-- **How you write:** your prose compared over time, after the writing guides; **Check this draft** for one note.
-- **Writing companion:** a side panel for the draft you're writing: what each paragraph does and what it's missing, and what your vault has for it.
-- **Links:** concepts mentioned without a link, names without a note, aliases and duplicates; patterns; a weekly review.
-- **Concept panel** and **debate map:** everything your references say about a concept, and where you stand; start a note from any mix of your annotations.
+### Your own vault, even an empty one
 
-Nothing in Insights or edit mode uses AI: every suggestion comes from rules in the code and from your notes.
+1. **Make a vault.** Open [Obsidian](https://obsidian.md) and choose **Create new vault**, give it a name, pick where to keep it and click **Create**. (Already have a vault? Open it and skip this step.)
+2. **Turn on community plugins.** In [Obsidian](https://obsidian.md): **Settings** (the gear, bottom left) → **Community plugins** → **Turn on community plugins**.
+3. **Download Texere.** From the [latest release](https://github.com/gorgmihai92/texere-plugin/releases/latest), under **Assets**, download three files: `main.js`, `manifest.json` and `styles.css`.
+4. **Put them in place.** Still in **Settings → Community plugins**, click the folder icon next to **Installed plugins**: your vault's plugins folder opens. Make a new folder in it called `texere` and move the three files into it.
+5. **Turn Texere on.** Back in [Obsidian](https://obsidian.md), click the refresh icon next to **Installed plugins**, then switch **Texere** on.
+6. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, your discipline (the Philosophy map), PDF++ for annotations (you click **Install** and **Enable**), and what's missing in your vault. In an empty vault, leave everything ticked and click **Next** at each step: Texere makes the folders, the templates, the bibliography and the Philosophy map.
 
----
+Done. Every new tab now opens Texere's home page. Start with **Add a reference**.
 
-## Install
-
-Texere isn't in Obsidian's community plugin list yet. Two ways to get it:
-
-- **The ready-made vault** ([gorgmihai92/texere](https://github.com/gorgmihai92/texere)): download it, open the folder in Obsidian with **Open folder as vault**, choose **Trust author and enable plugins**. Texere is already there.
-- **Into a vault you already have:** download `main.js`, `styles.css` and `manifest.json` from the [latest release](https://github.com/gorgmihai92/texere-plugin/releases/latest), put them in a new folder `.obsidian/plugins/texere/` inside your vault, then turn Texere on in **Settings → Community plugins** (turn off Restricted mode first, if it's on).
-
-You need Obsidian on a computer (Windows, macOS or Linux). For annotations in PDFs, Texere uses one other plugin, **PDF++**: the setup opens its page and you click **Install**, then **Enable**. Texere never installs or turns on another plugin by itself.
-
-## First run
-
-The setup opens by itself, once on each computer. In each step you tick or pick, and **Next** applies it; untick what you don't want.
-
-1. **Language:** English or Romanian.
-2. **Where Texere keeps things:** the recommended folders, or your own.
-3. **Your discipline:** the Philosophy map, ticked by default.
-4. **PDF++:** only if it's missing.
-5. **Your vault:** what's missing (folders, templates, bibliography, export folder); nothing you have is moved or overwritten.
-6. **Done:** where to find everything. What was done stays in **Help → Your last setup**.
-
-Run it again any time from **Settings → Texere → General** or the home page.
+The setup changes nothing without your click, and you can run it again from **Settings → Texere → General**.
 
 ## Updates
 
-Once a day Texere checks this repository's latest release. If it's newer, the home page shows it with an **Update** button; nothing installs until you click. The update goes into the plugin's own folder only (your notes and settings are never touched; the previous version is kept in `previous/`). **Settings → Texere → General → Updates** turns the check off, checks now, updates or goes back to the previous version.
+When there's a new version, Texere's home page shows it with an **Update** button. Nothing installs until you click, and your notes are never touched. You can go back to the previous version from **Settings → Texere → General → Updates**.
 
-## Help and support
+## Help
 
-- Inside Obsidian: **Help** (the **?** on the home page) has the whole guide and the frequent questions, in English and Romanian.
-- A problem or an idea: **Settings → Texere → About → Report a problem** opens an e-mail to [hi@georgemihai.com](mailto:hi@georgemihai.com).
+- In [Obsidian](https://obsidian.md): the **?** button on Texere's home page opens the guide and the frequent questions.
+- A problem or an idea: **Settings → Texere → About → Report a problem** writes an e-mail to [hi@georgemihai.com](mailto:hi@georgemihai.com).
 
----
+## Privacy
 
-## Disclosures
+Texere connects to the internet only when you use a feature that needs it (searching for a reference, downloading a PDF or a citation style, checking for updates), and never sends the content of your notes. No ads, no tracking, nothing sent to the author. The full list is below.
+
+<details>
+<summary>Everything Texere connects to and accesses (for [Obsidian](https://obsidian.md)'s plugin review)</summary>
 
 Obsidian asks plugins to state what they connect to and what they access. Here is everything Texere does.
 
@@ -144,9 +117,10 @@ Markdown notes and the files of the features you use: reading notes and their PD
 
 Everything works without an account, except Google Scholar search (your own SerpApi key). Other keys are optional: OpenAlex, Semantic Scholar, Zotero Web API, and your e-mail for Unpaywall and Crossref. No ads, no paid features, no usage data: nothing about you or your notes is sent to the author. Your files are ordinary Markdown and PDF in your vault; Texere's settings are in `.obsidian/plugins/texere/data.json`; writing counts and the Insights index stay per device in the plugin's folder.
 
----
+</details>
 
-## Building from source
+<details>
+<summary>For developers: building from source</summary>
 
 ```
 npm ci
@@ -155,6 +129,8 @@ npm run build   # minified main.js, for a release
 ```
 
 A release is built by the GitHub Action in `.github/workflows/release.yml` when a tag equal to the version in `manifest.json` is pushed.
+
+</details>
 
 ## Credits
 
@@ -172,15 +148,18 @@ Texere bundles these libraries and data in its `main.js`; each keeps its own lic
 
 ---
 
+Version 0.4.0 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
+
 ## Pe scurt, în română
 
-**Texere** adună cercetarea într-un singur loc: cauți și citezi referințe, adnotările din PDF ajung singure în notele de lectură, scrii cu lecturile la îndemână și exporți lucrarea sau teza în PDF ori Word. Interfața, configurarea și Ajutorul sunt în română și engleză; nu cere cunoștințe tehnice; vine cu șabloanele de export pentru lucrările de licență și disertație ale Facultății de Filosofie, Universitatea din București.
+**Texere** e un plugin pentru [Obsidian](https://obsidian.md) care adună cercetarea într-un singur loc: cauți și citezi referințe, adnotările din PDF ajung în notele de lectură, scrii cu lecturile la îndemână și exporți lucrarea în PDF sau Word. Merge în română și engleză și nu cere cunoștințe tehnice. Cel mai simplu început e vault-ul gata făcut: [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere).
 
-- **Instalare:** vault-ul gata făcut ([gorgmihai92/texere](https://github.com/gorgmihai92/texere)), deschis cu **Open folder as vault** și **Trust author and enable plugins**; sau, într-un vault al tău, cele trei fișiere din [ultima versiune](https://github.com/gorgmihai92/texere-plugin/releases/latest), puse în `.obsidian/plugins/texere/`, apoi Texere pornit din **Settings → Community plugins**.
-- **La prima pornire**, configurarea te ghidează în câțiva pași: limba, unde ține Texere lucrurile, disciplina ta, PDF++ (dacă lipsește; apeși tu Install și Enable), ce lipsește din vault. Nimic nu se face fără clicul tău.
-- **Module:** Referințe (căutare, citări, adnotări, Zotero), Export (PDF, Word, Markdown, import de documente), Insights (cuvinte, cum scrii, însoțitorul scrisului, linkuri, harta dezbaterii). Le pornești sau le oprești din **Settings → Texere → General**.
-- **Modul Editare:** variante ale unei propoziții direct în notă, estompezi un pasaj, muți text în Tăieturi. Fără AI.
-- **Ce trimite în afară:** doar când folosești o funcție care are nevoie, către serviciile din tabelul de mai sus; niciodată conținutul notelor (excepție: titlurile notelor-concept, când ceri traduceri).
-- **Actualizări:** o versiune nouă apare în pagina de pornire, cu **Actualizează**; nimic nu se instalează fără clicul tău. Verificarea o oprești din **Settings → Texere → General → Actualizări**.
-- **Ajutor:** butonul **?** de pe pagina de pornire; o problemă sau o idee: **Settings → Texere → Despre → Semnalează o problemă** (un e-mail la [hi@georgemihai.com](mailto:hi@georgemihai.com)).
-- **Doar pe desktop**, fără reclame, fără plată, fără date despre tine.
+**Într-un vault al tău, chiar gol:**
+1. Instalează [Obsidian](https://obsidian.md/download) (gratuit) și fă un vault: **Create new vault**, un nume, un loc, **Create**.
+2. **Settings → Community plugins → Turn on community plugins**.
+3. Din [ultima versiune](https://github.com/gorgmihai92/texere-plugin/releases/latest), la **Assets**, descarcă `main.js`, `manifest.json` și `styles.css`.
+4. În **Settings → Community plugins**, apasă iconița de folder de lângă **Installed plugins**, fă acolo un folder `texere` și mută în el cele trei fișiere.
+5. Înapoi în Obsidian: iconița de reîmprospătare de lângă **Installed plugins**, apoi pornește **Texere**.
+6. Configurarea pornește singură: limba, folderele, disciplina, PDF++ (apeși tu Install și Enable) și ce lipsește din vault. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas: Texere face folderele, șabloanele, bibliografia și harta filosofiei.
+
+**Ajutor:** butonul **?** de pe pagina de pornire. O problemă: **Settings → Texere → Despre → Semnalează o problemă** (un e-mail la [hi@georgemihai.com](mailto:hi@georgemihai.com)).
