@@ -2,11 +2,13 @@
 
 **Research in one place.**
 
+> **This repository is the Texere plugin**, the code behind [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere). To start with everything ready (the plugin, the Philosophy map, templates and guides), download the vault. To add Texere to a vault you already have, install the plugin from here.
+
 Research is usually scattered across many applications and places: Zotero, Mendeley or EndNote, Word or Google Docs, a laptop, the cloud, a phone, USB sticks and external drives. Moving between them costs time and loses things along the way.
 
-Texere is a ready-made Obsidian vault for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. This version comes with a map of philosophy, but you can reshape it for any discipline.
+Texere is an Obsidian plugin for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, but you can reshape it for any discipline.
 
-- **Anyone, without technical knowledge.** Download the vault, open it in Obsidian, and a short setup does the rest. No code, no command line, no LaTeX.
+- **Anyone, without technical knowledge.** Install it (or download the ready-made vault), and a short setup does the rest. No code, no command line, no LaTeX.
 - **English and Romanian writers.** The interface, the setup, Help and the guide work in both languages. Notes have English names and Romanian aliases: type `[[Etică` and you get **Ethics**.
 - **University of Bucharest students.** Export templates for BA and MA theses at the Faculty of Philosophy, following the faculty's writing guide.
 
