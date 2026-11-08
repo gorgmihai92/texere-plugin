@@ -1,0 +1,23 @@
+{
+  "name": "texere",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Texere — research vault plugin for Obsidian: references, citations, PDF annotations, export and insights.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
+  },
+  "author": "George Mihai",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "dependencies": {
+    "citeproc": "2.4.63",
+    "docx": "9.5.1",
+    "markdown-it": "14.3.3",
+    "markdown-it-footnote": "4.0.0",
+    "pagedjs": "0.4.3"
+  }
+}

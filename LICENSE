@@ -1,0 +1,81 @@
+MIT License
+
+Copyright (c) 2026 George Mihai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+Third-party code and data
+
+The MIT License above covers Texere's own code. The following parts, bundled
+into the released main.js or downloaded on request, are distributed under
+their own licenses by their authors and are not covered by the MIT License:
+
+- citeproc-js (npm package citeproc 2.4.63, processor 1.4.61), Copyright (c) 2009-2019 Frank Bennett
+  (https://github.com/Juris-M/citeproc-js), under the Common Public
+  Attribution License 1.0 (CPAL) or the GNU Affero General Public License 3.0
+  (AGPL), at the user's option.
+
+- docx 9.5.1 by Dolan Miu (https://github.com/dolanmiu/docx), MIT License;
+  it includes JSZip 3.10.1 (MIT License or GPLv3, used here under the MIT
+  License) and pako (MIT License and Zlib License).
+
+- markdown-it 14.3.3 and markdown-it-footnote 4.0.0
+  (https://github.com/markdown-it), MIT License.
+
+- Paged.js 0.4.3 (https://pagedjs.org), MIT License; it includes CSSTree
+  (MIT License) and mdn-data (CC0 1.0).
+
+- The Citation Style Language locales (en-US, ro-RO), the list of citation
+  styles and the citation styles downloaded on request, by the Citation Style
+  Language project (https://citationstyles.org), under the Creative Commons
+  Attribution-ShareAlike 3.0 License.
+
+- Edit mode (src/edit) is based on the design of Wordplay by Rob Hardy
+  (https://github.com/ungatedlife/wordplay), after Jason Fried's Write_On;
+  parts of its logic are adapted from Wordplay, under this license:
+
+  MIT License
+
+  Copyright (c) 2026 Rob Hardy
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+
+- The Philosophy discipline map, the Texere guide in assets/help (English
+  and Romanian), and the guides and templates in assets/notes (the
+  getting-started guides and the note and thesis templates) are
+  released under the Creative Commons Attribution 4.0 International License
+  (CC BY 4.0), credit to George Mihai (https://www.georgemihai.com).

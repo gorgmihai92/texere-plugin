@@ -1,0 +1,10 @@
+---
+dateCreated:
+aliases:
+discipline:
+branch:
+period:
+movements:
+theories:
+concepts:
+---

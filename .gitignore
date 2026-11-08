@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# the built plugin: it goes into the GitHub release, not into the repository
+/main.js
+
+# data a vault keeps in the plugin folder (when you develop inside a vault)
+/data.json
+/stats/
+/cache/
+*.log
+
+# system files
+.DS_Store
+Thumbs.db
