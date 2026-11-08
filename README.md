@@ -49,6 +49,8 @@ The setup changes nothing without your click, and you can run it again from **Se
 
 With BRAT, Texere updates itself: each time Obsidian starts, BRAT installs the newest version (you can turn this off in **Settings → BRAT**). Without BRAT, Texere's home page shows a new version with an **Update** button. Your notes are never touched, and **Settings → Texere → General → Updates** can go back to the previous version.
 
+When a version brings something for your vault (a new template, note or field), it is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**.
+
 ## Help
 
 - In [Obsidian](https://obsidian.md): the **?** button on Texere's home page opens the guide and the frequent questions.
@@ -147,7 +149,7 @@ Texere bundles these libraries and data in its `main.js`; each keeps its own lic
 
 ---
 
-Version 0.4.0 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
+Version 0.4.1 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
 
 ## Pe scurt, în română
 

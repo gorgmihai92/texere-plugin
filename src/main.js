@@ -48,6 +48,7 @@ const NOTES = [
   { path: "Support/Templates/Disertație – Facultatea de Filosofie UB.md", text: () => require("../assets/notes/Disertație – Facultatea de Filosofie UB.md") },
 ];
 const { Updater } = require("./core/updater");
+const { VaultUpdates } = require("./core/vaultupdates");
 const { beta } = require("./shared/beta");
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -102,6 +103,9 @@ module.exports = class Texere extends Plugin {
     this.app.workspace.onLayoutReady(() => { this.start().catch(e => console.error("Texere: configurarea", e)); });
     // actualizările, din release-urile GitHub ale pluginului (core/updater.js): „Ce e nou” după o actualizare, apoi o verificare pe zi
     this.app.workspace.onLayoutReady(() => { try { this.updater = new Updater(this); this.updater.start(); } catch (e) { console.error("Texere: actualizările", e); } });
+    // ce aduce o versiune nouă în vault (core/vaultupdates.js): doar propuneri în pagina de pornire; nimic fără clicul tău
+    this.vaultUpdates = new VaultUpdates(this);
+    this.app.workspace.onLayoutReady(() => { setTimeout(() => { (this._boot || Promise.resolve()).then(() => this.vaultUpdates.run()).catch(e => console.error("Texere: ce aduce versiunea nouă", e)); }, 4000); });
     // folderele de care are nevoie Texere: când redenumești sau muți unul, îți spune pe loc ce înseamnă
     this.app.workspace.onLayoutReady(() => { if (this.app.vault.on) this.registerEvent(this.app.vault.on("rename", (f, old) => { try { this.onRename(f, old); } catch (e) { console.error("Texere: folderele", e); } })); });
     // ce repari într-un loc se vede și în celălalt: tab-ul nou și setările se redesenează când se schimbă un folder sau o setare a lor
@@ -627,6 +631,9 @@ module.exports = class Texere extends Plugin {
         }
       }
     } catch (e) { console.warn("Texere: actualizarea în pagina de pornire", e); }
+    // 2b. ce aduce versiunea nouă (șabloane, note, câmpuri): propuneri, cu „Adaugă” și „Nu acum”
+    try { await this.vaultUpdates?.home(inner, redraw); } catch (e) { console.warn("Texere: ce aduce versiunea nouă, în pagina de pornire", e); }
+    if (leaf.__txh !== tok) return;
     // 3. ce trebuie reparat (doar dacă e ceva)
     if (probs.length) {
       const pb = inner.createDiv("txh-problems");
@@ -961,6 +968,8 @@ class TexereSettingTab extends PluginSettingTab {
         const after = body.querySelector(".tx-upd-anchor"); if (after) body.insertBefore(s.settingEl, after);
       }).catch(() => {});
       body.createDiv("tx-upd-anchor");
+      // ce au adus versiunile noi și n-ai adăugat încă (șabloane, note, câmpuri): le adaugi de aici, oricând
+      if (P.vaultUpdates) { const box = body.createDiv("tx-vu-settings"); P.vaultUpdates.settingsRows(box, Setting, () => this.display()).catch(e => console.warn("Texere: Din actualizări", e)); }
     }
     const ovDir = (() => { try { return P.edit?.O?.folder?.() || "Support/Texere/Cuts"; } catch (e) { return "Support/Texere/Cuts"; } })();
 

@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.0"
-date: "Versiunea 0.4.0 · 8 noiembrie 2026"
+version: "0.4.1"
+date: "Versiunea 0.4.1 · 9 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -23,10 +23,16 @@ Texere e un vault Obsidian gata făcut pentru cercetătorii care vor un singur l
 **Pasul 1. Configurează vault-ul (o singură dată)**
 
 1. Instalează [Obsidian](https://obsidian.md/download) (gratuit).
-2. Copiază folderul vault-ului pe calculator; în Obsidian, alege **Open folder as vault**.
+2. [Descarcă vault-ul](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) și dezarhivează-l; în Obsidian, alege **Open folder as vault**.
 3. Apasă **Trust author and enable plugins**.
 4. Configurarea se deschide singură. La fiecare pas bifezi sau alegi ce vrei; **Înainte** aplică alegerea.
 5. La final, **Vezi ce s-a făcut** îți arată un rezumat (mai târziu: **Ajutor → Ultima configurare**).
+
+> [!tip] Într-un vault al tău, chiar gol
+> 1. **Settings → Community plugins → Turn on community plugins**.
+> 2. **Browse**, caută **BRAT**, apoi **Install** și **Enable**. BRAT instalează pluginuri de pe GitHub și le ține la zi.
+> 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, bifezi **Enable after installing the plugin**, apeși **Add plugin**.
+> 4. Configurarea se deschide singură. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas.
 
 > [!warning] Ai ales din greșeală „Restricted mode”?
 > Pluginurile sunt oprite. Le pornești din **Settings → Community plugins**.
@@ -51,8 +57,8 @@ Te-ai blocat? Butonul **?** de lângă **+**, jos, deschide Ajutorul: scrie înt
 | **Etichetă** (tag) | Un cuvânt cu `#` în față, ca `#claim`. |
 | **Proprietăți (metadate)** | Câmpurile din capul notei. La o referință: autor, an, titlu, DOI, ramură… |
 | **Notă de lectură** | Câte una pentru fiecare referință: datele ei, PDF-ul și adnotările tale. |
-| **Citekey** | Codul unei referințe, ca `craig_philosophy_2002`: proprietatea `id` a notei. |
-| **Citare** | `[@citekey, p. 34]`, care apare ca (Craig, 2002, p. 34). |
+| **Citekey** | Codul unei referințe, ca `descartes_meditations_2022`: proprietatea `id` a notei. |
+| **Citare** | `[@citekey, p. 34]`, care apare ca (Descartes, 1641/2022, p. 29). |
 | **Bibliografie** | `bibliography.json`, în **Support/Texere/Bibliography**, ținută la zi de Texere. |
 | **Command palette** | Toate comenzile, cu **Ctrl/Cmd + P**. |
 
@@ -91,7 +97,7 @@ Texere stă liniștit în notele tale: cât scrii vezi doar textul tău, semnele
 
 **2. Notes/Disciplines/Philosophy** are câte o notă pentru fiecare ramură, teorie, concept, curent, perioadă și autor, pornind de la [[Philosophy|Filosofie]], fiecare cu alias în română.
 
-Folosește-le în metadatele referințelor. [[Craig 2002 – Philosophy. A very short introduction]] are la **branch** valoarea [[Introduction|Introduceri]]: deschide [[Introduction|Introduceri]], iar **Backlinks** arată toate referințele din ramura asta.
+Folosește-le în metadatele referințelor. [[Descartes 1641 (2022) – Meditations on First Philosophy]] are la **branch** valoarea [[Epistemology|Epistemologie]]: deschide [[Epistemology|Epistemologie]], iar **Backlinks** arată toate referințele din ramura asta.
 
 Nu ai folderul **Disciplines**? **Settings → Texere → General → Foldere → Harta disciplinei → Creează harta**. Harta altei discipline? Scrie la [hi@georgemihai.com](mailto:hi@georgemihai.com).
 
@@ -178,11 +184,12 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 
 **Adnotările făcute în altă parte** (Zotero, Preview, Acrobat) intră singure în notă, cu eticheta celei mai apropiate culori. Făcute după ce ai adăugat referința: clic dreapta pe PDF sau pe notă → **Texere** → **Importă adnotările din PDF**. Făcute sub alt nume: Texere te întreabă dacă sunt ale tale.
 
-> [!example] Dintr-o notă reală
-> În [[Dummett 1996 – Origins of Analytical Philosophy]]:
+> [!example] Dintr-o notă-exemplu
+> În [[Descartes 1641 (2022) – Meditations on First Philosophy]]:
 > ```
-> #claim Gottlob Frege, fondatorul filosofiei analitice, [@dummett_origins_1996, p. 7] · PDF
-> Contra credinței populare, nu Russell a fost părintele filosofiei analitice.
+> #claim I am, I exist, is necessarily true each time it is expressed by me, or conceived in my mind [@descartes_meditations_2022, p. 29] · PDF
+>
+> Cogito-ul, așa cum apare aici: nu o deducție, ci adevărat de fiecare dată când îl gândesc. [@descartes_meditations_2022, p. 29]
 > ```
 > Pasajul, apoi comentariul tău dedesubt.
 
@@ -190,7 +197,7 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 
 #### Distilează: adnotările în cuvintele tale
 
-O deschizi din **Acasă → Distilează** sau cu clic dreapta pe o notă de lectură → **Texere**. Texere îți arată câte o adnotare; scrii una-două propoziții, salvate chiar sub ea, deja citate: `… [@craig_philosophy_2002, p. 34]`.
+O deschizi din **Acasă → Distilează** sau cu clic dreapta pe o notă de lectură → **Texere**. Texere îți arată câte o adnotare; scrii una-două propoziții, salvate chiar sub ea, deja citate: `… [@descartes_meditations_2022, p. 29]`.
 
 - O adnotare e folosită când sub ea e ceva scris de tine; adnotările `#word` sunt sărite.
 - **Șterge adnotarea** o scoate din notă și din PDF; **Anulează** le pune pe amândouă înapoi.
@@ -218,16 +225,16 @@ La lucrări completezi **title**, **autor**, **coordonator** și **an**. Regulil
 2. Alege referința: Texere scrie `[@citekey]`.
 3. Adaugă pagina: `[@citekey, p. 34]`. Dă-o mereu când citezi sau parafrazezi.
 
-În notă, citarea se citește ca text: (Craig, 2002, p. 34). Un clic pe ea deschide referința sau PDF-ul, sau o editezi.
+În notă, citarea se citește ca text: (Descartes, 1641/2022, p. 29). Un clic pe ea deschide referința sau PDF-ul, sau o editezi.
 
 | Scrii | Primești (APA) |
 | --- | --- |
-| `[@craig_philosophy_2002]` | (Craig, 2002) |
-| `[@craig_philosophy_2002, p. 34]` | (Craig, 2002, p. 34) |
-| `[@craig_philosophy_2002, pp. 34-36]` | (Craig, 2002, pp. 34–36) |
-| `[@craig_philosophy_2002; @dummett_origins_1996]` | (Craig, 2002; Dummett, 1996) |
-| `@craig_philosophy_2002 [p. 34]` | Craig (2002, p. 34) |
-| `[see @craig_philosophy_2002, ch. 2]` | (see Craig, 2002, ch. 2) |
+| `[@descartes_meditations_2022]` | (Descartes, 1641/2022) |
+| `[@descartes_meditations_2022, p. 29]` | (Descartes, 1641/2022, p. 29) |
+| `[@descartes_meditations_2022, pp. 29-31]` | (Descartes, 1641/2022, pp. 29–31) |
+| `[@descartes_meditations_2022; @mill_utilitarianism_2022]` | (Descartes, 1641/2022; Mill, 1863/2022) |
+| `@descartes_meditations_2022 [p. 29]` | Descartes (1641/2022, p. 29) |
+| `[vezi @mill_utilitarianism_2022, cap. 2]` | (vezi Mill, 1863/2022, cap. 2) |
 
 **Stilul citărilor** apare în Texere, în dreapta-jos (de exemplu **APA**). Un clic pe el alege altul pentru nota asta (se salvează în proprietatea `csl`; exportul îl urmează), sau **Adaugă un stil de citare…** dintre peste 10.000.
 
@@ -377,7 +384,15 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 
 ## 7. Ce e nou
 
-Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.1** · 9 noiembrie 2026
+Ce aduce o versiune nouă pentru vault ți se propune, nu ți se impune.
+
+- **Șabloanele, notele și câmpurile noi doar ți se propun.** Pagina de pornire le arată cu **Adaugă** sau **Nu acum**; nimic nu intră singur în vault și nimic nu e bifat dinainte. Ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**.
+- **Un șablon schimbat de tine nu se suprascrie:** versiunea nouă ți se propune cu **Înlocuiește**, iar al tău rămâne alături.
+- **Instalare cu BRAT** într-un vault al tău (vezi [[#1. Început]]); BRAT ține și Texere la zi.
+- **Exemple noi:** *Meditațiile* lui Descartes și *Utilitarismul* lui Mill, adnotate, cu PDF-urile lor din domeniul public.
 
 **0.4.0** · 8 noiembrie 2026
 Un singur plugin în loc de patru, o configurare ghidată și Ajutorul în Texere.

@@ -2,6 +2,14 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.1 (9 November 2026)
+
+What a new version brings for your vault is offered, never imposed.
+
+- **Vault updates through the plugin:** new templates, notes and reading-note fields, new versions of Texere's templates, Texere's new settings, settings and minimum versions for other plugins. Templates, notes and fields are only offered on the home page (**Add** / **Not now**, nothing ticked for you) and wait in **Settings → Texere → General → From updates**; a template you changed is never overwritten (**Replace** keeps yours next to it). For developers: `src/core/vaultupdates.js`, and `tools/notehash.js` for the hashes of earlier versions.
+- **Install with BRAT** in a vault of your own; the guide and the README say how.
+- **Examples:** Descartes' *Meditations on First Philosophy* and Mill's *Utilitarianism* replace the old examples in the guide and in the ready-made vault; Distil and Home no longer count them as yours.
+
 ## 0.4.0 (8 November 2026)
 
 One plugin instead of four, a guided setup, Help inside Texere, and the words researchers use.

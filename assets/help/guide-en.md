@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.0"
-date: "Version 0.4.0 · 8 November 2026"
+version: "0.4.1"
+date: "Version 0.4.1 · 9 November 2026"
 ---
 ## 1. Start
 
@@ -23,10 +23,16 @@ Texere is a ready-made Obsidian vault for researchers who want one place for the
 **Step 1. Set up the vault (once)**
 
 1. Install [Obsidian](https://obsidian.md/download) (free).
-2. Copy the vault folder to your computer; in Obsidian, choose **Open folder as vault**.
+2. [Download the vault](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) and unzip it; in Obsidian, choose **Open folder as vault**.
 3. Click **Trust author and enable plugins**.
 4. The setup opens by itself. In each step, tick or pick what you want; **Next** applies it.
 5. At the end, **See what was done** shows a summary (later: **Help → Your last setup**).
+
+> [!tip] In a vault of your own, even an empty one
+> 1. **Settings → Community plugins → Turn on community plugins**.
+> 2. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub and keeps them up to date.
+> 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin**, click **Add plugin**.
+> 4. The setup opens by itself. In an empty vault, leave everything ticked and click **Next** at each step.
 
 > [!warning] Clicked "Restricted mode" by mistake?
 > The plugins are off. Turn them on in **Settings → Community plugins**.
@@ -51,8 +57,8 @@ Stuck? The **?** button next to **+**, at the bottom, opens Help: type your ques
 | **Tag** | A word with `#` in front, like `#claim`. |
 | **Properties (metadata)** | The fields at the top of a note. For a reference: author, year, title, DOI, branch… |
 | **Reading note** | One per reference: its data, its PDF and your annotations. |
-| **Citekey** | A reference's code, like `craig_philosophy_2002`: the note's `id`. |
-| **Citation** | `[@citekey, p. 34]`, shown as (Craig, 2002, p. 34). |
+| **Citekey** | A reference's code, like `descartes_meditations_2022`: the note's `id`. |
+| **Citation** | `[@citekey, p. 34]`, shown as (Descartes, 1641/2022, p. 29). |
 | **Bibliography** | `bibliography.json`, in **Support/Texere/Bibliography**, kept up to date by Texere. |
 | **Command palette** | Every command, with **Ctrl/Cmd + P**. |
 
@@ -91,7 +97,7 @@ Texere stays quiet in your notes: while you write you see only your text, marks 
 
 **2. Notes/Disciplines/Philosophy** has a note for each branch, theory, concept, movement, period and author, starting from [[Philosophy]], each with a Romanian alias.
 
-Use them in your references' metadata. [[Craig 2002 – Philosophy. A very short introduction]] has [[Introduction]] as **branch**: open [[Introduction]] and **Backlinks** lists every reference in that branch.
+Use them in your references' metadata. [[Descartes 1641 (2022) – Meditations on First Philosophy]] has [[Epistemology]] as **branch**: open [[Epistemology]] and **Backlinks** lists every reference in that branch.
 
 No **Disciplines** folder? **Settings → Texere → General → Folders → Discipline map → Create the map**. A map for another discipline? Write to [hi@georgemihai.com](mailto:hi@georgemihai.com).
 
@@ -178,12 +184,12 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 
 **Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
 
-> [!example] From a real note
-> In [[Craig 2002 – Philosophy. A very short introduction]]:
+> [!example] From an example note
+> In [[Descartes 1641 (2022) – Meditations on First Philosophy]]:
 > ```
-> #claim In fact philosophy is extremely hard to avoid, even with a conscious effort.
-> [@craig_philosophy_2002, p. 12] · PDF
-> Even sceptics who said that philosophy is useless have a certain set of values…
+> #claim I am, I exist, is necessarily true each time it is expressed by me, or conceived in my mind [@descartes_meditations_2022, p. 29] · PDF
+>
+> The cogito as it appears here: not an inference, but true each time I think it. [@descartes_meditations_2022, p. 29]
 > ```
 > The annotation, then your comment under it.
 
@@ -191,7 +197,7 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 
 #### Distil: your annotations in your own words
 
-Open it from **Home → Distil**, or right-click a reading note → **Texere**. Texere shows one annotation at a time; you write a sentence or two, saved right under it, already cited: `… [@craig_philosophy_2002, p. 34]`.
+Open it from **Home → Distil**, or right-click a reading note → **Texere**. Texere shows one annotation at a time; you write a sentence or two, saved right under it, already cited: `… [@descartes_meditations_2022, p. 29]`.
 
 - An annotation counts as used once something of yours sits under it; `#word` annotations are skipped.
 - **Delete annotation** removes it from the note and the PDF; **Undo** brings both back.
@@ -219,16 +225,16 @@ For the theses, fill in **title**, **autor**, **coordonator** and **an**. The ru
 2. Pick the reference: Texere writes `[@citekey]`.
 3. Add the page: `[@citekey, p. 34]`. Always give it when you quote or paraphrase.
 
-In the note, the citation reads like text: (Craig, 2002, p. 34). Click it to open the reference or the PDF, or to edit it.
+In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click it to open the reference or the PDF, or to edit it.
 
 | You write | You get (APA) |
 | --- | --- |
-| `[@craig_philosophy_2002]` | (Craig, 2002) |
-| `[@craig_philosophy_2002, p. 34]` | (Craig, 2002, p. 34) |
-| `[@craig_philosophy_2002, pp. 34-36]` | (Craig, 2002, pp. 34–36) |
-| `[@craig_philosophy_2002; @dummett_origins_1996]` | (Craig, 2002; Dummett, 1996) |
-| `@craig_philosophy_2002 [p. 34]` | Craig (2002, p. 34) |
-| `[see @craig_philosophy_2002, ch. 2]` | (see Craig, 2002, ch. 2) |
+| `[@descartes_meditations_2022]` | (Descartes, 1641/2022) |
+| `[@descartes_meditations_2022, p. 29]` | (Descartes, 1641/2022, p. 29) |
+| `[@descartes_meditations_2022, pp. 29-31]` | (Descartes, 1641/2022, pp. 29–31) |
+| `[@descartes_meditations_2022; @mill_utilitarianism_2022]` | (Descartes, 1641/2022; Mill, 1863/2022) |
+| `@descartes_meditations_2022 [p. 29]` | Descartes (1641/2022, p. 29) |
+| `[see @mill_utilitarianism_2022, ch. 2]` | (see Mill, 1863/2022, Chapter 2) |
 
 **The citation style** shows in the Texere item at the bottom right (e.g. **APA**). Click it to pick another for this note (saved in its `csl` property; the export follows), or **Add a citation style…** from 10,000+.
 
@@ -378,7 +384,15 @@ The step numbers are those in [[#6.3 Manual setup]].
 
 ## 7. What's new
 
-When there's a new version, the home page shows it with an **Update** button; nothing installs without your click. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.1** · 9 November 2026
+What a new version brings for your vault, offered, never imposed.
+
+- **New templates, notes and fields are only offered.** The home page shows them with **Add** or **Not now**; nothing goes into your vault by itself, and nothing is ticked for you. What you leave for later waits in **Settings → Texere → General → From updates**.
+- **A template you changed is never overwritten:** a new version is offered as **Replace**, and yours stays next to it.
+- **Install with BRAT** in a vault of your own (see [[#1. Start]]); BRAT also keeps Texere up to date.
+- **New examples:** Descartes' *Meditations* and Mill's *Utilitarianism*, annotated, with their public-domain PDFs.
 
 **0.4.0** · 8 November 2026
 One plugin instead of four, a guided setup, and Help inside Texere.
