@@ -36,11 +36,19 @@ You need [Obsidian](https://obsidian.md) on a computer (Mac, Windows or Linux). 
 ### Your own vault, even an empty one
 
 1. **Make a vault.** Open [Obsidian](https://obsidian.md) and choose **Create new vault**, give it a name, pick where to keep it and click **Create**. (Already have a vault? Open it and skip this step.)
-2. **Turn on community plugins.** In [Obsidian](https://obsidian.md): **Settings** (the gear, bottom left) → **Community plugins** → **Turn on community plugins**.
-3. **Download Texere.** From the [latest release](https://github.com/gorgmihai92/texere-plugin/releases/latest), under **Assets**, download three files: `main.js`, `manifest.json` and `styles.css`.
-4. **Put them in place.** Still in **Settings → Community plugins**, click the folder icon next to **Installed plugins**: your vault's plugins folder opens. Make a new folder in it called `texere` and move the three files into it.
-5. **Turn Texere on.** Back in [Obsidian](https://obsidian.md), click the refresh icon next to **Installed plugins**, then switch **Texere** on.
-6. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, your discipline (the Philosophy map), PDF++ for annotations (you click **Install** and **Enable**), and what's missing in your vault. In an empty vault, leave everything ticked and click **Next** at each step: Texere makes the folders, the templates, the bibliography and the Philosophy map.
+2. **Turn on community plugins.** **Settings** (the gear, bottom left) → **Community plugins** → **Turn on community plugins**.
+3. **Install BRAT**, a free helper that installs plugins from GitHub: in **Community plugins** click **Browse**, search for **BRAT**, then **Install** and **Enable**.
+4. **Add Texere.** Press **Ctrl/Cmd + P**, type `BRAT plugin` and choose **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, leave **Latest version**, tick **Enable after installing the plugin** and click **Add plugin**.
+5. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, your discipline (the Philosophy map), PDF++ for annotations (you click **Install** and **Enable**), and what's missing in your vault. In an empty vault, leave everything ticked and click **Next** at each step: Texere makes the folders, the templates, the bibliography and the Philosophy map.
+
+<details>
+<summary>Without BRAT: copy the files yourself</summary>
+
+1. From the [latest release](https://github.com/gorgmihai92/texere-plugin/releases/latest), under **Assets**, download `main.js`, `manifest.json` and `styles.css`.
+2. In **Settings → Community plugins**, click the folder icon next to **Installed plugins**: your vault's plugins folder opens. Make a new folder in it called `texere` and move the three files into it.
+3. Back in Obsidian, click the refresh icon next to **Installed plugins**, then switch **Texere** on. The setup opens by itself.
+
+</details>
 
 Done. Every new tab now opens Texere's home page. Start with **Add a reference**.
 
@@ -48,7 +56,7 @@ The setup changes nothing without your click, and you can run it again from **Se
 
 ## Updates
 
-When there's a new version, Texere's home page shows it with an **Update** button. Nothing installs until you click, and your notes are never touched. You can go back to the previous version from **Settings → Texere → General → Updates**.
+When there's a new version, Texere's home page shows it with an **Update** button (with BRAT, it can also update itself when Obsidian starts). Nothing installs until you click, and your notes are never touched. You can go back to the previous version from **Settings → Texere → General → Updates**.
 
 ## Help
 
@@ -157,9 +165,8 @@ Version 0.4.0 · by [George Mihai](https://www.georgemihai.com/?utm_source=texer
 **Într-un vault al tău, chiar gol:**
 1. Instalează [Obsidian](https://obsidian.md/download) (gratuit) și fă un vault: **Create new vault**, un nume, un loc, **Create**.
 2. **Settings → Community plugins → Turn on community plugins**.
-3. Din [ultima versiune](https://github.com/gorgmihai92/texere-plugin/releases/latest), la **Assets**, descarcă `main.js`, `manifest.json` și `styles.css`.
-4. În **Settings → Community plugins**, apasă iconița de folder de lângă **Installed plugins**, fă acolo un folder `texere` și mută în el cele trei fișiere.
-5. Înapoi în Obsidian: iconița de reîmprospătare de lângă **Installed plugins**, apoi pornește **Texere**.
-6. Configurarea pornește singură: limba, folderele, disciplina, PDF++ (apeși tu Install și Enable) și ce lipsește din vault. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas: Texere face folderele, șabloanele, bibliografia și harta filosofiei.
+3. În **Community plugins → Browse**, caută **BRAT**, apoi **Install** și **Enable**.
+4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, lași **Latest version**, bifezi **Enable after installing the plugin** și apeși **Add plugin**.
+5. Configurarea pornește singură: limba, folderele, disciplina, PDF++ (apeși tu Install și Enable) și ce lipsește din vault. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas.
 
 **Ajutor:** butonul **?** de pe pagina de pornire. O problemă: **Settings → Texere → Despre → Semnalează o problemă** (un e-mail la [hi@georgemihai.com](mailto:hi@georgemihai.com)).
