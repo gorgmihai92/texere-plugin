@@ -1,9 +1,14 @@
 name: Release Obsidian plugin
 
+# A new version in manifest.json, pushed to main: GitHub builds the plugin and prepares the release as a draft
+# (main.js, manifest.json, styles.css and the release notes). The owner only clicks "Publish" on the Releases page.
+# A tag pushed by hand (e.g. 0.4.2) still works: the files are added to that release.
 on:
   push:
-    tags:
-      - "*"
+    branches: [main]
+    paths: [manifest.json]
+    tags: ["*"]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,33 +24,42 @@ jobs:
         with:
           node-version: "20.x"
 
+      - name: Which version
+        id: v
+        run: |
+          version="$(node -p "require('./manifest.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "$version" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match manifest.json version $version"; exit 1
+          fi
+          # already published: nothing to do
+          if gh release view "$version" --json isDraft -q .isDraft 2>/dev/null | grep -q false; then
+            echo "Release $version is already published."; echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build plugin
+        if: steps.v.outputs.skip != 'true'
         run: |
           npm ci
           npm run build
 
-      - name: Check that the tag matches manifest.json
-        run: |
-          tag="${GITHUB_REF#refs/tags/}"
-          version="$(node -p "require('./manifest.json').version")"
-          if [ "$tag" != "$version" ]; then
-            echo "Tag $tag does not match manifest.json version $version"
-            exit 1
-          fi
-
-      - name: Create release
+      - name: Prepare the release
+        if: steps.v.outputs.skip != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
-          # the release notes: .github/release-notes/<tag>.md if there is one, otherwise the tag's section of CHANGELOG.md
-          notes=".github/release-notes/$tag.md"
+          v="${{ steps.v.outputs.version }}"
+          # the release notes: .github/release-notes/<version>.md if there is one, otherwise that version's section of CHANGELOG.md
+          notes=".github/release-notes/$v.md"
           if [ ! -f "$notes" ]; then
             notes="$RUNNER_TEMP/notes.md"
-            awk -v t="## $tag" 'index($0, t) == 1 {on=1; next} on && /^## / {exit} on {print}' CHANGELOG.md > "$notes"
+            awk -v t="## $v" 'index($0, t) == 1 {on=1; next} on && /^## / {exit} on {print}' CHANGELOG.md > "$notes"
           fi
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" main.js manifest.json styles.css --clobber
+          if gh release view "$v" >/dev/null 2>&1; then
+            gh release upload "$v" main.js manifest.json styles.css --clobber
+            gh release edit "$v" --notes-file "$notes"
           else
-            gh release create "$tag" --title="$tag" --notes-file="$notes" main.js manifest.json styles.css
+            gh release create "$v" --draft --title "$v" --target "$GITHUB_SHA" --notes-file "$notes" main.js manifest.json styles.css
           fi
