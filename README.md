@@ -37,18 +37,9 @@ You need [Obsidian](https://obsidian.md) on a computer (Mac, Windows or Linux). 
 
 1. **Make a vault.** Open [Obsidian](https://obsidian.md) and choose **Create new vault**, give it a name, pick where to keep it and click **Create**. (Already have a vault? Open it and skip this step.)
 2. **Turn on community plugins.** **Settings** (the gear, bottom left) → **Community plugins** → **Turn on community plugins**.
-3. **Install BRAT**, a free helper that installs plugins from GitHub: in **Community plugins** click **Browse**, search for **BRAT**, then **Install** and **Enable**.
+3. **Install BRAT**, a free helper that installs plugins from GitHub and keeps them up to date: in **Community plugins** click **Browse**, search for **BRAT**, then **Install** and **Enable**.
 4. **Add Texere.** Press **Ctrl/Cmd + P**, type `BRAT plugin` and choose **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, leave **Latest version**, tick **Enable after installing the plugin** and click **Add plugin**.
 5. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, your discipline (the Philosophy map), PDF++ for annotations (you click **Install** and **Enable**), and what's missing in your vault. In an empty vault, leave everything ticked and click **Next** at each step: Texere makes the folders, the templates, the bibliography and the Philosophy map.
-
-<details>
-<summary>Without BRAT: copy the files yourself</summary>
-
-1. From the [latest release](https://github.com/gorgmihai92/texere-plugin/releases/latest), under **Assets**, download `main.js`, `manifest.json` and `styles.css`.
-2. In **Settings → Community plugins**, click the folder icon next to **Installed plugins**: your vault's plugins folder opens. Make a new folder in it called `texere` and move the three files into it.
-3. Back in Obsidian, click the refresh icon next to **Installed plugins**, then switch **Texere** on. The setup opens by itself.
-
-</details>
 
 Done. Every new tab now opens Texere's home page. Start with **Add a reference**.
 
@@ -56,7 +47,7 @@ The setup changes nothing without your click, and you can run it again from **Se
 
 ## Updates
 
-When there's a new version, Texere's home page shows it with an **Update** button (with BRAT, it can also update itself when Obsidian starts). Nothing installs until you click, and your notes are never touched. You can go back to the previous version from **Settings → Texere → General → Updates**.
+With BRAT, Texere updates itself: each time Obsidian starts, BRAT installs the newest version (you can turn this off in **Settings → BRAT**). Without BRAT, Texere's home page shows a new version with an **Update** button. Your notes are never touched, and **Settings → Texere → General → Updates** can go back to the previous version.
 
 ## Help
 
@@ -165,8 +156,10 @@ Version 0.4.0 · by [George Mihai](https://www.georgemihai.com/?utm_source=texer
 **Într-un vault al tău, chiar gol:**
 1. Instalează [Obsidian](https://obsidian.md/download) (gratuit) și fă un vault: **Create new vault**, un nume, un loc, **Create**.
 2. **Settings → Community plugins → Turn on community plugins**.
-3. În **Community plugins → Browse**, caută **BRAT**, apoi **Install** și **Enable**.
+3. În **Community plugins → Browse**, caută **BRAT** (instalează pluginuri de pe GitHub și le ține la zi), apoi **Install** și **Enable**.
 4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, lași **Latest version**, bifezi **Enable after installing the plugin** și apeși **Add plugin**.
 5. Configurarea pornește singură: limba, folderele, disciplina, PDF++ (apeși tu Install și Enable) și ce lipsește din vault. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas.
+
+**Actualizări:** cu BRAT, Texere se actualizează singur la fiecare pornire a Obsidian (se poate opri din **Settings → BRAT**); fără BRAT, versiunea nouă apare în pagina de pornire, cu **Actualizează**.
 
 **Ajutor:** butonul **?** de pe pagina de pornire. O problemă: **Settings → Texere → Despre → Semnalează o problemă** (un e-mail la [hi@georgemihai.com](mailto:hi@georgemihai.com)).
