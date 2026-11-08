@@ -129,7 +129,7 @@ npm run dev     # readable main.js, for testing
 npm run build   # minified main.js, for a release
 ```
 
-A release is built by the GitHub Action in `.github/workflows/release.yml` when a tag equal to the version in `manifest.json` is pushed.
+When the version in `manifest.json` changes on `main`, the GitHub Action in `.github/workflows/release.yml` builds the plugin and prepares a draft release (files and notes from `.github/release-notes/<version>.md`); publishing it on the Releases page makes it reach everyone.
 
 </details>
 
