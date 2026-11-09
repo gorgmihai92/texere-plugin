@@ -390,6 +390,7 @@ Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actual
 Mai fluid, plus câteva reparații.
 
 - **Gata cu sacadarea la fiecare secundă** când butonul Zotero e pornit și Zotero e închis: Texere nu mai verifică lista programelor deschise cât timp lucrezi în Obsidian (fiecare verificare oprea Obsidian o clipă). Îi lasă în continuare locul lui Zotero imediat ce îl deschizi.
+- **Citarea cu @ iartă greșelile:** `@ascombe` îl găsește pe Anscombe, `@vica` pe Vică, iar referințele adăugate ultima dată apar primele.
 - **Distil** arată pagina tipărită a adnotării (cea din citare), nu numărul paginii din PDF.
 - **O citare de carte lipită** (APA, cu editura după titlu) e citită ca o carte, nu ca un articol.
 

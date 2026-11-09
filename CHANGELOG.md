@@ -7,6 +7,7 @@ Version numbers: a big new feature raises the middle number (0.4 → 0.5), a cha
 Smoother, and a few fixes.
 
 - **Performance:** with the Zotero button on and Zotero closed, Texere checked the running programs (`ps`) every second; each check blocked Obsidian for about 50 ms, so scrolling a PDF, typing and closing tabs stuttered. Now the check runs only while Obsidian is in the background (at most every 1.5 s) or once a minute; Zotero starting is still caught at once by watching its files.
+- **Citations with @:** the list forgives a typo (`@ascombe` finds Anscombe) and missing diacritics (`@vica` finds Vică), and shows the references you added most recently first.
 - **Distil** shows the printed page of an annotation (from its citation), not the PDF's page index.
 - **Pasted citations:** an APA book (publisher after the title, no volume or pages) is read as a book, not as a journal article.
 - **Help:** the citation example uses `[@citekey, p. 29]`.

@@ -390,6 +390,7 @@ When there's a new version, the home page shows it with an **Update** button; no
 Smoother, and a few fixes.
 
 - **No more stutter every second** with the Zotero button turned on and Zotero closed: Texere no longer checks the list of running programs while you work in Obsidian (each check froze Obsidian for a moment). It still lets Zotero have its place as soon as you open it.
+- **Citing with @ forgives typos:** `@ascombe` finds Anscombe, `@vica` finds Vică, and the references you added last come first.
 - **Distil** shows the printed page of an annotation (the one in its citation), not the PDF's page number.
 - **A pasted book citation** (APA, with the publisher after the title) is read as a book, not as an article.
 

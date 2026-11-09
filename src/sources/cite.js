@@ -3,6 +3,34 @@
 const { Notice, EditorSuggest } = require("obsidian");
 const { LANG, isEn } = require("../shared/lang");
 
+// litere mici, fără diacritice: „Vică” se găsește și cu „vica”
+const fold = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+// distanța de editare, oprită devreme (ne interesează doar 0, 1 sau 2)
+function lev(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i]; let low = i;
+    for (let j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); if (cur[j] < low) low = cur[j]; }
+    if (low > max) return max + 1; prev = cur;
+  }
+  return prev[b.length];
+}
+// cât de bine se potrivește un cuvânt scris cu o referință: 0 începutul unui cuvânt, 1 în interior, 2 cu o greșeală, 3 deloc
+function matchWord(it, w) {
+  if (!it.words) it.words = String(it.hay || "").split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  if (it.words.some(x => x.startsWith(w))) return 0;
+  if (it.hay.includes(w)) return 1;
+  if (w.length >= 3) {
+    const max = w.length >= 7 ? 2 : 1;
+    for (const x of it.words) {
+      if (x.length < 3) continue;
+      if (lev(w, x.slice(0, w.length), max) <= max || lev(w, x.slice(0, w.length + 1), max) <= max || lev(w, x, max) <= max) return 2;
+    }
+  }
+  return 3;
+}
+
 // ---------- Citări din mers: scrii „@” (sau „[@”) și alegi sursa din bibliografie ----------
 class CiteSuggest extends EditorSuggest {
   constructor(plugin) { super(plugin.app); this.plugin = plugin; this.items = null; this.mtime = 0; this.limit = 10; }
@@ -16,8 +44,12 @@ class CiteSuggest extends EditorSuggest {
         const au = (e.author || e.editor || []).map(a => a.family || a.literal || "").filter(Boolean);
         const year = e.issued?.["date-parts"]?.[0]?.[0] || "";
         const who = au.length > 2 ? au[0] + " et al." : au.join(" & ");
-        return { key: e.id, who, year: String(year), title: e.title || "", first: String(au[0] || "").toLowerCase(), hay: [e.id, au.join(" "), year, e.title].join(" ").toLowerCase() };
+        const hay = fold([e.id, au.join(" "), year, e.title].join(" "));
+        const added = (e.accessed?.["date-parts"]?.[0] || []).map(n => String(n).padStart(2, "0")).join("-");
+        return { key: e.id, who, year: String(year), title: e.title || "", first: fold(au[0] || ""), hay, words: hay.split(/[^\p{L}\p{N}]+/u).filter(Boolean), added };
       });
+      // cele adăugate de curând întâi (lista fără nimic scris și, la egalitate, oricând)
+      this.items = this.items.map((it, i) => [it, i]).sort((a, b) => (b[0].added || "").localeCompare(a[0].added || "") || a[1] - b[1]).map(x => x[0]);
     } catch (err) { this.items = []; }
     return this.items;
   }
@@ -30,11 +62,17 @@ class CiteSuggest extends EditorSuggest {
     this.load();   // se încarcă în fundal; lista apare la tasta următoare dacă nu e gata
     return { start: { line: cursor.line, ch: cursor.ch - m[2].length - 1 }, end: cursor, query: m[2] };
   }
-  // cel mult 10, cele mai potrivite întâi: cheia sau primul autor care încep cu ce ai scris, apoi restul
+  // cel mult 10, cele mai potrivite întâi: cheia sau primul autor care încep cu ce ai scris, apoi restul;
+  // iartă diacriticele (vica → Vică) și o greșeală de tastare (ascombe → Anscombe)
   async getSuggestions(ctx) {
-    const items = await this.load(), q = ctx.query.toLowerCase().split(/\s+/).filter(Boolean), q0 = q[0] || "";
-    const rank = it => !q0 ? 0 : it.key.toLowerCase().startsWith(q0) || it.first.startsWith(q0) ? 0 : 1;
-    return items.filter(it => q.every(w => it.hay.includes(w))).map((it, i) => [rank(it), i, it]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, this.limit).map(x => x[2]);
+    const items = await this.load(), q = fold(ctx.query).split(/[\s_]+/).filter(Boolean), q0 = q[0] || "";
+    const found = items.map((it, i) => {
+      let worst = 0;
+      for (const w of q) { const m = matchWord(it, w); if (m > worst) worst = m; if (worst > 2) break; }
+      const start = !q0 || it.key.toLowerCase().startsWith(q0) || it.first.startsWith(q0) ? 0 : 1;
+      return [worst, start, i, it];
+    }).filter(x => x[0] <= 2).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).slice(0, this.limit).map(x => x[3]);
+    return found;   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
   }
   // un singur rând pe sursă: „Autor An – Titlu” (titlul se taie dacă e lung); cheia, în balon
   renderSuggestion(it, el) {
