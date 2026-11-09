@@ -2,6 +2,15 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.2 (9 November 2026)
+
+Smoother, and a few fixes.
+
+- **Performance:** with the Zotero button on and Zotero closed, Texere checked the running programs (`ps`) every second; each check blocked Obsidian for about 50 ms, so scrolling a PDF, typing and closing tabs stuttered. Now the check runs only while Obsidian is in the background (at most every 1.5 s) or once a minute; Zotero starting is still caught at once by watching its files.
+- **Distil** shows the printed page of an annotation (from its citation), not the PDF's page index.
+- **Pasted citations:** an APA book (publisher after the title, no volume or pages) is read as a book, not as a journal article.
+- **Help:** the citation example uses `[@citekey, p. 29]`.
+
 ## 0.4.1 (9 November 2026)
 
 What a new version brings for your vault is offered, never imposed.

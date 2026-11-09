@@ -217,7 +217,8 @@ class DistilModal extends Modal {
     }
     const src = c.createDiv("td-src");
     if (it.tag) { const t = src.createSpan("td-tag"), dot = t.createSpan("td-dot"), col = this.D.tagColor(it.tag); if (col) dot.setCssStyles({ background: col }); t.createSpan({ text: it.tag }); }
-    const p = it.ids[0].page; src.createSpan({ cls: "td-src-n", text: it.note.basename.split(" – ")[0] + (p ? " · p. " + p : "") }).title = it.note.basename;
+    // the page as printed in the book (the one in the citation), not the PDF's page number
+    const p = ((it.cite || "").match(/pp?\.\s*([^\]\s,;]+)/) || [])[1] || it.ids[0].page; src.createSpan({ cls: "td-src-n", text: it.note.basename.split(" – ")[0] + (p ? " · p. " + p : "") }).title = it.note.basename;
     const links = src.createDiv("td-links");
     links.createEl("a", { text: T("Deschide în PDF", "Open in PDF") }).addEventListener("click", () => this.D.openAt(it, true));
     links.createEl("a", { text: T("Deschide nota", "Open note") }).addEventListener("click", () => this.D.openAt(it, false));

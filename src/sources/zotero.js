@@ -146,7 +146,15 @@ class Zotero {
     return this.state.local;
   }
   // rulează Zotero pe acest calculator? { running: true/false/null (nu se poate ști), age: secunde de când a pornit }
-  proc() {
+  // `ps` blochează Obsidian câteva zeci de ms la fiecare pornire: cât timp Obsidian e în față (deci nu deschizi Zotero acum),
+  // ajunge răspunsul de acum un minut; pornirea lui Zotero o prind oricum fs.watch (watchZoteroStart) și verificarea când Obsidian trece în spate
+  proc(force) {
+    const front = typeof document !== "undefined" && document.hasFocus?.() && !document.hidden;
+    if (!force && this._proc && (front ? Date.now() - this._proc.at < 60000 : Date.now() - this._proc.at < 1500)) return Promise.resolve(this._proc.p);
+    if (this._procP) return this._procP;
+    return (this._procP = this.procNow().then(p => { this._proc = { p, at: Date.now() }; this._procP = null; return p; }));
+  }
+  procNow() {
     const cp = this.node("child_process"); if (!cp) return Promise.resolve({ running: null, age: null });
     return new Promise(res => {
       try {

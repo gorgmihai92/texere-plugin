@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.1"
-date: "Version 0.4.1 · 9 November 2026"
+version: "0.4.2"
+date: "Version 0.4.2 · 9 November 2026"
 ---
 ## 1. Start
 
@@ -58,7 +58,7 @@ Stuck? The **?** button next to **+**, at the bottom, opens Help: type your ques
 | **Properties (metadata)** | The fields at the top of a note. For a reference: author, year, title, DOI, branch… |
 | **Reading note** | One per reference: its data, its PDF and your annotations. |
 | **Citekey** | A reference's code, like `descartes_meditations_2022`: the note's `id`. |
-| **Citation** | `[@citekey, p. 34]`, shown as (Descartes, 1641/2022, p. 29). |
+| **Citation** | `[@citekey, p. 29]`, shown as (Descartes, 1641/2022, p. 29). |
 | **Bibliography** | `bibliography.json`, in **Support/Texere/Bibliography**, kept up to date by Texere. |
 | **Command palette** | Every command, with **Ctrl/Cmd + P**. |
 
@@ -223,7 +223,7 @@ For the theses, fill in **title**, **autor**, **coordonator** and **an**. The ru
 
 1. Type `@` and a word from the author or the title.
 2. Pick the reference: Texere writes `[@citekey]`.
-3. Add the page: `[@citekey, p. 34]`. Always give it when you quote or paraphrase.
+3. Add the page: `[@citekey, p. 29]`. Always give it when you quote or paraphrase.
 
 In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click it to open the reference or the PDF, or to edit it.
 
@@ -385,6 +385,13 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.2** · 9 November 2026
+Smoother, and a few fixes.
+
+- **No more stutter every second** with the Zotero button turned on and Zotero closed: Texere no longer checks the list of running programs while you work in Obsidian (each check froze Obsidian for a moment). It still lets Zotero have its place as soon as you open it.
+- **Distil** shows the printed page of an annotation (the one in its citation), not the PDF's page number.
+- **A pasted book citation** (APA, with the publisher after the title) is read as a book, not as an article.
 
 **0.4.1** · 9 November 2026
 What a new version brings for your vault, offered, never imposed.

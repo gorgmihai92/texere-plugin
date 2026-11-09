@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.1"
-date: "Versiunea 0.4.1 · 9 noiembrie 2026"
+version: "0.4.2"
+date: "Versiunea 0.4.2 · 9 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -58,7 +58,7 @@ Te-ai blocat? Butonul **?** de lângă **+**, jos, deschide Ajutorul: scrie înt
 | **Proprietăți (metadate)** | Câmpurile din capul notei. La o referință: autor, an, titlu, DOI, ramură… |
 | **Notă de lectură** | Câte una pentru fiecare referință: datele ei, PDF-ul și adnotările tale. |
 | **Citekey** | Codul unei referințe, ca `descartes_meditations_2022`: proprietatea `id` a notei. |
-| **Citare** | `[@citekey, p. 34]`, care apare ca (Descartes, 1641/2022, p. 29). |
+| **Citare** | `[@citekey, p. 29]`, care apare ca (Descartes, 1641/2022, p. 29). |
 | **Bibliografie** | `bibliography.json`, în **Support/Texere/Bibliography**, ținută la zi de Texere. |
 | **Command palette** | Toate comenzile, cu **Ctrl/Cmd + P**. |
 
@@ -223,7 +223,7 @@ La lucrări completezi **title**, **autor**, **coordonator** și **an**. Regulil
 
 1. Scrie `@` și un cuvânt din autor sau din titlu.
 2. Alege referința: Texere scrie `[@citekey]`.
-3. Adaugă pagina: `[@citekey, p. 34]`. Dă-o mereu când citezi sau parafrazezi.
+3. Adaugă pagina: `[@citekey, p. 29]`. Dă-o mereu când citezi sau parafrazezi.
 
 În notă, citarea se citește ca text: (Descartes, 1641/2022, p. 29). Un clic pe ea deschide referința sau PDF-ul, sau o editezi.
 
@@ -385,6 +385,13 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.2** · 9 noiembrie 2026
+Mai fluid, plus câteva reparații.
+
+- **Gata cu sacadarea la fiecare secundă** când butonul Zotero e pornit și Zotero e închis: Texere nu mai verifică lista programelor deschise cât timp lucrezi în Obsidian (fiecare verificare oprea Obsidian o clipă). Îi lasă în continuare locul lui Zotero imediat ce îl deschizi.
+- **Distil** arată pagina tipărită a adnotării (cea din citare), nu numărul paginii din PDF.
+- **O citare de carte lipită** (APA, cu editura după titlu) e citită ca o carte, nu ca un articol.
 
 **0.4.1** · 9 noiembrie 2026
 Ce aduce o versiune nouă pentru vault ți se propune, nu ți se impune.

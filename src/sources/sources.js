@@ -262,7 +262,9 @@ function guessRef(text) {
     const n = splitName(a); if (n) authors.push(n);
   }
   const isPub = x => /\b(editura|press|publishing|publishers|verlag|éditions|edizioni|humanitas|polirom|nemira)\b/i.test(x || "");
-  if (cont[1] && isPub(cont[1])) return cleanCsl({ type: "book", title, author: authors, issued: year ? { "date-parts": [[year]] } : undefined, publisher: cont[1].trim() });
+  // APA book: „Title. Publisher.” (nothing after it with a volume, issue or pages) is a book, not a journal
+  const bookish = cont[1] && !cont[2] && !/\d/.test(after);
+  if (cont[1] && (isPub(cont[1]) || bookish)) return cleanCsl({ type: "book", title, author: authors, issued: year ? { "date-parts": [[year]] } : undefined, publisher: cont[1].trim() });
   return cleanCsl({ type: cont[1] ? "article-journal" : "book", title, author: authors, issued: year ? { "date-parts": [[year]] } : undefined,
     "container-title": cont[1]?.trim(), volume: cont[2], "publisher-place": pub?.[1]?.trim(), publisher: pub?.[2]?.trim() });
 }
