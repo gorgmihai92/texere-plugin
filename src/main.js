@@ -306,9 +306,20 @@ module.exports = class Texere extends Plugin {
   maps() { return MAPS; }
   // o hartă e dorită dacă n-ai fost încă întrebat (vault-urile de dinainte) sau ai ales-o la configurare; altfel Texere nu ți-o mai propune
   mapWanted(m) { const f = this.settings.fields; return !f?.asked || (f.chosen || []).includes(m.id); }
-  async chooseField(id, on = true) { const f = (this.settings.fields = this.settings.fields || {}); f.asked = true; const c = new Set(f.chosen || []); if (on) c.add(id); else c.delete(id); f.chosen = [...c]; await this.save();
+  async chooseField(id, on = true) { const f = (this.settings.fields = this.settings.fields || {}); f.asked = true; const c = new Set(f.chosen || []); if (on) c.add(id); else c.delete(id); f.chosen = [...c];
+    const d = new Set(f.declined || []); if (on) d.delete(id); else d.add(id); f.declined = [...d]; await this.save();   // „declined”: ai spus nu; nu le mai adaugăm singuri
     // câmpurile hărții în șablonul notei de lectură: intră cu harta, ies dacă n-o alegi (doar cele neschimbate și nefolosite)
-    try { const S = this.sourcesApi(); if (S) await (on ? S.addMapFields?.(id) : S.dropMapFields?.(id)); } catch (e) { console.warn("Texere: câmpurile hărții", e); } }
+    try { const S = this.sourcesApi(); if (S) await (on ? S.addMapFields?.(id) : S.dropMapFields?.(id)); } catch (e) { console.warn("Texere: câmpurile hărții", e); }
+    // tipul lor în Obsidian: listă (ca în vault-ul Texere), doar dacă nu le-ai dat tu alt tip
+    if (on) { try { const MT = this.app.metadataTypeManager, names = require("./sources/template").MAP_FIELDS[id] || [];
+      for (const n of names) { const cur = MT?.getAssignedWidget?.(n); if (!cur && typeof MT?.setType === "function") MT.setType(n, "multitext"); } } catch (e) { console.warn("Texere: tipurile câmpurilor", e); } } }
+  // harta e în vault, dar câmpurile ei nu sunt în șablon (și nu le-ai refuzat): de completat
+  async mapFieldsMissing() {
+    const out = [], f = this.settings.fields || {}, S = this.sourcesApi(); if (!S?.template) return out;
+    let t = null; try { t = S.template(); } catch (e) { return out; }
+    for (const m of MAPS) { if ((f.declined || []).includes(m.id) || (t.maps || []).includes(m.id)) continue; try { const st = await this.mapStatus(m); if (st.have > 0) out.push(m); } catch (e) {} }
+    return out;
+  }
   // unde e harta acum: folderul în care stă „Philosophy/Philosophy.md” (oriunde l-ai mutat); altfel, una nouă: „Fields”, lângă notele tale (în „02. Notes”, dacă îl ai)
   mapRoot(m) {
     const tail = `${m.folder}/${m.folder}.md`, hit = (this.app.vault.getMarkdownFiles?.() || []).find(f => f.path === tail || f.path.endsWith("/" + tail));
@@ -396,6 +407,7 @@ module.exports = class Texere extends Plugin {
   async completeSetup(force) {
     const v = this.manifest?.version || "";
     if (!this.settings.onboarded || this.needsConfig() || this._wiz || (!force && this.settings.completedFor === v)) return false;
+    try { this._mapFieldsMissing = await this.mapFieldsMissing(); } catch (e) { this._mapFieldsMissing = []; }
     const W = require("./core/wizard"), miss = W.missingSetup(this);
     this.settings.completedFor = v; await this.save();   // o singură dată pe versiune; ce rămâne apare pe pagina de pornire
     if (!miss.any) return false;

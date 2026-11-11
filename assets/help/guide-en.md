@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.9"
-date: "Version 0.4.9 · 11 November 2026"
+version: "0.4.10"
+date: "Version 0.4.10 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -387,6 +387,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.10** · 11 November 2026
+- **A shorter setup:** each step says only what it needs to, without repeating the previous one. **The Texere structure** is always preselected (recommended).
+- **The map's fields in your reading notes:** if you import the map of philosophy, new reading notes get *discipline, branch, subfield, period, movements, theories, concepts* (as lists). Fixed: going to the next step twice while the map was importing could drop them. If you have the map but not its fields, a short window after the update adds them.
 
 **0.4.9** · 11 November 2026
 - **The discipline step says what it does:** "Your discipline's map" — I import the map of philosophy (435 notes: branches, concepts, theories, movements, periods, authors, linked together) into 2. Notes/Disciplines/Philosophy; untick it if you don't want it. In Settings, the button is now **Import the map**.

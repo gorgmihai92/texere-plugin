@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.10 (11 November 2026)
+
+- **Setup copy, shorter:** "Where Texere keeps things" — two one-line cards, no list (the next steps show what was done); the Texere structure is always preselected and just "Recommended"; "My own folders" — fields without per-place explanations, "Other folders (optional)". Results: top-level folders with what each holds; bibliography and "6 citation styles"; templates and guides counted; the map card "The map of philosophy" + "435 notes · folder"; PDF++ "installed and on" + "Texere's settings". Done: three short lines.
+- **Map fields:** fix — a second Next on the map step while it was importing un-chose the map (stale status) and dropped its fields from the reading-note template; the un-choose now checks the live status. Choosing a map also sets its fields' Obsidian property type to *List* (multitext) unless you set another. After an update, a vault with the map but without its fields (and not declined) gets them in the completion window. Declining a map is remembered (`fields.declined`).
+
 ## 0.4.9 (11 November 2026)
 
 - Setup, discipline step reworded: title "Your discipline's map"; it says the map is imported into the vault (one note per branch, concept, theory, movement, period and author, linked, like a small dictionary of the field) and what it's for; the card reads "The map of philosophy · 435 notes" with "On Next, I'll import it into …" / "Imported · in …"; how to skip or import later; result "Imported the map of philosophy: 435 notes in …". Settings and home: "Import the map".

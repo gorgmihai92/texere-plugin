@@ -68,8 +68,9 @@ function missingSetup(P) {
   try { out.notes = P.noteStatus().filter(n => !n.file).length; } catch (e) {}
   out.pdf = !setup.pdfplus.check(P);
   { const s = P.app.plugins?.plugins?.["pdf-plus"]?.settings; out.preset = !out.pdf && !!s && PRE.isFresh(s); }   // PDF++ pornit, dar cu setările lui de început
-  try { out.links = V.getConfig?.("alwaysUpdateLinks") !== true && !!V.setConfig; } catch (e) {}   // Texere redenumește note: linkurile trebuie să urmeze
-  out.any = !!(out.folders.length || out.bib || out.notes || out.pdf || out.preset || out.links);
+  try { out.links = V.getConfig?.("alwaysUpdateLinks") !== true && !!V.setConfig; } catch (e) {}
+  out.mapFields = (P._mapFieldsMissing || []);   // calculat înainte (async), în completeSetup   // Texere redenumește note: linkurile trebuie să urmeze
+  out.any = !!(out.folders.length || out.bib || out.notes || out.pdf || out.preset || out.links || out.mapFields.length);
   return out;
 }
 const AUTO = {
@@ -86,7 +87,8 @@ const AUTO = {
     for (const p of [...Object.values(choice), ...(others || [])]) if (typeof p === "string" && V.getAbstractFileByPath(p)) had.add(p);
     let res = null; try { res = await PL.apply(P, choice, mode); } catch (e) { console.error("Texere: folderele", e); res = { done: [], fail: ["all"] }; }
     const st = p => had.has(p) ? M("exista deja", "already there") : M("creat", "created");
-    for (const x of PL.PLACES) { const p = choice[x.key]; if (!p) continue; out.ok.push({ label: x.label, value: p, state: PL.isAbs(p) ? M("pe calculator", "on your computer") : st(p) }); }
+    // folderele tale: fiecare loc, cu calea aleasă (structura Texere: mai jos, doar folderele de sus, cu ce ține fiecare)
+    if (mode !== "recommended") for (const x of PL.PLACES) { const p = choice[x.key]; if (!p) continue; out.ok.push({ label: x.label, value: p, state: PL.isAbs(p) ? M("pe calculator", "on your computer") : st(p) }); }
     if (res.fail.length) out.todo.push({ msg: M("Unele foldere nu s-au putut seta; le poți schimba din Settings → Texere → General → Foldere.", "Some folders couldn't be set; you can change them in Settings → Texere → General → Folders.") });
     let made = 0;
     try {
@@ -95,10 +97,23 @@ const AUTO = {
       await P.save();
     } catch (e) { console.error("Texere: folderele", e); }
     // Texere redenumește note (referințele, numele „Autor An – Titlu”): linkurile spre ele trebuie să se actualizeze singure
-    try { if (V.getConfig?.("alwaysUpdateLinks") !== true && V.setConfig) { V.setConfig("alwaysUpdateLinks", true); out.ok.push({ label: M("Linkurile se actualizează când redenumești o notă", "Links update when you rename a note"), value: "", state: M("pornit", "turned on") }); } } catch (e) {}
-    const rest = (others || []).filter(p => V.getAbstractFileByPath(p));
-    if (rest.length) out.ok.push({ label: M("Notițele și lucrările tale", "Your notes and work"), value: [...new Set(rest.map(p => p.split("/").slice(-1)[0]))].join(" · "), state: made ? M(`${made} create`, `${made} created`) : M("existau deja", "already there") });
+    try { if (V.getConfig?.("alwaysUpdateLinks") !== true && V.setConfig) { V.setConfig("alwaysUpdateLinks", true); out.ok.push({ label: M("Linkurile se actualizează la redenumire", "Links update when you rename"), state: M("pornit", "on") }); } } catch (e) {}
+    if (mode === "recommended") {
+      const WHAT = { references: M("referințele și PDF-urile", "references and PDFs"), notes: M("notițele tale", "your notes"), workspace: M("cursuri, teză, articole, proiecte", "courses, thesis, articles, projects"), export: M("exporturile", "exports"), support: M("șabloane, bibliografie, imagini", "templates, bibliography, images") };
+      const tops = [...new Set([...Object.values(choice), ...(others || [])].filter(p => typeof p === "string" && !PL.isAbs(p)).map(p => p.split("/")[0]))].filter(t => V.getAbstractFileByPath(t));
+      const key = t => t.replace(/^\d+\.\s*/, "").toLowerCase();
+      tops.sort((a, b) => (key(a) === "support") - (key(b) === "support") || a.localeCompare(b, undefined, { numeric: true }));
+      for (const t of tops) out.ok.push({ label: M(t, t), state: WHAT[key(t)] || M("", "") });
+    } else {
+      const rest = (others || []).filter(p => V.getAbstractFileByPath(p));
+      if (rest.length) out.ok.push({ label: M("Celelalte foldere", "Other folders"), value: [...new Set(rest.map(p => p.split("/").slice(-1)[0]))].join(" · "), state: made ? M(`${made} create`, `${made} created`) : M("existau deja", "already there") });
+    }
     try { P.notify?.(); } catch (e) {}
+    return out;
+  },
+  async mapFields(W) {
+    const P = W.P, out = none();
+    for (const m of W.missing?.mapFields || []) { try { await P.chooseField(m.id); out.ok.push({ label: M(`Harta ${m.of?.ro || m.ro}`, `The map of ${m.of?.en || m.en}`), state: M("discipline, branch, subfield, period, movements, theories, concepts", "discipline, branch, subfield, period, movements, theories, concepts") }); } catch (e) { out.todo.push({ msg: M(`N-a mers: ${e.message}`, `Didn't work: ${e.message}`) }); } }
     return out;
   },
   async links(W) {
@@ -116,10 +131,10 @@ const AUTO = {
     const S = P.mod("sources")?.sources; let bib = ""; try { bib = S?.bibPath?.() || ""; } catch (e) {}
     if (!S) { out.info.push(M("Modulul Referințe e oprit: bibliografia se face când îl pornești.", "The References module is off: the bibliography is made when you turn it on.")); return out; }
     let n = 0; try { await setup.bibliography.run(P); n = S.lib?.all?.().length || 0; } catch (e) { console.warn("Texere: bibliografia", e); }
-    out.ok.push({ label: M("Bibliografia", "Bibliography"), value: bib, state: n ? M(`${n} referințe`, `${n} references`) : M("gata, goală", "ready, empty") });
+    out.ok.push({ label: M("Bibliografia", "Bibliography"), state: n ? M(`${n} referințe`, `${n} references`) : M("gata", "ready") });
     const dir = bib.includes("/") ? bib.slice(0, bib.lastIndexOf("/")) : "";
     const styles = (P.app.vault.getAbstractFileByPath(dir || "/")?.children || []).filter(f => f.extension === "csl").length;
-    out.ok.push({ label: M("Stilurile de citare", "Citation styles"), value: styles >= 6 ? STYLE_NAMES : `${styles}`, state: M("gata", "ready") });
+    out.ok.push({ label: M(`${styles} stiluri de citare`, `${styles} citation styles`), state: styles >= 6 ? M("APA, Chicago, MLA, Harvard, IEEE", "APA, Chicago, MLA, Harvard, IEEE") : M("gata", "ready") });
     return out;
   },
   // 3. șabloanele (articol, autor, licență, disertație) și ghidurile de scris
@@ -128,8 +143,8 @@ const AUTO = {
     let made = 0; try { made = await P.addNotes(); } catch (e) { console.error("Texere: notele", e); }
     const tdir = String(P.settings.dirs?.templates || "Support/Templates");
     const all = P.noteStatus(), tpl = all.filter(n => n.path.startsWith("Support/Templates/")), gd = all.filter(n => !n.path.startsWith("Support/Templates/"));
-    out.ok.push({ label: M("Șabloanele", "Templates"), value: tpl.map(n => n.path.split("/").pop().replace(/\.md$/, "")).join(" · "), state: M(`în ${tdir}`, `in ${tdir}`) });
-    out.ok.push({ label: M("Ghidurile de scris", "Writing guides"), value: gd.map(n => n.path.split("/").pop().replace(/\.md$/, "")).join(" · "), state: M("în Support/Texere/Guides", "in Support/Texere/Guides") });
+    out.ok.push({ label: M(`${tpl.length} șabloane`, `${tpl.length} templates`), state: M(`în ${tdir}`, `in ${tdir}`) });
+    out.ok.push({ label: M(`${gd.length} ghiduri de scris`, `${gd.length} writing guides`), state: M("în Support/Texere/Guides", "in Support/Texere/Guides") });
     if (!made && before) out.info.push(M("Erau deja în vault; nu le-am atins.", "They were already in your vault; I didn't touch them."));
     return out;
   },
@@ -140,8 +155,8 @@ const AUTO = {
     let r = null; try { r = await setup.pdfplus.run(P, "install"); } catch (e) { console.error("Texere: PDF++", e); r = { ...none(), todo: [{ msg: M(`Nu am putut instala PDF++ (${e.message}).`, `I couldn't install PDF++ (${e.message}).`) }] }; }
     // setările lui Texere pentru PDF++ (dacă PDF++ are încă setările lui de început; ce ți-ai setat tu rămâne)
     let preset = false; if (setup.pdfplus.check(P)) { try { preset = await PRE.apply(P.app); } catch (e) { console.warn("Texere: setările PDF++", e); } }
-    if (setup.pdfplus.check(P) && (preset || PRE.hasTexere(P.app.plugins.plugins["pdf-plus"]?.settings))) out.ok.push({ label: M("Setările lui Texere pentru PDF++", "Texere's settings for PDF++"), value: (() => { const a = P.app.plugins.plugins["pdf-plus"]?.settings?.author; return a ? M(`${PRE.SUMMARY.ro} · autorul adnotărilor: ${a}`, `${PRE.SUMMARY.en} · annotations' author: ${a}`) : M(PRE.SUMMARY.ro, PRE.SUMMARY.en); })(), state: preset || wasFresh ? M("puse", "applied") : M("erau deja", "already there") });
-    if (setup.pdfplus.check(P)) out.ok.unshift({ label: M("PDF++", "PDF++"), value: M("adnotările din PDF: culori, etichete, legături spre pasaj", "PDF annotations: colours, tags, links back to the passage"), state: M(`instalat și pornit${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`, `installed and on${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`) });
+    if (setup.pdfplus.check(P) && (preset || PRE.hasTexere(P.app.plugins.plugins["pdf-plus"]?.settings))) out.ok.push({ label: M("Setările lui Texere", "Texere's settings"), state: M("culori ca etichete, auto-copy, auto-paste", "colours as tags, auto-copy, auto-paste") });
+    if (setup.pdfplus.check(P)) out.ok.unshift({ label: M("PDF++", "PDF++"), state: M("instalat și pornit", "installed and on") });
     out.todo.push(...(r?.todo || [])); out.tech.push(...(r?.tech || []));
     return out;
   },
@@ -156,24 +171,23 @@ function buildSteps(P, first) {
     check: () => S.language.check(P), lang: true });
   // unde ține Texere lucrurile: structura recomandată sau folderele tale (doar la prima configurare; apoi din Setări → Foldere)
   if (first && !P.settings.structure) steps.push({ id: "places", icon: "folder-tree", title: M("Unde ține Texere lucrurile", "Where Texere keeps things"),
-    explain: M("Alege cum pregătesc vault-ul. Apoi fac totul pas cu pas și îți arăt ce am făcut. Nu mut și nu suprascriu nimic din ce ai.",
-      "Choose how I set up your vault. Then I do everything step by step and show you what I did. Nothing of yours is moved or overwritten."), places: true, check: () => !!P.settings.structure });
+    explain: M("Alege cum pregătesc vault-ul. Nu mut și nu șterg nimic din ce ai.", "Choose how I set up your vault. Nothing of yours is moved or deleted."), places: true, check: () => !!P.settings.structure });
   // prima configurare: fiecare lucru într-un pas al lui, care îți arată ce face și ce a făcut
   if (first) {
     steps.push({ id: "folders", icon: "folder-tree", title: M("Folderele", "Your folders"), auto: AUTO.folders,
-      explain: M("Creez folderele în care Texere ține referințele, PDF-urile și exporturile. Ce ai deja rămâne cum e.", "I'm creating the folders where Texere keeps references, PDFs and exports. What you already have stays as it is.") });
+      explain: M("Folderele în care Texere ține lucrurile.", "The folders where Texere keeps things.") });
     steps.push({ id: "bibliography", icon: "book-open", title: M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), auto: AUTO.bibliography,
-      explain: M("Din bibliografie se fac citările (@) și lista de referințe de la export; stilul îl alegi oricând.", "Citations (@) and the exported reference list come from the bibliography; you choose the style any time.") });
+      explain: M("Pentru citări (@) și lista de referințe de la export.", "For citations (@) and the reference list when you export.") });
     steps.push({ id: "notes", icon: "layout-template", title: M("Șabloanele și ghidurile de scris", "Templates and writing guides"), auto: AUTO.notes,
-      explain: M("Șabloane pentru un eseu, un autor, o lucrare de licență sau de disertație, plus ghidurile de scris.", "Templates for an essay, an author, a BA or MA thesis, plus the writing guides.") });
+      explain: M("Pentru un eseu, un autor, o licență sau o disertație.", "For an essay, an author, a BA or MA thesis.") });
   }
   if (first && !P.settings.fields?.asked && (P.maps?.() || []).length) steps.push({ id: "fields", icon: "network", title: M("Harta disciplinei tale", "Your discipline's map"),
-    explain: M("Pot importa în vault harta unei discipline: câte o notă pentru fiecare ramură, concept, teorie, curent, perioadă și autor, legate între ele, ca un mic dicționar al domeniului. Cu ea etichetezi referințele (de exemplu ramura: Etică) și vezi apoi tot ce ai citit într-o ramură.",
-      "I can import a discipline's map into your vault: one note for each branch, concept, theory, movement, period and author, linked together, like a small dictionary of the field. With it you tag your references (for example branch: Ethics), then see everything you read in a branch."), fields: true,
+    explain: M("Note legate pentru ramurile, conceptele și autorii domeniului. Cu ele etichetezi referințele (de exemplu ramura: Etică).",
+      "Linked notes for the field's branches, concepts and authors. You use them to tag your references (for example branch: Ethics)."), fields: true,
     check: async () => { for (const m of P.maps?.() || []) { try { const st = await P.mapStatus(m); if (st.have < st.total) return false; } catch (e) { return false; } } return true; } });   // toate hărțile deja în vault: nimic de ales, „Înainte”
   const ppFresh = () => { try { const s = P.app.plugins.plugins["pdf-plus"]?.settings; return !!s && PRE.isFresh(s); } catch (e) { return false; } };
   if (first && (!S.pdfplus.check(P) || ppFresh())) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
-    explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez din lista oficială Obsidian, îl pornesc și îi pun setările lui Texere: culorile ca etichete, auto-copy, auto-paste, formatele de copiere.", "Texere uses PDF++ for your PDF annotations. I'm installing it from Obsidian's official list, turning it on and giving it Texere's settings: colours as tags, auto-copy, auto-paste, copy formats.") });
+    explain: M("Pentru adnotările din PDF. Îl instalez și îl configurez pentru Texere.", "For your PDF annotations. I'm installing it and setting it up for Texere.") });
   else if (!S.pdfplus.check(P)) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), explain: S.pdfplus.explain, setupStep: S.pdfplus, poll: true,
     check: () => S.pdfplus.check(P), extra: (row, W) => {
       // după ce ai apăsat Install și Enable în pagina lui PDF++: verifică din nou (pornirea o faci tu, cu un clic)
@@ -192,12 +206,12 @@ function buildSteps(P, first) {
   // la o configurare din nou: ce mai lipsește, bifat (la prima, pașii de mai sus au făcut deja totul)
   if (!first) steps.push({ id: "vault", icon: "folder-tree", title: M("Vault-ul tău", "Your vault"),
     explain: M("Adaug doar ce lipsește; ce ai deja rămâne neatins.", "I add only what's missing; what you already have stays untouched."), vault: true });
-  steps.push({ id: "done", icon: "check-circle", title: M("Gata", "You're all set"), explain: M("Texere e pregătit. La „Termină” îți deschid pagina de pornire într-un tab nou. Iată unde găsești totul:", "Texere is ready. When you click Finish, I'll open the home page in a new tab. Here's where to find everything:"), info: true, last: true,
+  steps.push({ id: "done", icon: "check-circle", title: M("Gata", "You're all set"), explain: M("Texere e pregătit. La „Termină” se deschide pagina de pornire.", "Texere is ready. Finish opens the home page."), info: true, last: true,
     body: (el, W) => {
       const ul = el.createEl("ul", { cls: "txw-where" });
-      for (const [ic, a, b] of [["texere", M("Pagina de pornire", "Home"), M("în fiecare tab nou, sau iconița împletită din ribbon (bara de iconițe din stânga).", "in every new tab, or the braid icon in the ribbon (the icon bar on the left).")],
-        ["circle-help", M("Ajutor", "Help"), M("butonul ? de lângă +, jos pe pagina de pornire, sau Ctrl/Cmd + P → Ajutor.", "the ? button next to +, at the bottom of the home page, or Ctrl/Cmd + P → Help.")],
-        ["settings", M("Settings → Texere", "Settings → Texere"), M("modulele, limba și configurarea din nou.", "modules, language and running the setup again.")]]) {
+      for (const [ic, a, b] of [["texere", M("Pagina de pornire", "Home"), M("în fiecare tab nou", "in every new tab")],
+        ["circle-help", M("Ajutor", "Help"), M("butonul ? de pe pagina de pornire", "the ? button on the home page")],
+        ["settings", M("Settings → Texere", "Settings → Texere"), M("setările", "the settings")]]) {
         const li = ul.createEl("li"), i = li.createSpan("txw-ic"); icon(i, ic); const t = li.createSpan(); t.createEl("b", { text: W.T(a) }); t.appendText(" — " + W.T(b));
       }
     } });
@@ -214,10 +228,13 @@ function completeSteps(P, miss) {
       if (miss.bib) add("book-open", M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), "");
       if (miss.notes) add("layout-template", M(`Șabloanele și ghidurile de scris (${miss.notes})`, `Templates and writing guides (${miss.notes})`), "");
       if (miss.pdf) add("highlighter", M("PDF++, pentru adnotările din PDF", "PDF++, for your PDF annotations"), "");
+      if (miss.mapFields.length) add("network", M("Câmpurile hărții în notele de lectură", "The map's fields in reading notes"), "discipline, branch, subfield, period, movements, theories, concepts");
       if (miss.links) add("link", M("Linkurile se actualizează când redenumești o notă", "Links update when you rename a note"), "");
       if (miss.pdf || miss.preset) add("palette", M("Setările lui Texere pentru PDF++", "Texere's settings for PDF++"), W.T(M(PRE.SUMMARY.ro, PRE.SUMMARY.en))); } });
   if (miss.folders.length) steps.push({ id: "folders", icon: "folder-tree", title: M("Folderele lui Texere", "Texere's folders"), auto: AUTO.coreFolders,
     explain: M("Creez folderele în care Texere ține referințele, PDF-urile, exporturile și șabloanele.", "I'm creating the folders where Texere keeps references, PDFs, exports and templates.") });
+  if (miss.mapFields.length) steps.push({ id: "mapfields", icon: "network", title: M("Câmpurile hărții", "The map's fields"), auto: AUTO.mapFields,
+    explain: M("Ai harta disciplinei: notele de lectură noi primesc câmpurile ei.", "You have the discipline map: new reading notes get its fields.") });
   if (miss.links) steps.push({ id: "links", icon: "link", title: M("Linkurile", "Links"), auto: AUTO.links,
     explain: M("Texere redenumește note (de ex. „Autor An – Titlu”); pornesc actualizarea linkurilor, ca să nu se rupă.", "Texere renames notes (e.g. “Author Year – Title”); I'm turning on link updates, so links don't break.") });
   if (miss.bib) steps.push({ id: "bibliography", icon: "book-open", title: M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), auto: AUTO.bibliography,
@@ -380,7 +397,8 @@ class WizardModal extends Modal {
     if (!this.placesVals) this.placesVals = Object.fromEntries(PL.PLACES.map(x => [x.key, (again && cur[x.key]) || rec[x.key]]));
     const others = (() => { try { return P.otherFolders ? P.otherFolders() : []; } catch (e) { return []; } })();
     if (!this.othersPicked) this.othersPicked = new Set();
-    const mode = this.placesMode || (again ? (P.settings.structure === "own" ? "own" : "rec") : fresh ? "rec" : "own"), exists = p => !!(p && !PL.isAbs(p) && app.vault.getAbstractFileByPath(p));
+    // structura Texere e alegerea de pornire (recomandată); o configurare rulată din nou pornește de la ce ai ales data trecută
+    const mode = this.placesMode || (again && P.settings.structure === "own" ? "own" : "rec"), exists = p => !!(p && !PL.isAbs(p) && app.vault.getAbstractFileByPath(p));
     const pdfOn = setup.pdfplus.check(P), bib = (() => { try { const b = P.mod("sources")?.sources?.bibPath?.() || ""; return b.includes("/") ? b.slice(0, b.lastIndexOf("/")) : "Support/Texere/Bibliography"; } catch (e) { return "Support/Texere/Bibliography"; } })();
     const opts = body.createDiv("txw-places");
     const card = (k, title, desc, badge) => {
@@ -389,28 +407,17 @@ class WizardModal extends Modal {
       const t = c.createDiv("txw-field-t"), h = t.createDiv({ cls: "txw-field-name", text: T(title) }); if (badge) h.createSpan({ cls: "txw-rec", text: T(badge) });
       t.createDiv({ cls: "txw-field-desc", text: T(desc) }); return t;
     };
-    const state = p => T(exists(p) ? M("există", "exists") : M("nou", "new"));
-    const t1 = card("rec", M("Structura Texere", "The Texere structure"),
-      M("Fac eu tot: folderele vault-ului Texere, bibliografia cu stilurile de citare, exportul, șabloanele și ghidurile de scris" + (pdfOn ? "." : ", plus PDF++ (îl instalez din lista oficială Obsidian).") + " Ce ai deja rămâne cum e.",
-        "I set up everything: the Texere vault's folders, the bibliography with citation styles, export, templates and writing guides" + (pdfOn ? "." : ", plus PDF++ (installed from Obsidian's official list).") + " What you already have stays as it is."),
-      fresh ? M("Recomandat", "Recommended") : M("Recomandat pentru vault-urile noi", "Recommended for new vaults"));
-    if (mode === "rec") {
-      const ul = t1.createEl("ul", { cls: "txw-place-list" }), li = (k, v, st) => { const x = ul.createEl("li"); x.createSpan({ cls: "txw-place-k", text: k }); x.createSpan({ cls: "txw-place-v", text: v }); x.createSpan({ cls: "txw-place-s", text: st }); };
-      for (const x of PL.PLACES) li(T(x.label), rec[x.key], state(rec[x.key]));
-      li(T(M("Bibliografia", "Bibliography")), bib, state(bib));
-      li(T(M("Restul structurii", "The rest of the structure")), others.map(p => p.split("/").slice(-1)[0]).join(" · "), "");
-      if (!pdfOn) li("PDF++", T(M("instalat și pornit", "installed and turned on")), T(M("nou", "new")));
-    }
-    const t2 = card("own", M("Folderele mele", "My own folders"),
-      M("Texere are nevoie de câteva foldere ale lui (referințele, PDF-urile, exportul, bibliografia): le creez cu numele pe care le alegi. Restul vault-ului e al tău." + (pdfOn ? "" : " Instalez și PDF++."),
-        "Texere needs a few folders of its own (references, PDFs, export, bibliography): I create them with the names you choose. The rest of the vault is yours." + (pdfOn ? "" : " I'll install PDF++ too.")),
-      !fresh && !again ? M("Pentru vault-ul tău", "For your vault") : null);
+    card("rec", M("Structura Texere", "The Texere structure"),
+      M(pdfOn ? "Folderele, bibliografia și șabloanele, gata de folosit." : "Folderele, bibliografia, șabloanele și PDF++, gata de folosit.", pdfOn ? "Folders, bibliography and templates, ready to use." : "Folders, bibliography, templates and PDF++, ready to use."),
+      M("Recomandat", "Recommended"));
+    card("own", M("Folderele mele", "My own folders"),
+      M("Alegi tu unde stau referințele, PDF-urile și exporturile.", "You choose where references, PDFs and exports go."), null);
     const errs = {};
     if (mode === "own") {
       const box = opts.createDiv("txw-place-own");   // în afara cardului: un clic în câmp nu atinge alegerea
-      box.createDiv({ cls: "txw-place-sec", text: T(M("Folderele lui Texere · se creează acum", "Texere's folders · created now")) });
+      box.createDiv({ cls: "txw-place-sec", text: T(M("Folderele lui Texere", "Texere's folders")) });
       for (const x of PL.PLACES) {
-        const r = box.createDiv("txw-place-row"), l = r.createDiv("txw-place-l"); l.createDiv({ cls: "txw-place-k", text: T(x.label) }); l.createDiv({ cls: "txw-check-d", text: T(x.desc) });
+        const r = box.createDiv("txw-place-row"), l = r.createDiv("txw-place-l"); l.createDiv({ cls: "txw-place-k", text: T(x.label) });
         const f = r.createDiv("txw-place-f"), inp = f.createEl("input", { type: "text", cls: "txw-place-in" }); inp.value = this.placesVals[x.key] || ""; inp.placeholder = rec[x.key];
         const set = v => { this.placesVals[x.key] = v; err.setText(""); };
         inp.addEventListener("input", () => set(inp.value));
@@ -421,11 +428,8 @@ class WizardModal extends Modal {
         }
         const err = f.createDiv("txw-place-err"); errs[x.key] = err;
       }
-      { const r = box.createDiv("txw-place-row"), l = r.createDiv("txw-place-l"); l.createDiv({ cls: "txw-place-k", text: T(M("Bibliografia", "Bibliography")) }); l.createDiv({ cls: "txw-check-d", text: T(M("Lista referințelor și stilurile de citare (APA, Chicago, MLA…). O poți muta apoi din Obsidian.", "The list of references and the citation styles (APA, Chicago, MLA…). You can move it later in Obsidian.")) });
-        r.createDiv({ cls: "txw-place-f txw-place-v", text: bib }); }
       if (others.length) {
-        box.createDiv({ cls: "txw-place-sec", text: T(M("Celelalte foldere · ale tale, doar dacă le vrei", "Other folders · yours, only if you want them")) });
-        box.createDiv({ cls: "txw-check-d", text: T(M("Din structura Texere, pentru notițe și lucrări. Le poți face și tu, cum vrei, oricând.", "From the Texere structure, for notes and work. You can also make your own, any time.")) });
+        box.createDiv({ cls: "txw-place-sec", text: T(M("Alte foldere (opțional)", "Other folders (optional)")) });
         const grid = box.createDiv("txw-place-others");
         for (const p of others) {
           const lab = grid.createEl("label"), cb = lab.createEl("input", { type: "checkbox" }); cb.checked = this.othersPicked.has(p) || exists(p); cb.disabled = exists(p);
@@ -468,14 +472,13 @@ class WizardModal extends Modal {
       cb.addEventListener("change", () => { if (cb.checked) picked.add(m.id); else picked.delete(m.id); card.toggleClass("is-off", !cb.checked); });
       if (!cb.checked) card.addClass("is-off");
       const t = card.createDiv("txw-field-t");
-      t.createDiv({ cls: "txw-field-name", text: T(M(`Harta ${m.of?.ro || m.ro}${st ? ` · ${st.total} de note` : ""}`, `The map of ${m.of?.en || m.en}${st ? ` · ${st.total} notes` : ""}`)) });
-      if (m.desc) t.createDiv({ cls: "txw-field-desc", text: T(M(m.desc.ro, m.desc.en)) });
-      const meta = st ? (full ? M(`Importată · în ${st.folder}`, `Imported · in ${st.folder}`)
-        : part ? M(`${st.have} din ${st.total} note sunt deja în ${st.folder}; import doar ce lipsește`, `${st.have} of ${st.total} notes are already in ${st.folder}; I'll import only what's missing`)
-        : M(`La „Înainte” o import în ${st.folder}`, `On Next, I'll import it into ${st.folder}`)) : null;
+      t.createDiv({ cls: "txw-field-name", text: T(M(`Harta ${m.of?.ro || m.ro}`, `The map of ${m.of?.en || m.en}`)) });
+      const meta = st ? (full ? M(`Importată · ${st.folder}`, `Imported · ${st.folder}`)
+        : part ? M(`${st.have} din ${st.total} note există; import doar restul`, `${st.have} of ${st.total} notes exist; I'll import the rest`)
+        : M(`${st.total} de note · ${st.folder}`, `${st.total} notes · ${st.folder}`)) : null;
       if (meta) t.createDiv({ cls: "txw-field-meta", text: T(meta) });
     }
-    body.createEl("p", { cls: "txw-muted", text: T(M("Nu o vrei? Debifeaz-o. O poți importa oricând din Settings → Texere → General → Foldere → Harta disciplinei. Alte discipline vin în versiunile următoare.", "Don't want it? Untick it. You can import it any time in Settings → Texere → General → Folders → Discipline map. More disciplines are coming in later versions.")) });
+    body.createEl("p", { cls: "txw-muted", text: T(M("O poți importa și mai târziu, din setări.", "You can also import it later, in Settings.")) });
     this.stepRun = async () => {
       const ok = []; let bad = false;
       for (const { m } of list || []) if (picked.has(m.id)) {
@@ -483,7 +486,8 @@ class WizardModal extends Modal {
         catch (e) { console.error("Texere: harta", m.id, e); bad = true; this.results.map = { ...none(), todo: [{ msg: M(`N-a mers: ${e.message}`, `Didn't work: ${e.message}`) }] }; }
       }
       // hărțile debifate (și care nu sunt deja în vault): nu le vrei, deci nici câmpurile lor în nota de lectură
-      for (const { m, st } of list || []) if (!picked.has(m.id) && !(st && st.have > 0)) { try { await P.chooseField(m.id, false); } catch (e) { console.warn("Texere: harta", m.id, e); } }
+      // (starea de acum, nu cea de la desenarea pasului: o hartă tocmai importată nu e „debifată”)
+      for (const { m } of list || []) if (!picked.has(m.id)) { let have = 0; try { have = (await P.mapStatus(m)).have; } catch (e) {} if (!have && !(P.settings.fields?.chosen || []).includes(m.id)) { try { await P.chooseField(m.id, false); } catch (e) { console.warn("Texere: harta", m.id, e); } } }
       if (ok.length) this.results.map = { ...none(), ok }; this.acted.add("fields");
       picked.clear();   // adăugate; la „Înapoi” apar ca „Deja în vault”
       if (bad) { this.render(); return false; }
