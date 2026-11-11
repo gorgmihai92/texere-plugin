@@ -722,13 +722,14 @@ section.cover .cv-bottom { font-size: ${sz + 1}pt; line-height: 1.5; }
     const ext = (FORMATS.find(f => f[0] === format) || FORMATS[0])[2];
     const outside = isAbsDir(c.folder), fs = outside ? node("fs") : null, P = outside ? node("path") : null;
     const dir = outside ? homeDir(c.folder).replace(/[\\/]+$/, "") : normalizePath(String(c.folder || DEFAULTS.folder).replace(/\/+$/, ""));
-    if (!outside && !opts.created && !this.app.vault.getAbstractFileByPath(dir)) {   // folderul exportului a dispărut: nu-l refac fără să te întreb
+    const seen = typeof this.S.core?.seen === "function" ? this.S.core.seen(dir) : true;   // n-a fost niciodată aici (vault nou): îl creăm, fără întrebări
+    if (!outside && !opts.created && seen && !this.app.vault.getAbstractFileByPath(dir)) {   // folderul exportului a dispărut: nu-l refac fără să te întreb
       const pick = await this.askFolder(dir);
       if (!pick) throw Object.assign(new Error("cancelled"), { cancelled: true });
       c.folder = pick; c.folderMoved = null; await this.save();
       return this.export(file, format, { ...opts, built, created: true });
     }
-    if (outside) fs.mkdirSync(dir, { recursive: true }); else await this.S.ensureFolder(dir);
+    if (outside) fs.mkdirSync(dir, { recursive: true }); else { await this.S.ensureFolder(dir); try { this.S.core?.markSeen?.([dir]); } catch (e) {} }
     const put = outside   // în afara vault-ului: direct pe disc
       ? async (path, data) => { fs.mkdirSync(P.dirname(path), { recursive: true }); fs.writeFileSync(path, Buffer.from(data)); }
       : async (path, data) => { const have = this.app.vault.getAbstractFileByPath(path); if (have instanceof TFile) await this.app.vault.modifyBinary(have, data); else await this.app.vault.createBinary(path, data); };
@@ -1127,7 +1128,7 @@ class ExportSettingTab extends PluginSettingTab {
   // ——— folderele exportului, desenate în Settings → Texere → Foldere: unde ajung exporturile și documentele importate ———
   folderRows(body, redraw) {
     const X = this.X, T = (a, b) => X.T(a, b), s = X.conf();
-    const cur = String(s.folder || DEFAULTS.folder).replace(/\/+$/, ""), outside = isAbsDir(cur), gone = !outside && !X.app.vault.getAbstractFileByPath(cur);
+    const cur = String(s.folder || DEFAULTS.folder).replace(/\/+$/, ""), outside = isAbsDir(cur), gone = !outside && !X.app.vault.getAbstractFileByPath(cur) && (typeof (X.core || X.S?.core)?.seen === "function" ? (X.core || X.S.core).seen(cur) : true);
     const fset = new Setting(body).setName(T("Exportul", "Export")).setDesc(outside ? T(`Pe calculator: ${cur}`, `On this computer: ${cur}`) : T("Unde ajung PDF-urile și fișierele Word exportate: în vault sau oriunde pe calculator.", "Where exported PDF and Word files go: in the vault or anywhere on this computer."));
     // un singur buton: un folder din vault sau, ca prim rând, oricare folder de pe calculator
     fset.descEl.createDiv({ cls: "tx-mt6 ts-cur", text: outside ? "" : gone ? T(`${cur} (nu mai e în vault)`, `${cur} (not in the vault anymore)`) : cur });

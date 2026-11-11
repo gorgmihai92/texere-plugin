@@ -657,6 +657,7 @@ class Sources {
     // folderul surselor (notele sau PDF-urile) a fost redenumit sau șters: nu-l refacem pe ascuns cu numele vechi, altfel sursa ar ajunge în alt folder decât al tău
     if (!force) { const g = Object.values(this.goneSafe()).find(r => dir === r || dir.startsWith(r + "/")); if (g) throw new Error(this.T(`folderul „${g}” nu mai e în vault; alege în Texere · Referințe unde se salvează referințele`, `the folder “${g}” isn't in your vault anymore; choose in Texere · References where references are saved`)); }
     let cur = ""; for (const part of dir.split("/")) { cur = cur ? cur + "/" + part : part; if (!this.app.vault.getAbstractFileByPath(cur)) { try { await this.app.vault.createFolder(cur); } catch (e) {} } }
+    try { this.host?.core?.trackSeen?.(); } catch (e) {}   // de acum, dacă dispare, Texere te întreabă
   }
   // datele unei note de literatură, cât trebuie pentru nume și foldere
   cslOfFm(fm) { return { type: fm.type, title: fm.title, "title-short": fm["title-short"], author: fm.author, editor: fm.editor, issued: fm.issued, "original-date": fm["original-date"], DOI: fm.DOI, ISBN: fm.ISBN }; }
@@ -1369,7 +1370,9 @@ class Sources {
   // ce folder lipsește: { notes, pdfs } → calea (partea fixă, fără variabile); Inbox se creează singur, la nevoie
   goneFolders() {
     const f = this.filesConf(), out = {};
-    for (const k of ["notes", "pdfs"]) { const r = this.rootOf(f[k]); if (r && !this.app.vault.getAbstractFileByPath(r)) out[k] = r; }
+    // doar un folder care a fost în vault și a dispărut; unul care n-a fost niciodată aici (vault nou) se creează la prima referință
+    const core = this.host?.core, seen = r => typeof core?.seen === "function" ? core.seen(r) : true;
+    for (const k of ["notes", "pdfs"]) { const r = this.rootOf(f[k]); if (r && !this.app.vault.getAbstractFileByPath(r) && seen(r)) out[k] = r; }
     return out;
   }
   goneSafe() { try { return this.goneFolders(); } catch (e) { return {}; } }

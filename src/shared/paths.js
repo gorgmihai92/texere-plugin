@@ -36,7 +36,7 @@ function existingPrefix(app, p) {
 function unpadded(app) {
   const kids = app.vault.getRoot?.()?.children || [];
   const num = kids.filter(c => Array.isArray(c.children) && /^\d+\.\s/.test(c.name));
-  return num.length > 0 && num.every(c => !/^0\d/.test(c.name));
+  return num.every(c => !/^0\d/.test(c.name));   // un vault fără foldere numerotate: ca vault-ul Texere („1. References”)
 }
 // unde s-ar face p: părțile care există, cu numele lor din vault; restul cum sunt scrise (fără zero, dacă vault-ul numerotează fără zero)
 function placeFor(app, p) {

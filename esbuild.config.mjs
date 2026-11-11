@@ -24,7 +24,7 @@ await esbuild.build({
   platform: "node",
   target: "es2020",
   external: ["obsidian", "electron", "@codemirror/*", "@lezer/*", ...builtinModules, ...builtinModules.map(m => `node:${m}`)],
-  loader: { ".xml": "text", ".txt": "text", ".md": "text", ".json": "json" },
+  loader: { ".xml": "text", ".txt": "text", ".md": "text", ".json": "json", ".csl": "text" },
   plugins: [pagedText],
   minify: prod,
   legalComments: "eof",

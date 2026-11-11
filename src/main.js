@@ -71,7 +71,7 @@ const DEPS = [
   { id: "pdf-plus", name: "PDF++", by: "texere-sources", ro: "Adnotările din PDF: culorile, etichetele și legăturile spre locul din PDF (modulul Referințe).", en: "PDF annotations: colors, tags and links back to the place in the PDF (the References module)." },
 ];
 // structura de foldere propusă: drumul de lucru, în ordine (sursele → notițele tale → lucrările → exportul)
-const FOLDERS = ["02. Notes/Essays", "02. Notes/Personal", "02. Notes/Poetry", "03. Workspace/01. Courses", "03. Workspace/02. Thesis", "03. Workspace/03. Articles", "03. Workspace/04. Projects"];
+const FOLDERS = ["02. Notes/Essays", "02. Notes/Personal", "02. Notes/Imported", "03. Workspace/01. Courses", "03. Workspace/02. Thesis", "03. Workspace/03. Articles", "03. Workspace/04. Projects"];
 // hărțile domeniilor: notele din Fields/<domeniu>, din care vin valorile proprietăților notelor (ramură, concepte, teorii…)
 const MAPS = [
   { id: "philosophy", folder: "Philosophy", ro: "Filosofie", en: "Philosophy", load: () => require("../assets/philosophy.json"),
@@ -97,6 +97,8 @@ module.exports = class Texere extends Plugin {
     // modul Editare (variante, estompare, pus deoparte): nu se vede nimic până nu-l pornești pe o notă
     try { require("./edit").install(this); } catch (e) { console.error("Texere: modul Editare", e); }
     this.app.workspace.onLayoutReady(() => { this._boot = this.bootModules().catch(e => console.error("Texere: modulele", e)); });
+    // după module: ce foldere sunt deja aici, ce-i trebuie lui Texere ca să meargă din prima (bibliografia, stilurile) și, pe un vault nou, pagina de pornire și iconița din ribbon
+    this.app.workspace.onLayoutReady(() => { (this._boot || Promise.resolve()).then(() => this.firstRun()).catch(e => console.error("Texere: prima pornire", e)); });
     // o singură dată, când o cere instalarea (tidy-once.json în folderul pluginului): folderele lui Texere la un loc, prin Obsidian
     this.app.workspace.onLayoutReady(() => { this.tidyOnce().catch(e => console.error("Texere: folderele, o dată", e)); });
     // prima pornire pe acest laptop: configurarea pas cu pas (o singură dată; după ce pornesc modulele)
@@ -309,7 +311,8 @@ module.exports = class Texere extends Plugin {
   mapRoot(m) {
     const tail = `${m.folder}/${m.folder}.md`, hit = (this.app.vault.getMarkdownFiles?.() || []).find(f => f.path === tail || f.path.endsWith("/" + tail));
     if (hit) return hit.path === tail ? "" : hit.path.slice(0, -(tail.length + 1));
-    const base = (this._maps?.[m.id]?.root) || "Disciplines", notes = P_.existing(this.app, "02. Notes");
+    // ca în vault-ul Texere: „2. Notes/Disciplines”; cu structura Texere aleasă, chiar dacă „2. Notes” nu e încă creat
+    const base = "Disciplines", notes = P_.existing(this.app, "02. Notes") || (this.settings.structure === "recommended" ? P_.placeFor(this.app, "02. Notes") : null);
     return notes && !base.includes("/") ? `${notes}/${base}` : base;
   }
   async mapData(m) { if (!this._maps) this._maps = {}; if (!this._maps[m.id]) this._maps[m.id] = m.load(); return this._maps[m.id]; }
@@ -363,6 +366,62 @@ module.exports = class Texere extends Plugin {
   }
 
   // ——— folderele de care are nevoie Texere ———
+  // ce foldere ale lui Texere au fost deja în vault: doar unul care a fost aici și a dispărut e o alertă („Pune-l la loc”, „Alege…”);
+  // unul care n-a fost niciodată (vault nou, sau Texere instalat acum într-un vault al tău) se creează singur, la nevoie
+  seen(path) { const s = this.settings.seen, p = String(path || "").replace(/\/+$/, ""); return Array.isArray(s) ? s.includes(p) : !!this.settings.onboarded; }
+  markSeen(paths) {
+    const s = (this.settings.seen = Array.isArray(this.settings.seen) ? this.settings.seen : []); let add = false;
+    for (const p0 of paths || []) { const p = String(p0 || "").replace(/\/+$/, ""); if (p && !s.includes(p)) { s.push(p); add = true; } }
+    if (add) { clearTimeout(this._seenT); this._seenT = setTimeout(() => this.save(), 500); }
+  }
+  // folderele lui Texere care sunt acum în vault devin „văzute”
+  trackSeen() { try { const V = this.app.vault; this.markSeen([...this.fixedFolders(), ...this.movableFolders()].map(x => x.path).filter(p => p && V.getAbstractFileByPath(p))); } catch (e) {} }
+  // o singură dată: un vault configurat înainte de această versiune păstrează alertele de până acum (folderele lui contează ca văzute, chiar dacă lipsesc);
+  // unul neconfigurat pornește doar cu ce e deja în el
+  seenInit() {
+    if (Array.isArray(this.settings.seen)) return;
+    const all = [...this.fixedFolders(), ...this.movableFolders()].map(x => x.path).filter(Boolean);
+    this.settings.seen = []; this.markSeen(this.settings.onboarded ? all : all.filter(p => this.app.vault.getAbstractFileByPath(p)));
+  }
+  // bibliografia (gol) și stilurile de citare, dacă n-au fost niciodată în vault; citările merg din prima
+  ensureEssentials() {
+    if (this._ess) return this._ess;
+    this._ess = require("./core/essentials").ensure(this).then(r => { if (r?.made?.length) this.notify(); return r; }).catch(e => { console.error("Texere: bibliografia și stilurile", e); return { made: [] }; }).finally(() => { this._ess = null; });
+    return this._ess;
+  }
+  // un vault nou: fără note ale tale (nota „Welcome” pe care o pune Obsidian într-un vault nou și ce a pus Texere nu contează)
+  // vault-ul Texere descărcat (structura lui, ghidurile, exemplele) e tot unul nou; un vault deja configurat de Texere nu mai e
+  isNewVault() {
+    if (this.settings.onboarded) return false;
+    const V = this.app.vault, texereVault = !!(V.getAbstractFileByPath("Support/Texere/Guides") && P_.existing(this.app, "01. References/Reading Notes"));
+    return texereVault || !(V.getMarkdownFiles?.() || []).some(f => !f.path.startsWith(".") && !/^Support\/Texere\//.test(f.path) && f.path !== "Welcome.md");
+  }
+  // vault nou: hotărât o dată, la prima pornire a lui Texere (înainte ca, de exemplu, configurarea să adauge note)
+  freshVault() { return this.settings.presetDone ? this.settings.presetDone === "new" : this.isNewVault(); }
+  // iconița lui Texere, prima în ribbon (bara de iconițe din stânga); Obsidian ține minte ordinea
+  ribbonFirst() {
+    const R = this.app.workspace.leftRibbon, items = R?.items, i = (items || []).findIndex(x => String(x.id || "").startsWith(this.manifest.id + ":"));
+    if (i < 0) return false;
+    const [it] = items.splice(i, 1); it.hidden = false; items.unshift(it);
+    if (typeof R.onChange === "function") R.onChange(true); else { R.ribbonItemsEl?.prepend(it.buttonEl); this.app.workspace.requestSaveLayout?.(); }
+    return true;
+  }
+  // O singură dată pe vault. Vault nou: pagina de pornire în tab-ul nou, iconița lui Texere prima în ribbon, linkurile se actualizează la redenumire.
+  // Într-un vault existent nu schimbăm nimic din aranjamentul tău (iconița e la capătul ribbonului, unde Obsidian pune pluginurile).
+  async firstRun() {
+    this.seenInit();
+    await this.ensureEssentials();
+    if (!this.settings.presetDone) {
+      const fresh = this.isNewVault();
+      this.settings.presetDone = fresh ? "new" : "existing"; await this.save();
+      if (fresh) {
+        try { this.ribbonFirst(); } catch (e) { console.warn("Texere: ribbon", e); }
+        try { if (this.app.vault.getConfig?.("alwaysUpdateLinks") !== true) this.app.vault.setConfig?.("alwaysUpdateLinks", true); } catch (e) {}
+        try { if (!(this.app.workspace.getLeavesOfType?.("empty") || []).some(l => ![this.app.workspace.leftSplit, this.app.workspace.rightSplit].includes(l.getRoot?.()))) this.openHome(); } catch (e) {}
+      }
+    }
+    this.notify();
+  }
   // bibliografia și stilurile de citare: dacă le muți în Obsidian, Texere le urmează; dacă dispar (mutate în afara lui Obsidian), le caută după bibliography.json
   fixedFolders() {
     const T = (a, b) => this.T(a, b), S = this.mod("sources");
@@ -451,6 +510,8 @@ module.exports = class Texere extends Plugin {
   // un folder redenumit sau mutat în Obsidian: setările lui Texere îl urmează (tidy.followRename); mesajele de mai jos rămân doar pentru ce n-a putut urma
   onRename(f, old) {
     try { tidy.followRename(this, f, old); } catch (e) { console.error("Texere: căile", e); }   // setările lui Texere urmează redenumirea
+    // ce era „văzut” sub numele vechi e văzut și sub cel nou (dacă îl muți apoi în afara lui Obsidian, Texere tot îți spune)
+    try { if (Array.isArray(f?.children) && Array.isArray(this.settings.seen)) this.markSeen(this.settings.seen.filter(p => p === old || p.startsWith(old + "/")).map(p => f.path + p.slice(old.length))); } catch (e) {}
     if (!Array.isArray(f?.children) || this._putting || this._tidying) return;   // doar folderele; nu și când le mută Texere
     const T = (a, b) => this.T(a, b), hit = p => old === p || p.startsWith(old + "/"), now = p => f.path + p.slice(old.length);
     const fixed = this.fixedFolders().filter(x => hit(x.path));
@@ -528,6 +589,9 @@ module.exports = class Texere extends Plugin {
   // ce trebuie reparat în vault sau în setări: [{ text, why, btn, fn }]
   async problems() {
     const T = (a, b) => this.T(a, b), out = [], P = this.app.plugins;
+    // neconfigurat (vault nou, laptop nou): un singur lucru de făcut, configurarea; restul îl rezolvă ea
+    if (this.needsConfig()) return [{ text: T("Texere nu e încă configurat aici.", "Texere isn't set up here yet."), why: T("Câțiva pași scurți: limba, unde ține Texere lucrurile, disciplina ta și ce lipsește din vault.", "A few short steps: language, where Texere keeps things, your discipline and what's missing in the vault."), btn: T("Configurează", "Set up"), fn: () => this.onboard(true) }];
+    this.trackSeen();
     for (const d of DEPS) {
       const st = this.state(d.id); if (st === "on") continue;
       out.push({ text: st === "missing" ? T(`Lipsește ${d.name}.`, `${d.name} is missing.`) : T(`${d.name} e oprit.`, `${d.name} is off.`),
@@ -535,7 +599,6 @@ module.exports = class Texere extends Plugin {
         btn: st === "missing" ? T("Deschide pagina lui", "Open its page") : T("Pornește", "Turn on"), fn: () => this.doItem({ kind: "dep", d, st }) });
     }
     // (un modul oprit nu e o problemă: l-ai oprit tu, din setări sau din configurare)
-    if (this.needsConfig()) out.push({ text: T("Vault-ul nu e configurat pe acest laptop.", "The vault isn't set up on this laptop."), why: T("Câțiva pași scurți: limba, unde ține Texere lucrurile, disciplina ta și ce lipsește din vault.", "A few short steps: language, where Texere keeps things, your discipline and what's missing in the vault."), btn: T("Configurează", "Set up"), fn: () => this.onboard(true) });
     // setări care arată încă spre nume vechi de foldere („02. Notes/…” când folderul e acum „2. Notes”)
     try {
       const st = tidy.stalePaths(this);
@@ -543,9 +606,11 @@ module.exports = class Texere extends Plugin {
     } catch (e) { console.warn("Texere: căile vechi", e); }
     for (const m of MAPS.filter(x => this.mapWanted(x))) { try { const s = await this.mapStatus(m); if (!s.have) out.push({ text: T(`Harta disciplinei (${m.ro}) nu e creată.`, `The discipline map (${m.en}) isn't created.`), why: T(`${s.total} note în ${s.folder}.`, `${s.total} notes in ${s.folder}.`), btn: T("Creează", "Create"), fn: () => this.createMap(m) }); } catch (e) {} }
     // folderele de care are nevoie Texere
-    for (const x of this.fixedFolders()) if (!this.app.vault.getAbstractFileByPath(x.path))
+    for (const x of this.fixedFolders()) if (!this.app.vault.getAbstractFileByPath(x.path)) {
+      if (!this.seen(x.path)) { this.ensureEssentials(); continue; }   // n-a fost niciodată aici: îl facem acum, fără alarmă
       out.push({ text: x.breaks, why: T(`„${x.path}” nu mai e acolo (mutat sau redenumit în afara lui Obsidian?). `, `“${x.path}” isn't there anymore (moved or renamed outside Obsidian?). `) + x.why, btn: T("Pune-l la loc", "Put it back"), fn: () => this.putBack(x.path) });
-    for (const x of this.movableFolders()) if (!this.app.vault.getAbstractFileByPath(x.path)) {
+    }
+    for (const x of this.movableFolders()) if (!this.app.vault.getAbstractFileByPath(x.path) && this.seen(x.path)) {   // unul care n-a fost încă aici se creează la prima folosire
       let m = x.key === "export" ? this.mod("export")?.settings?.export?.folderMoved : this.mod("sources")?.settings?.sources?.folderMoved?.[x.key];
       if (!(m && m.from === x.path) && x.key !== "export") { try { m = this.mod("sources")?.sources?.movedFor?.(x.key, x.path) || m; } catch (e) {} }
       const to = m && m.from === x.path && this.app.vault.getAbstractFileByPath(m.to) ? m.to : null, guess = !!m?.guess;
@@ -579,14 +644,16 @@ module.exports = class Texere extends Plugin {
   }
   cmd(id) { const c = this.app.commands; if (!c?.commands?.[id]) return false; c.executeCommandById(id); return true; }
   // pagina de pornire: dacă e deja deschisă într-un tab gol din zona notelor, mergi acolo; altfel un tab nou (panoul se desenează singur în el)
-  openHome() {
+  openHome(page) {
     const W = this.app.workspace, side = [W.leftSplit, W.rightSplit];
     let leaf = (W.getLeavesOfType?.("empty") || []).find(l => !side.includes(l.getRoot?.()));
     if (!leaf) leaf = W.getLeaf("tab");
-    leaf.__txPage = "home";
+    leaf.__txPage = page || "home";
     try { W.setActiveLeaf(leaf, { focus: true }); } catch (e) { try { W.revealLeaf(leaf); } catch (e2) {} }
     try { this.home(leaf); } catch (e) { console.error("Texere: panoul", e); }
   }
+  // o pagină a tab-ului (Acasă, Referințe, Export, Insights, Ajutor)
+  goPage(leaf, page) { leaf.__txPage = page; this.renderHome(leaf); }
   // pune panoul în tab-urile goale (doar în zona notelor, nu în barele laterale); redraw: true = toate din nou, sau un singur tab
   home(redraw) {
     const W = this.app.workspace, side = [W.leftSplit, W.rightSplit];
@@ -650,7 +717,7 @@ module.exports = class Texere extends Plugin {
       inner.createDiv({ cls: "txh-label", text: T("Lectură", "Reading") });
       const r = inner.createDiv("txh-row");
       r.createSpan({ text: distilN === 1 ? T("1 adnotare încă fără cuvintele tale", "1 annotation still without your words") : T(`${distilN} adnotări încă fără cuvintele tale`, `${distilN} annotations still without your words`) });
-      r.createEl("button", { text: T("Distilează", "Distil") }).addEventListener("click", () => { leaf.__txPage = "distil"; this.renderHome(leaf); });
+      r.createEl("button", { text: T("Distilează", "Distil") }).addEventListener("click", () => this.goPage(leaf, "distil"));
     }
     // 3a''. surse care ar putea primi nume „Autor An – Titlu” (în locul ferestrei care apărea singură la pornire); ✕ o ascunde până apar altele
     try {
@@ -669,7 +736,7 @@ module.exports = class Texere extends Plugin {
     try { const I = this.mod("insights"); if (I?.homeSection) I.homeSection(inner, leaf); } catch (e) { console.error("Texere: Insights în tab-ul nou", e); }
     // 4. ultimele 5 fișiere deschise, cu folderul și când le-ai deschis sau schimbat ultima dată
     let opened = {}; try { opened = this.app.loadLocalStorage("texere-opened") || {}; } catch (e) {}
-    const recent = this.app.workspace.getLastOpenFiles().map(p => this.app.vault.getAbstractFileByPath(p)).filter(f => f instanceof TFile).slice(0, 5);
+    const recent = this.app.workspace.getLastOpenFiles().map(p => this.app.vault.getAbstractFileByPath(p)).filter(f => f instanceof TFile && !/^(csl|json)$/i.test(f.extension)).slice(0, 5);   // nu și stilurile sau bibliografia (le creează Texere)
     if (recent.length) {
       inner.createDiv({ cls: "txh-label", text: T("Recente", "Recent") });
       const ul = inner.createDiv("txh-recent");
@@ -716,7 +783,7 @@ module.exports = class Texere extends Plugin {
     const T = (a, b) => this.T(a, b), box = parent.createDiv("txh-fw"), n = Object.values(steps).filter(Boolean).length;
     const head = box.createDiv("txh-label txh-fw-h"); head.createSpan({ text: T(`Prima săptămână · ${n} din 4`, `Your first week · ${n} of 4`) });
     const hide = head.createEl("a", { text: T("Ascunde", "Hide"), href: "#" }); hide.addEventListener("click", async e => { e.preventDefault(); this.settings.firstWeek = "hidden"; await this.save(); this.renderHome(leaf); });
-    const go = page => { leaf.__txPage = page; this.renderHome(leaf); };
+    const go = page => this.goPage(leaf, page);
     const list = [
       ["source", T("Adaugă o referință", "Add a reference"), T("Caut-o după titlu, DOI sau ISBN, ori adu-o din Zotero.", "Search by title, DOI or ISBN, or bring it in from Zotero."), () => go("sources")],
       ["highlight", T("Adnoteaz-o", "Annotate it"), T("Deschide PDF-ul referinței și marchează un pasaj; adnotările intră singure în nota ei.", "Open the reference's PDF and mark a passage; the annotations go into its note by themselves."), () => this.openLatestPdf(leaf) || go("sources")],
@@ -746,7 +813,7 @@ module.exports = class Texere extends Plugin {
     for (const [id, icon, label] of [["home", "home", T("Acasă", "Home")], ["sources", "library", T("Referințe", "References")], ["export", "file-output", T("Export", "Export")], ["insights", "lightbulb", "Insights"]]) {
       const b = nav.createEl("button", { cls: "txh-nb" + (page === id ? " on" : "") });   // numele se vede pe buton: fără balon la hover
       const ic = b.createSpan("txh-ic"); try { setIcon(ic, icon); } catch (e) {} const nl = b.createSpan({ cls: "txh-nl", text: label }); if (id === "insights") { b.addClass("is-beta"); beta(nl); }
-      b.addEventListener("click", () => { if (leaf.__txPage === id && id !== "home") return; leaf.__txPage = id; this.renderHome(leaf); });
+      b.addEventListener("click", () => { if (leaf.__txPage === id && id !== "home") return; this.goPage(leaf, id); });
     }
     // un singur balon, deasupra butonului (nu peste el)
     const tip = (b, text) => { b.setAttr?.("aria-label", text); b.setAttr?.("data-tooltip-position", "top"); };
@@ -756,7 +823,7 @@ module.exports = class Texere extends Plugin {
     // Ajutorul nu e un loc de lucru: un buton rotund lângă (+), nu în bară; când ești în Ajutor, el e cel selectat
     const help = wrap.createEl("button", { cls: "txh-new txh-helpbtn" + (page === "help" ? " on" : "") }); tip(help, T("Ajutor", "Help"));
     try { setIcon(help, "circle-help"); } catch (e) { help.setText("?"); }
-    help.addEventListener("click", () => { if (leaf.__txPage === "help") return; leaf.__txPage = "help"; this.renderHome(leaf); });
+    help.addEventListener("click", () => { if (leaf.__txPage === "help") return; this.goPage(leaf, "help"); });
   }
   // (+): o notă nouă, o sursă, documente de pe calculator (doar ce e pornit) · deasupra butonului, în limbajul meniului Texere din modul Editare
   newMenu(leaf, ev) {

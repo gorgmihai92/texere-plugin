@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.2"
-date: "Version 0.4.2 · 9 November 2026"
+version: "0.4.3"
+date: "Version 0.4.3 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -32,7 +32,9 @@ Texere is a ready-made Obsidian vault for researchers who want one place for the
 > 1. **Settings → Community plugins → Turn on community plugins**.
 > 2. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub and keeps them up to date.
 > 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin**, click **Add plugin**.
-> 4. The setup opens by itself. In an empty vault, leave everything ticked and click **Next** at each step.
+> 4. The setup opens by itself. In an empty vault, leave everything as it is and click **Next** at each step: you get the Texere structure. In a vault that already has your notes, **My own folders** is selected: choose where reading notes, PDFs and exports go (Texere moves nothing of yours).
+>
+> Citations work from the start: Texere adds an empty bibliography and six citation styles (APA, Chicago, MLA, Harvard, IEEE) in **Support/Texere/Bibliography**.
 
 > [!warning] Clicked "Restricted mode" by mistake?
 > The plugins are off. Turn them on in **Settings → Community plugins**.
@@ -44,7 +46,7 @@ Texere is a ready-made Obsidian vault for researchers who want one place for the
 
 #### The home page
 
-Every new tab opens Texere's home page: your last files, the main actions, anything that needs fixing (with a button) and, in a new vault, **your first week**, four steps that tick themselves off.
+Every new tab opens Texere's home page (so does the braid icon in the ribbon, the icon bar on the left): your last files, the main actions, anything that needs fixing (with a button) and, in a new vault, **your first week**, four steps that tick themselves off.
 
 Stuck? The **?** button next to **+**, at the bottom, opens Help: type your question in your own words. New to Obsidian? Start with [[#1.4 Obsidian in five minutes]].
 
@@ -81,7 +83,7 @@ Texere stays quiet in your notes: while you write you see only your text, marks 
 | Folder | What's in it |
 | --- | --- |
 | **1. References** | **Reading Notes** (one per reference) and **PDFs** |
-| **2. Notes** | **Essays**, **Personal**, **Poetry**, and **Disciplines** (the discipline maps) |
+| **2. Notes** | **Essays**, **Personal**, **Imported** (Word and PDF documents you import), and **Disciplines** (the discipline maps) |
 | **3. Workspace** | **Courses**, **Thesis**, **Articles**, **Projects** |
 | **4. Export** | the exported files |
 | **Support** | **Media** (images), **Templates**, and **Texere**: **Guides** (with **Writing guide references**), **Bibliography** (and citation styles), **Cuts** (what you cut from each note) |
@@ -385,6 +387,14 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.3** · 11 November 2026
+Texere works from the first start, in a new vault and in one you already have.
+
+- **New vault:** the setup proposes the Texere structure (the one in the ready-made vault), the home page opens in the new tab and the Texere icon comes first in the ribbon.
+- **A vault you already have:** **My own folders** is selected, so you choose where things go; Texere moves nothing and leaves your sidebar and ribbon as they are.
+- **Citations work at once:** an empty bibliography and six citation styles are added in **Support/Texere/Bibliography** if they were never there.
+- **No false alarms:** a folder that was never in your vault is created when it's first needed; only one that was there and disappeared shows **Put it back** or **Choose…**.
 
 **0.4.2** · 9 November 2026
 Smoother, and a few fixes.

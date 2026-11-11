@@ -2,6 +2,17 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.3 (11 November 2026)
+
+Texere works from the first start, in a new vault and in one you already have.
+
+- **Citations and the bibliography work at once:** if the bibliography folder was never in the vault, Texere creates it with an empty `bibliography.json` and six citation styles (APA, Chicago author-date, Chicago notes, MLA, Harvard, IEEE; CSL, CC BY-SA 3.0) bundled in the plugin. A `bibliography.json` that belongs to another plugin (e.g. BibLib) is never touched.
+- **No false alarms on a new vault:** Texere remembers which of its folders were ever in the vault (`seen` in its settings; follows renames in Obsidian). Only a folder that was there and disappeared gives **Put it back** / **Choose…**; one that was never there is created when first needed (reading notes, PDFs, export). Vaults set up before this version keep their alerts as they were. While Texere isn't set up, the home page shows only **Set up**.
+- **New vault:** the home page in the new tab, the Texere icon first in the ribbon, links update on rename; the setup proposes the Texere structure, numbered like the ready-made vault (`1. References`, `2. Notes/{Essays, Personal, Imported, Disciplines}`, `3. Workspace/…`, `4. Export`, `Support/{Media, Templates}`), with attachments in `Support/Media`.
+- **Existing vault:** the setup selects **My own folders** (empty fields, examples as hints; inbox and templates optional) and marks the Texere structure "Recommended for new vaults"; the ribbon, sidebar and Obsidian settings stay as they are.
+- The discipline map goes in `2. Notes/Disciplines` (was `Fields` when the notes folder didn't exist yet). The suggested folders: `Imported` instead of `Poetry`.
+- Includes 0.4.2 (not published separately).
+
 ## 0.4.2 (9 November 2026)
 
 Smoother, and a few fixes.

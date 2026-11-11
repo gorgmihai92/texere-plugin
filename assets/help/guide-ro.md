@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.2"
-date: "Versiunea 0.4.2 · 9 noiembrie 2026"
+version: "0.4.3"
+date: "Versiunea 0.4.3 · 11 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -32,7 +32,9 @@ Texere e un vault Obsidian gata făcut pentru cercetătorii care vor un singur l
 > 1. **Settings → Community plugins → Turn on community plugins**.
 > 2. **Browse**, caută **BRAT**, apoi **Install** și **Enable**. BRAT instalează pluginuri de pe GitHub și le ține la zi.
 > 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, bifezi **Enable after installing the plugin**, apeși **Add plugin**.
-> 4. Configurarea se deschide singură. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas.
+> 4. Configurarea se deschide singură. Într-un vault gol, lași totul cum e și apeși **Înainte** la fiecare pas: primești structura Texere. Într-un vault care are deja notele tale, e aleasă varianta **Folderele mele**: alegi unde ajung notele de lectură, PDF-urile și exporturile (Texere nu mută nimic din ce ai).
+>
+> Citările merg din prima: Texere adaugă o bibliografie goală și șase stiluri de citare (APA, Chicago, MLA, Harvard, IEEE) în **Support/Texere/Bibliography**.
 
 > [!warning] Ai ales din greșeală „Restricted mode”?
 > Pluginurile sunt oprite. Le pornești din **Settings → Community plugins**.
@@ -44,7 +46,7 @@ Texere e un vault Obsidian gata făcut pentru cercetătorii care vor un singur l
 
 #### Pagina de pornire
 
-Fiecare tab nou deschide pagina de pornire Texere: ultimele fișiere, acțiunile principale, ce trebuie reparat (cu un buton) și, într-un vault nou, **prima ta săptămână**, patru pași care se bifează singuri.
+Fiecare tab nou deschide pagina de pornire Texere (la fel și iconița împletită din ribbon, bara de iconițe din stânga): ultimele fișiere, acțiunile principale, ce trebuie reparat (cu un buton) și, într-un vault nou, **prima ta săptămână**, patru pași care se bifează singuri.
 
 Te-ai blocat? Butonul **?** de lângă **+**, jos, deschide Ajutorul: scrie întrebarea cu cuvintele tale. E prima dată în Obsidian? Începe cu [[#1.4 Obsidian în cinci minute]].
 
@@ -81,7 +83,7 @@ Texere stă liniștit în notele tale: cât scrii vezi doar textul tău, semnele
 | Folder | Ce conține |
 | --- | --- |
 | **1. References** | **Reading Notes** (câte una pentru fiecare referință) și **PDFs** |
-| **2. Notes** | **Essays**, **Personal**, **Poetry** și **Disciplines** (hărțile disciplinelor) |
+| **2. Notes** | **Essays**, **Personal**, **Imported** (documentele Word și PDF pe care le imporți) și **Disciplines** (hărțile disciplinelor) |
 | **3. Workspace** | **Courses**, **Thesis**, **Articles**, **Projects** |
 | **4. Export** | fișierele exportate |
 | **Support** | **Media** (imaginile), **Templates** și **Texere**: **Guides** (cu **Writing guide references**), **Bibliography** (și stilurile de citare), **Cuts** (Tăieturile: ce tai din fiecare notă) |
@@ -385,6 +387,14 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.3** · 11 noiembrie 2026
+Texere merge din prima pornire, într-un vault nou și într-unul pe care îl ai deja.
+
+- **Vault nou:** configurarea îți propune structura Texere (cea din vault-ul gata făcut), pagina de pornire se deschide în tab-ul nou, iar iconița Texere e prima în ribbon.
+- **Un vault pe care îl ai deja:** e aleasă varianta **Folderele mele**, ca să alegi tu unde ajung lucrurile; Texere nu mută nimic și îți lasă bara laterală și ribbonul cum sunt.
+- **Citările merg imediat:** o bibliografie goală și șase stiluri de citare se adaugă în **Support/Texere/Bibliography**, dacă n-au fost niciodată acolo.
+- **Fără alarme false:** un folder care n-a fost niciodată în vault se creează când e nevoie de el; doar unul care a fost și a dispărut arată **Pune-l la loc** sau **Alege…**.
 
 **0.4.2** · 9 noiembrie 2026
 Mai fluid, plus câteva reparații.

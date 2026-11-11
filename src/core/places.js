@@ -96,6 +96,8 @@ async function apply(P, choice, mode) {
   }
   P.settings.dirs = { ...(P.settings.dirs || {}), templates: choice.templates || P.settings.dirs?.templates };
   P.settings.structure = mode === "own" ? "own" : "recommended";
+  // vault nou, structura Texere: atașamentele (imagini lipite, fișiere) în Support/Media, ca în vault-ul Texere; doar dacă n-ai ales tu alt loc
+  try { if (mode !== "own" && P.freshVault?.() && ["", "/", "./"].includes(String(V.getConfig?.("attachmentFolderPath") ?? ""))) { const m = P_.placeFor(app, "Support/Media"); await mk(m); V.setConfig?.("attachmentFolderPath", m); done.push("attachments"); } } catch (e) {}
   await P.save();
   return { done, fail };
 }

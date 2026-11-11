@@ -65,7 +65,7 @@ const UiMixin = {
     row.addEventListener("click", () => this.openView());
     // cum scrii, față de punctul de plecare: cele mai mari 2–3 schimbări, în cuvinte (clic → Insights, în pagină)
     const vl = this.voiceLineText?.();
-    if (vl) { const v = box.createDiv("txh-ins-row txh-ins-voice"); v.createSpan({ text: vl }); v.title = T("Deschide Cum scrii", "Open How you write"); v.addEventListener("click", () => { const core = this.app.plugins.plugins.texere; if (leaf && core?.renderHome) { this._insTab = "writing"; leaf.__txPage = "insights"; core.renderHome(leaf); } else this.openView("writing"); }); }
+    if (vl) { const v = box.createDiv("txh-ins-row txh-ins-voice"); v.createSpan({ text: vl }); v.title = T("Deschide Cum scrii", "Open How you write"); v.addEventListener("click", () => { const core = this.app.plugins.plugins.texere; if (leaf && core?.renderHome) { this._insTab = "writing"; if (core.goPage) core.goPage(leaf, "insights"); else { leaf.__txPage = "insights"; core.renderHome(leaf); } } else this.openView("writing"); }); }
     // de pus în ordine: un singur rând (menționări, nume, aliasuri, dubluri), ca în fila Linkuri
     const ns = (this.names || []).length, as = (this.aliasSugg || []).length, ds = (this.duplicates || []).length;
     const bits = [un.length && T(`${un.length} ${un.length === 1 ? "menționare" : "menționări"} fără link`, `${un.length} unlinked ${un.length === 1 ? "mention" : "mentions"}`), ns && T(`${ns} nume fără notă`, `${ns} ${ns === 1 ? "name" : "names"} without a note`), as && T(`${as} ${as === 1 ? "alias" : "aliasuri"}`, `${as} ${as === 1 ? "alias" : "aliases"}`), ds && T(`${ds} ${ds === 1 ? "dublură" : "dubluri"}`, `${ds} ${ds === 1 ? "duplicate" : "duplicates"}`)].filter(Boolean);

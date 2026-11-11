@@ -70,7 +70,7 @@ function buildSteps(P, first) {
   steps.push({ id: "done", icon: "check-circle", title: M("Gata", "You're all set"), explain: M("Iată unde găsești totul:", "Here's where to find everything:"), info: true, last: true,
     body: (el, W) => {
       const ul = el.createEl("ul", { cls: "txw-where" });
-      for (const [ic, a, b] of [["texere", M("Pagina de pornire", "Home"), M("în fiecare tab nou (sau semnul împletit din stânga).", "in every new tab (or the braid on the left).")],
+      for (const [ic, a, b] of [["texere", M("Pagina de pornire", "Home"), M("în fiecare tab nou, sau iconița împletită din ribbon (bara de iconițe din stânga).", "in every new tab, or the braid icon in the ribbon (the icon bar on the left).")],
         ["circle-help", M("Ajutor", "Help"), M("butonul ? de lângă +, jos pe pagina de pornire, sau Ctrl/Cmd + P → Ajutor.", "the ? button next to +, at the bottom of the home page, or Ctrl/Cmd + P → Help.")],
         ["settings", M("Settings → Texere", "Settings → Texere"), M("modulele, limba și configurarea din nou.", "modules, language and running the setup again.")]]) {
         const li = ul.createEl("li"), i = li.createSpan("txw-ic"); icon(i, ic); const t = li.createSpan(); t.createEl("b", { text: W.T(a) }); t.appendText(" — " + W.T(b));
@@ -188,8 +188,11 @@ class WizardModal extends Modal {
   drawPlaces(body, row) {
     const T = m => this.T(m), P = this.P, app = this.app;
     const cur = PL.current(P), rec = Object.fromEntries(PL.PLACES.map(x => [x.key, PL.recommended(app, x.key)]));
-    if (!this.placesVals) this.placesVals = Object.fromEntries(PL.PLACES.map(x => [x.key, cur[x.key] || rec[x.key]]));
-    const mode = this.placesMode || "rec", exists = p => !!(p && !PL.isAbs(p) && app.vault.getAbstractFileByPath(p));
+    // vault nou: structura vault-ului Texere (recomandată); vault existent: folderele tale, pe care le alegi tu (câmpurile pornesc goale);
+    // configurarea rulată din nou pornește de la ce ai ales data trecută
+    const fresh = (() => { try { return P.freshVault ? P.freshVault() : true; } catch (e) { return true; } })(), again = !!P.settings.onboarded;
+    if (!this.placesVals) this.placesVals = Object.fromEntries(PL.PLACES.map(x => [x.key, again ? (cur[x.key] || rec[x.key]) : fresh ? rec[x.key] : ""]));
+    const mode = this.placesMode || (again ? (P.settings.structure === "own" ? "own" : "rec") : fresh ? "rec" : "own"), exists = p => !!(p && !PL.isAbs(p) && app.vault.getAbstractFileByPath(p));
     const opts = body.createDiv("txw-places");
     const card = (k, title, desc, badge) => {
       const c = opts.createEl("label", { cls: "txw-place-opt" + (mode === k ? " is-on" : "") }), r = c.createEl("input", { type: "radio" }); r.name = "txw-places"; r.checked = mode === k;
@@ -197,15 +200,15 @@ class WizardModal extends Modal {
       const t = c.createDiv("txw-field-t"), h = t.createDiv({ cls: "txw-field-name", text: T(title) }); if (badge) h.createSpan({ cls: "txw-rec", text: T(badge) });
       t.createDiv({ cls: "txw-field-desc", text: T(desc) }); return t;
     };
-    const t1 = card("rec", M("Structura recomandată", "The recommended structure"), M("Folderele lui Texere, gata de folosit. Cele care există deja în vault sunt folosite așa cum sunt.", "Texere's folders, ready to use. Those already in your vault are used as they are."), M("Recomandat", "Recommended"));
+    const t1 = card("rec", M("Structura Texere", "The Texere structure"), M("Folderele vault-ului Texere: References, Notes, Workspace, Export și Support, gata de folosit. Cele care există deja sunt folosite așa cum sunt.", "The folders of the Texere vault: References, Notes, Workspace, Export and Support, ready to use. Those already in your vault are used as they are."), fresh ? M("Recomandat", "Recommended") : M("Recomandat pentru vault-urile noi", "Recommended for new vaults"));
     if (mode === "rec") { const ul = t1.createEl("ul", { cls: "txw-place-list" }); for (const x of PL.PLACES) { const li = ul.createEl("li"); li.createSpan({ cls: "txw-place-k", text: T(x.label) }); li.createSpan({ cls: "txw-place-v", text: rec[x.key] }); li.createSpan({ cls: "txw-place-s", text: T(exists(rec[x.key]) ? M("există", "exists") : M("nou", "new")) }); } }
-    const t2 = card("own", M("Folderele mele", "My own folders"), M("Ai deja o structură? Alege pentru fiecare loc un folder din vault (sau scrie unul nou). Exportul poate fi și în afara vault-ului.", "Already have a structure? Pick a folder in your vault for each place (or type a new one). Export can be outside the vault too."));
+    const t2 = card("own", M("Folderele mele", "My own folders"), M("Ai deja o structură? Alege pentru fiecare loc un folder din vault (sau scrie unul nou). Inbox-ul și șabloanele pot rămâne goale: le pun eu lângă PDF-uri și în folderul șabloanelor din Obsidian. Exportul poate fi și în afara vault-ului.", "Already have a structure? Pick a folder in your vault for each place (or type a new one). Inbox and templates can stay empty: I'll put them next to the PDFs and in Obsidian's templates folder. Export can be outside the vault too."), !fresh && !again ? M("Pentru vault-ul tău", "For your vault") : null);
     const errs = {};
     if (mode === "own") {
       const box = opts.createDiv("txw-place-own");   // în afara cardului: un clic în câmp nu atinge alegerea
       for (const x of PL.PLACES) {
         const r = box.createDiv("txw-place-row"), l = r.createDiv("txw-place-l"); l.createDiv({ cls: "txw-place-k", text: T(x.label) }); l.createDiv({ cls: "txw-check-d", text: T(x.desc) });
-        const f = r.createDiv("txw-place-f"), inp = f.createEl("input", { type: "text", cls: "txw-place-in" }); inp.value = this.placesVals[x.key] || ""; inp.placeholder = rec[x.key];
+        const f = r.createDiv("txw-place-f"), inp = f.createEl("input", { type: "text", cls: "txw-place-in" }); inp.value = this.placesVals[x.key] || ""; inp.placeholder = (x.key === "inbox" || x.key === "templates" ? T(M("opțional · ", "optional · ")) : T(M("de ex. ", "e.g. "))) + rec[x.key];
         const set = v => { this.placesVals[x.key] = v; err.setText(""); };
         inp.addEventListener("input", () => set(inp.value));
         try { const S = P.mod("sources")?.sources; if (S?.folderSuggest) S.folderSuggest(inp, v => { inp.value = typeof v === "string" ? v : (v?.path || inp.value); set(inp.value); }); } catch (e) {}
@@ -219,8 +222,14 @@ class WizardModal extends Modal {
     // „Înainte” aplică varianta aleasă (cu verificarea căilor); o cale greșită te ține pe pas, cu mesajul sub câmp
     this.stepRun = async () => {
       const choice = {}; let bad = false;
+      // „Folderele mele”: Inbox-ul gol stă în folderul PDF-urilor; șabloanele goale, în folderul de șabloane din Obsidian (sau cel recomandat)
+      const own = k => { const v = String(this.placesVals[k] || "").trim(); if (v) return v;
+        const pdfs = String(this.placesVals.pdfs || "").trim().replace(/\/+$/, "");
+        if (k === "inbox" && pdfs) return pdfs + "/Inbox";
+        if (k === "templates") { try { const f = app.internalPlugins?.getPluginById?.("templates")?.instance?.options?.folder; if (f) return f; } catch (e) {} return rec.templates; }
+        return v; };
       for (const x of PL.PLACES) {
-        const r = PL.clean(mode === "rec" ? rec[x.key] : this.placesVals[x.key], { outside: !!x.outside, base: (() => { try { return C.basePath(app) || ""; } catch (e) { return ""; } })() });
+        const r = PL.clean(mode === "rec" ? rec[x.key] : own(x.key), { outside: !!x.outside, base: (() => { try { return C.basePath(app) || ""; } catch (e) { return ""; } })() });
         if (r.error) { bad = true; errs[x.key]?.setText(T(r.error)); continue; }
         choice[x.key] = r.value; if (x.key === "export") choice.exportAbs = !!r.abs;
       }
