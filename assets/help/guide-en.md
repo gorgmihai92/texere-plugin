@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.11"
-date: "Version 0.4.11 · 11 November 2026"
+version: "0.4.12"
+date: "Version 0.4.12 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -387,6 +387,9 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.12** · 11 November 2026
+- **Reload after an update reloads all of Obsidian**, so the new version starts and the message goes away (before, only Texere restarted and the message stayed).
 
 **0.4.11** · 11 November 2026
 - **First steps, clearer:** on the home page, a thin line shows how far you are; the next step stands out, with one line on how to do it and a link that takes you there (Open References, Open the PDF, New note, Open Export); done steps are checked (with the reference you added); the rest wait, faded.

@@ -128,9 +128,12 @@ class Updater {
   }
 
   // reîncarcă pluginul (codul nou), fără să închidă Obsidian
+  // reîncarcă tot Obsidian (ca „Reload app without saving”): doar așa pornește versiunea nouă și dispare mesajul;
+  // repornirea doar a pluginului ținea în memorie versiunea veche
   async reload() {
-    const id = this.P.manifest.id, pl = this.app.plugins;
-    try { await pl.disablePlugin(id); await pl.enablePlugin(id); } catch (e) { new Notice(this.T("Repornește Obsidian ca să pornească versiunea nouă.", "Restart Obsidian to start the new version."), 8000); }
+    try { await this.P.save(); } catch (e) {}
+    try { if (this.app.commands?.executeCommandById?.("app:reload")) return; } catch (e) {}
+    try { window.location.reload(); } catch (e) { new Notice(this.T("Repornește Obsidian ca să pornească versiunea nouă.", "Restart Obsidian to start the new version."), 8000); }
   }
 
   // o dată după o actualizare: ce s-a schimbat

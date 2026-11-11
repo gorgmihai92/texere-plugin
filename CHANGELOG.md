@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.12 (11 November 2026)
+
+- **Reload** (home page, settings, the "installed" notice, rollback) now reloads the whole app (`app:reload`, fallback `location.reload()`), instead of disabling and re-enabling the plugin, which kept the old manifest in memory: the new version didn't start and "Texere x is installed. It starts after a reload" stayed.
+
 ## 0.4.11 (11 November 2026)
 
 - Home → **First steps** redesigned, minimal: "First steps · n of 4" with a thin progress line; the next step highlighted (soft background, accent number) with one line on how and a link to the place (Open References / Open the PDF / New note / Open Export); done steps checked in the accent colour, the first one with the reference you added; later steps faded, still clickable. "Annotate it" → "Annotate its PDF".
