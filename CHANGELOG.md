@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.7 (11 November 2026)
+
+- **Tag colours from PDF++** (`src/core/tagcolors.js`): one `<style>` built from PDF++'s palette, like the ready-made vault's `highlight-tags.css` snippet (text in the tag's colour, grey outline, transparent background; reading view, Live Preview, source mode). Rebuilt when the palette changes (checked every 3 s), removed when PDF++ is gone.
+- **Update check:** at start (8 s after), every hour, and when the home page renders — at most once every 10 minutes; immediately if Texere's version changed since the last check (e.g. BRAT updated it). Was: at most once an hour, so a release published soon after a check stayed invisible.
+
 ## 0.4.6 (11 November 2026)
 
 - Fix: with Texere's PDF++ settings (write highlights to the PDF on), highlighting failed with "PDF++: An error occurred while attempting to add an annotation" — PDF++ refuses to write an annotation without `author`, which the 0.4.5 preset left empty. The preset now sets it to the computer account's name (`id -F` on macOS, else the username); at startup, a PDF++ with Texere's palette and no author gets one (nothing else is changed).

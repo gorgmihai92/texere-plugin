@@ -103,8 +103,10 @@ module.exports = class Texere extends Plugin {
     this.app.workspace.onLayoutReady(() => { this.tidyOnce().catch(e => console.error("Texere: folderele, o dată", e)); });
     // prima pornire pe acest laptop: configurarea pas cu pas (o singură dată; după ce pornesc modulele)
     this.app.workspace.onLayoutReady(() => { this.start().catch(e => console.error("Texere: configurarea", e)); });
-    // actualizările, din release-urile GitHub ale pluginului (core/updater.js): „Ce e nou” după o actualizare, apoi o verificare pe zi
+    // actualizările, din release-urile GitHub ale pluginului (core/updater.js): „Ce e nou” după o actualizare; verificări la pornire, la fiecare oră și când deschizi pagina de pornire
     this.app.workspace.onLayoutReady(() => { try { this.updater = new Updater(this); this.updater.start(); } catch (e) { console.error("Texere: actualizările", e); } });
+    // etichetele evidențierilor (#fact, #claim…) în culorile paletei PDF++, legate de ea
+    this.app.workspace.onLayoutReady(() => { try { require("./core/tagcolors").start(this); } catch (e) { console.error("Texere: culorile etichetelor", e); } });
     // ce aduce o versiune nouă în vault (core/vaultupdates.js): doar propuneri în pagina de pornire; nimic fără clicul tău
     this.vaultUpdates = new VaultUpdates(this);
     this.app.workspace.onLayoutReady(() => { setTimeout(() => { (this._boot || Promise.resolve()).then(() => this.vaultUpdates.run()).catch(e => console.error("Texere: ce aduce versiunea nouă", e)); }, 4000); });
@@ -711,6 +713,8 @@ module.exports = class Texere extends Plugin {
     inner.createDiv({ cls: "txh-hi", text: T("Bun venit în Texere", "Welcome to Texere") });
     inner.createDiv({ cls: "txh-desc", text: T("Referințele, lectura și scrisul tău, într-un singur loc.\nAdaugi o referință, o adnotezi, scrii cu citări și exporți.", "Your references, reading and writing, in one place.\nAdd a reference, annotate it, write with citations, export.") });
     // 2. o versiune nouă a lui Texere (core/updater.js): se instalează doar când apeși „Actualizează”; ✕ o sare pe asta
+    // (deschizi pagina de pornire: dacă n-am mai întrebat GitHub de 10 minute, întreb acum, în fundal; rândul apare când vine răspunsul)
+    try { this.updater?.soon(); } catch (e) {}
     try {
       const U = this.updater, nv = U?.available, pv = U?.pending;
       if (nv || pv) {

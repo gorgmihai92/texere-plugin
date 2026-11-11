@@ -1,5 +1,5 @@
 // Actualizările lui Texere, din release-urile GitHub ale pluginului (în afara listei de pluginuri a Obsidian).
-//  • check(): la pornire (cel mult o dată pe oră), din 6 în 6 ore și la „Caută acum”, întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
+//  • check(): la pornire, la fiecare oră, când deschizi pagina de pornire (cel mult o dată la 10 minute) și la „Caută acum”, întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
 //    Nu instalează nimic singur: o versiune nouă apare în pagina de pornire și în setări, cu butonul „Actualizează”.
 //  • update(): doar la clicul tău; install(): descarcă main.js, styles.css și manifest.json, le verifică (manifestul e al lui Texere, versiunea e cea a release-ului,
 //    main.js nu e gol), pune fișierele de acum în previous/ și le scrie pe cele noi. Atinge doar folderul pluginului, niciodată notele.
@@ -10,7 +10,7 @@ const { requestUrl, Notice } = require("obsidian");
 const REPO = "gorgmihai92/texere-plugin";
 const API = `https://api.github.com/repos/${REPO}/releases/latest`;
 const FILES = ["main.js", "styles.css", "manifest.json"];
-const DAY = 864e5, HOUR = 36e5;
+const DAY = 864e5, HOUR = 36e5, GAP = 10 * 6e4;   // între două verificări automate: cel puțin 10 minute
 
 // „0.4.10” > „0.4.9”; un „v” în față nu contează
 const parse = v => String(v || "").trim().replace(/^v/i, "").split(/[.+-]/).slice(0, 3).map(n => parseInt(n, 10) || 0);
@@ -33,12 +33,14 @@ class Updater {
   // la pornire: „Ce e nou” dacă tocmai s-a instalat o versiune; apoi verificarea (fără instalare), puțin după ce s-a încărcat totul, și din 6 în 6 ore
   start() {
     this.whatsNew();
-    const tick = () => { if (this.auto) this.check(false).catch(e => console.warn("Texere: actualizări", e)); };
-    setTimeout(tick, 20e3);
-    this.timer = window.setInterval(tick, 6 * 36e5);
+    const tick = () => this.soon();
+    setTimeout(tick, 8e3);
+    this.timer = window.setInterval(tick, HOUR);
     this.P.register(() => window.clearInterval(this.timer));
   }
 
+  // verificare automată, în tăcere: la pornire, la fiecare oră și când deschizi pagina de pornire (cel mult o dată la 10 minute)
+  soon() { if (this.auto && !this.busy) this.check(false).catch(e => console.warn("Texere: actualizări", e)); }
   // „acum 5 minute” / „5 minutes ago”, fără să depindă de limba lui moment
   ago(t) {
     const m = Math.max(0, Math.round((Date.now() - t) / 6e4)), T = (a, b) => this.T(a, b);
@@ -59,12 +61,13 @@ class Updater {
   async check(manual) {
     if (this.busy) return { state: "busy" };
     const c = this.conf;
-    if (!manual && c.checkedAt && Date.now() - c.checkedAt < HOUR) return { state: "later" };   // la fiecare pornire (cel mult o dată pe oră) și din 6 în 6 ore
+    // automat: cel mult o dată la 10 minute; imediat dacă Texere s-a schimbat de la ultima verificare (de ex. actualizat de BRAT)
+    if (!manual && c.checkedAt && c.checkedFor === this.version && Date.now() - c.checkedAt < GAP) return { state: "later" };
     this.busy = true;
     try {
       let rel = null; try { rel = await this.latest(); } catch (e) { rel = null; }
       const had = this.available;
-      c.checkedAt = Date.now(); c.latest = rel?.version || c.latest || ""; await this.P.save();
+      c.checkedAt = Date.now(); c.checkedFor = this.version; c.latest = rel?.version || c.latest || ""; await this.P.save();
       if (this.available !== had) { try { this.P.notify?.(); } catch (e) {} }
       if (rel?.none) { if (manual) new Notice(this.T(`Ai ultima versiune (${this.version}); pe GitHub nu e încă nicio versiune publicată.`, `You have the latest version (${this.version}); nothing is published on GitHub yet.`), 6000); return { state: "current" }; }
       if (!rel) { if (manual) new Notice(this.T("Nu am putut întreba GitHub de o versiune nouă. Încearcă mai târziu.", "Couldn't ask GitHub for a new version. Try again later."), 6000); return { state: "offline" }; }
