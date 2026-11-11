@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.5"
-date: "Versiunea 0.4.5 · 11 noiembrie 2026"
+version: "0.4.6"
+date: "Versiunea 0.4.6 · 11 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -387,6 +387,9 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.6** · 11 noiembrie 2026
+- **Evidențierile se scriu din nou în PDF** („PDF++: An error occurred while attempting to add an annotation”): PDF++ are nevoie pentru asta de un nume de autor, iar 0.4.5 îl lăsa gol. Texere pune acum numele contului tău de pe calculator; îl poți schimba din setările PDF++ (Author).
 
 **0.4.5** · 11 noiembrie 2026
 - **PDF++ vine pregătit:** configurarea îi pune setările lui Texere, ca în vault-ul gata făcut: culorile ca etichete (fact, claim, disagree, agree, connection, question, definition, word), **auto-copy** și **auto-paste** pornite, formatele de copiere ale lui Texere, evidențierile scrise în PDF. Doar peste setările de început ale lui PDF++: ce ți-ai setat tu rămâne. Dacă PDF++ are încă setările lui de început, pagina de pornire îți propune **Pune-le**.

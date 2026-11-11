@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.6 (11 November 2026)
+
+- Fix: with Texere's PDF++ settings (write highlights to the PDF on), highlighting failed with "PDF++: An error occurred while attempting to add an annotation" — PDF++ refuses to write an annotation without `author`, which the 0.4.5 preset left empty. The preset now sets it to the computer account's name (`id -F` on macOS, else the username); at startup, a PDF++ with Texere's palette and no author gets one (nothing else is changed).
+
 ## 0.4.5 (11 November 2026)
 
 - **PDF++ preset** (`assets/pdfplus-preset.json`, from the ready-made vault's `.obsidian/plugins/pdf-plus/data.json`, without the author): the Texere palette (colours as tags), auto-copy, auto-paste, auto-focus targets, copy commands (Quote in callout, Paragraf, …), display formats (Referință `@id, p.`), `defaultWriteFileToggle`, `proxyMDProperty: attachment`, `enablePDFEdit`. Applied when PDF++ is installed or turned on by Texere (written before it starts), in the setup's PDF++ step, in the completion window after an update, and from the home page (**Apply**) — only when PDF++ still has its default palette (Yellow, Red, Note, Important). PDF++ is restarted after the settings change so its toolbar and ribbon icons follow.

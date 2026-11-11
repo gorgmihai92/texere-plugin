@@ -9,6 +9,13 @@ const ID = "pdf-plus";
 const DEFAULT_COLORS = ["yellow", "red", "note", "important"];
 
 const plugin = app => app.plugins?.plugins?.[ID] || null;
+// autorul adnotărilor: PDF++ nu scrie o evidențiere în PDF fără el („The author name is not set”).
+// Numele contului de pe calculator (pe macOS, numele întreg, de ex. „George Mihai”), altfel numele de utilizator.
+function defaultAuthor() {
+  try { if (process.platform === "darwin") { const n = require("child_process").execFileSync("id", ["-F"], { encoding: "utf8", timeout: 1500 }).trim(); if (n) return n; } } catch (e) {}
+  try { const u = require("os").userInfo().username; if (u) return u; } catch (e) {}
+  return "Texere";
+}
 const file = app => `${app.vault.configDir || ".obsidian"}/plugins/${ID}/data.json`;
 
 async function read(app) {
@@ -29,7 +36,7 @@ async function apply(app, opts = {}) {
   if (!app.plugins?.manifests?.[ID]) return false;
   const cur = await read(app);
   if (!opts.force && !isFresh(cur)) return false;
-  const preset = PRESET(), merged = { ...(cur || {}), ...preset, author: cur?.author || "" };
+  const preset = PRESET(), merged = { ...(cur || {}), ...preset, author: cur?.author || defaultAuthor() };
   const pp = plugin(app), ad = app.vault.adapter;
   if (pp?.settings) {
     Object.assign(pp.settings, merged);
@@ -40,10 +47,19 @@ async function apply(app, opts = {}) {
   return true;
 }
 
+// PDF++ cu setările lui Texere, dar fără autor (0.4.5): evidențierile nu se pot scrie în PDF. Îi punem autorul; nimic altceva.
+async function ensureAuthor(app) {
+  const pp = plugin(app), s = pp?.settings;
+  if (!s || s.author || !hasTexere(s)) return false;
+  s.author = defaultAuthor();
+  try { if (typeof pp.saveSettings === "function") await pp.saveSettings(); else await pp.saveData(s); } catch (e) { return false; }
+  return true;
+}
+
 // ce înseamnă, în cuvinte (pentru pasul din configurare)
 const SUMMARY = {
   ro: "culorile devin etichete (fact, claim, disagree, agree, connection, question, definition, word) · auto-copy și auto-paste pornite · formatele de copiere ale lui Texere · adnotările scrise în PDF",
   en: "colours become tags (fact, claim, disagree, agree, connection, question, definition, word) · auto-copy and auto-paste on · Texere's copy formats · annotations written into the PDF",
 };
 
-module.exports = { needs, apply, hasTexere, isFresh, SUMMARY, PRESET };
+module.exports = { needs, apply, ensureAuthor, defaultAuthor, hasTexere, isFresh, SUMMARY, PRESET };

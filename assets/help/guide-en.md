@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.5"
-date: "Version 0.4.5 · 11 November 2026"
+version: "0.4.6"
+date: "Version 0.4.6 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -387,6 +387,9 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.6** · 11 November 2026
+- **Highlights are written into the PDF again** ("PDF++: An error occurred while attempting to add an annotation"): PDF++ needs an author name for that, and 0.4.5 left it empty. Texere now sets it to your computer account's name; you can change it in PDF++'s settings (Author).
 
 **0.4.5** · 11 November 2026
 - **PDF++ comes ready:** the setup gives it Texere's settings, as in the ready-made vault: colours as tags (fact, claim, disagree, agree, connection, question, definition, word), **auto-copy** and **auto-paste** on, Texere's copy formats, highlights written into the PDF. Only over PDF++'s own defaults: settings you made stay. If PDF++ still has its defaults, the home page offers **Apply**.

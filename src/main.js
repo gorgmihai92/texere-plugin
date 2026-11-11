@@ -423,6 +423,8 @@ module.exports = class Texere extends Plugin {
   async firstRun() {
     this.seenInit();
     await this.ensureEssentials();
+    // PDF++ cu setările lui Texere, dar fără autor: fără el, PDF++ nu scrie evidențierile în PDF
+    try { if (await require("./core/pdfpreset").ensureAuthor(this.app)) console.log("Texere: autorul adnotărilor PDF++ setat"); } catch (e) {}
     // după o actualizare, într-un vault configurat înainte: dacă lipsește ceva de care Texere are nevoie, îl adaug pas cu pas (o dată pe versiune)
     try { await this.completeSetup(); } catch (e) { console.error("Texere: completarea configurării", e); }
     if (!this.settings.presetDone) {
