@@ -840,23 +840,40 @@ module.exports = class Texere extends Plugin {
     if (Object.values(steps).every(Boolean)) { this.settings.firstWeek = "done"; await this.save(); return null; }
     return steps;
   }
+  // primii pași, clar: câți sunt făcuți (bară), pasul următor evidențiat (ce faci, concret, și un buton care te duce acolo),
+  // pașii făcuți bifați (cu ce ai făcut), cei de după estompați
   firstWeekBox(parent, leaf, steps) {
     const T = (a, b) => this.T(a, b), box = parent.createDiv("txh-fw"), n = Object.values(steps).filter(Boolean).length;
-    const head = box.createDiv("txh-label txh-fw-h"); head.createSpan({ text: T(`Prima săptămână · ${n} din 4`, `Your first week · ${n} of 4`) });
+    const head = box.createDiv("txh-fw-h");
+    head.createSpan({ cls: "txh-label", text: T(`Primii pași · ${n} din 4`, `First steps · ${n} of 4`) });
     const hide = head.createEl("a", { text: T("Ascunde", "Hide"), href: "#" }); hide.addEventListener("click", async e => { e.preventDefault(); this.settings.firstWeek = "hidden"; await this.save(); this.renderHome(leaf); });
+    const bar = box.createDiv("txh-fw-bar"); bar.createSpan().style.width = `${n * 25}%`;
     const go = page => this.goPage(leaf, page);
+    // ce ai făcut deja (pentru pașii bifați)
+    const latestLit = (() => { try { const mc = this.app.metadataCache; const f = this.app.vault.getMarkdownFiles().filter(x => mc.getFileCache(x)?.frontmatter?.["citation-key"]).sort((a, b) => (b.stat?.ctime || 0) - (a.stat?.ctime || 0))[0]; return f?.basename || ""; } catch (e) { return ""; } })();
     const list = [
-      ["source", T("Adaugă o referință", "Add a reference"), T("Caut-o după titlu, DOI sau ISBN, ori adu-o din Zotero.", "Search by title, DOI or ISBN, or bring it in from Zotero."), () => go("sources")],
-      ["highlight", T("Adnoteaz-o", "Annotate it"), T("Deschide PDF-ul referinței și marchează un pasaj; adnotările intră singure în nota ei.", "Open the reference's PDF and mark a passage; the annotations go into its note by themselves."), () => this.openLatestPdf(leaf) || go("sources")],
-      ["cite", T("Scrie o notă care o citează", "Write a note that cites it"), T("Într-o notă nouă, scrie @ și alege referința.", "In a new note, type @ and pick the reference."), () => this.newNote(leaf)],
-      ["export", T("Exportă nota", "Export the note"), T("În Word sau PDF, cu citările și bibliografia în stilul ales.", "To Word or PDF, with citations and bibliography in your style."), () => go("export")],
+      { k: "source", title: T("Adaugă o referință", "Add a reference"), done: latestLit || "",
+        how: T("Caut-o după titlu, DOI sau ISBN.", "Search by title, DOI or ISBN."), btn: T("Deschide Referințele", "Open References"), fn: () => go("sources") },
+      { k: "highlight", title: T("Adnotează PDF-ul ei", "Annotate its PDF"), done: "",
+        how: T("Selectează un pasaj și alege o culoare; adnotarea intră singură în notă.", "Select a passage and pick a colour; the annotation goes into the note by itself."), btn: T("Deschide PDF-ul", "Open the PDF"), fn: () => this.openLatestPdf(leaf) || go("sources") },
+      { k: "cite", title: T("Scrie o notă care o citează", "Write a note that cites it"), done: "",
+        how: T("Scrie @ și alege referința din listă.", "Type @ and pick the reference from the list."), btn: T("Notă nouă", "New note"), fn: () => this.newNote(leaf) },
+      { k: "export", title: T("Exportă nota", "Export the note"), done: "",
+        how: T("În Word sau PDF, cu citările în stilul ales.", "To Word or PDF, with citations in your style."), btn: T("Deschide Exportul", "Open Export"), fn: () => go("export") },
     ];
-    const next = list.find(([k]) => !steps[k])?.[0], ul = box.createDiv("txh-fw-list");
-    list.forEach(([k, title, hint, fn], i) => {
-      const done = steps[k], row = ul.createEl(done ? "div" : "a", { cls: "txh-fw-i" + (done ? " done" : k === next ? " next" : "") }); if (!done) row.href = "#";
+    const next = list.find(x => !steps[x.k])?.k, ul = box.createDiv("txh-fw-list");
+    list.forEach((x, i) => {
+      const done = !!steps[x.k], isNext = x.k === next;
+      const row = ul.createDiv({ cls: "txh-fw-i" + (done ? " done" : isNext ? " next" : " later") });
       const c = row.createSpan("txh-fw-c"); if (done) { try { setIcon(c, "check"); } catch (e) { c.setText("✓"); } } else c.setText(String(i + 1));
-      const t = row.createSpan("txh-fw-t"); t.createSpan({ cls: "txh-fw-n", text: title }); if (k === next) t.createSpan({ cls: "txh-fw-d", text: hint });
-      if (!done) row.addEventListener("click", e => { e.preventDefault(); fn(); });
+      const t = row.createDiv("txh-fw-t");
+      t.createSpan({ cls: "txh-fw-n", text: x.title });
+      if (done && x.done) t.createSpan({ cls: "txh-fw-d", text: x.done });
+      if (isNext) {
+        t.createSpan({ cls: "txh-fw-d", text: x.how });
+        const a = t.createEl("a", { cls: "txh-fw-go", href: "#", text: x.btn + " →" }); a.addEventListener("click", e => { e.preventDefault(); x.fn(); });
+      }
+      if (!done && !isNext) { row.addClass("is-click"); row.addEventListener("click", () => x.fn()); }
     });
   }
   // PDF-ul celei mai recente surse (pentru „Evidențiază-o”); false dacă nu e niciunul

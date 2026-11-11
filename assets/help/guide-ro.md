@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.10"
-date: "Versiunea 0.4.10 · 11 noiembrie 2026"
+version: "0.4.11"
+date: "Versiunea 0.4.11 · 11 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -387,6 +387,9 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.11** · 11 noiembrie 2026
+- **Primii pași, mai clari:** pe pagina de pornire, o linie subțire arată cât ai făcut; pasul următor iese în evidență, cu un rând despre cum îl faci și un link care te duce acolo (Deschide Referințele, Deschide PDF-ul, Notă nouă, Deschide Exportul); pașii făcuți sunt bifați (cu referința adăugată); ceilalți așteaptă, estompați.
 
 **0.4.10** · 11 noiembrie 2026
 - **O configurare mai scurtă:** fiecare pas spune doar ce trebuie, fără să repete pasul de dinainte. **Structura Texere** e mereu aleasă din start (recomandat).

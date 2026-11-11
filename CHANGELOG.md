@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.11 (11 November 2026)
+
+- Home → **First steps** redesigned, minimal: "First steps · n of 4" with a thin progress line; the next step highlighted (soft background, accent number) with one line on how and a link to the place (Open References / Open the PDF / New note / Open Export); done steps checked in the accent colour, the first one with the reference you added; later steps faded, still clickable. "Annotate it" → "Annotate its PDF".
+
 ## 0.4.10 (11 November 2026)
 
 - **Setup copy, shorter:** "Where Texere keeps things" — two one-line cards, no list (the next steps show what was done); the Texere structure is always preselected and just "Recommended"; "My own folders" — fields without per-place explanations, "Other folders (optional)". Results: top-level folders with what each holds; bibliography and "6 citation styles"; templates and guides counted; the map card "The map of philosophy" + "435 notes · folder"; PDF++ "installed and on" + "Texere's settings". Done: three short lines.
