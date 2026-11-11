@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.4"
-date: "Version 0.4.4 · 11 November 2026"
+version: "0.4.5"
+date: "Version 0.4.5 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -40,7 +40,7 @@ Texere is a ready-made Obsidian vault for researchers who want one place for the
 > The plugins are off. Turn them on in **Settings → Community plugins**.
 
 > [!note] PDF++
-> Texere needs **PDF++** for annotations. The setup installs it from Obsidian's official list and turns it on. Offline? **Try again** later, or **Open its page**: **Install**, then **Enable**.
+> Texere needs **PDF++** for annotations. The setup installs it from Obsidian's official list, turns it on and gives it Texere's settings: colours as tags (fact, claim, question…), auto-copy and auto-paste on, the copy formats, highlights written into the PDF. Offline? **Try again** later, or **Open its page**: **Install**, then **Enable**.
 
 **Step 2. Work:** add a reference ([[#2. References and reading]]), read and annotate ([[#2.5 Reading and annotations]]), write and cite ([[#3. Writing]]), export ([[#4. Export]]).
 
@@ -387,6 +387,12 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.5** · 11 November 2026
+- **PDF++ comes ready:** the setup gives it Texere's settings, as in the ready-made vault: colours as tags (fact, claim, disagree, agree, connection, question, definition, word), **auto-copy** and **auto-paste** on, Texere's copy formats, highlights written into the PDF. Only over PDF++'s own defaults: settings you made stay. If PDF++ still has its defaults, the home page offers **Apply**.
+- **Missing PDF++?** The home page's **Install** button installs it (with Texere's settings) instead of only opening its page.
+- **Updates:** Texere looks for a new version each time Obsidian starts (at most once an hour) and every 6 hours, and says **What's new** after any update, also one made by BRAT.
+- **After an update**, the short "Completing your setup" window also covers PDF++'s settings and link updates.
 
 **0.4.4** · 11 November 2026
 The setup does everything for you, one step at a time.

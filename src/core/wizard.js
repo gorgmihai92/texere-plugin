@@ -37,6 +37,7 @@ async function vaultItems(P) {
 
 // prima configurare, pas cu pas: după ce alegi structura, fiecare pas face un singur lucru și îți arată ce a făcut; apoi „Înainte”.
 // Ce n-a mers rămâne scris în pas (și în raport), cu ce ai de făcut; nu oprește restul.
+const PRE = require("./pdfpreset");
 const STYLE_NAMES = "APA · Chicago (author-date) · Chicago (notes) · MLA · Harvard · IEEE";
 const mkdirs = async (V, dir) => { let cur = ""; for (const part of dir.split("/")) { cur = cur ? `${cur}/${part}` : part; if (!V.getAbstractFileByPath(cur)) { try { await V.createFolder(cur); } catch (e) {} } } };
 // alegerea de la „Unde ține Texere lucrurile” (sau, dacă pasul n-a fost, ce e deja în setări)
@@ -66,7 +67,9 @@ function missingSetup(P) {
   }
   try { out.notes = P.noteStatus().filter(n => !n.file).length; } catch (e) {}
   out.pdf = !setup.pdfplus.check(P);
-  out.any = !!(out.folders.length || out.bib || out.notes || out.pdf);
+  { const s = P.app.plugins?.plugins?.["pdf-plus"]?.settings; out.preset = !out.pdf && !!s && PRE.isFresh(s); }   // PDF++ pornit, dar cu setările lui de început
+  try { out.links = V.getConfig?.("alwaysUpdateLinks") !== true && !!V.setConfig; } catch (e) {}   // Texere redenumește note: linkurile trebuie să urmeze
+  out.any = !!(out.folders.length || out.bib || out.notes || out.pdf || out.preset || out.links);
   return out;
 }
 const AUTO = {
@@ -98,6 +101,14 @@ const AUTO = {
     try { P.notify?.(); } catch (e) {}
     return out;
   },
+  async links(W) {
+    const V = W.P.app.vault, out = none();
+    try { V.setConfig("alwaysUpdateLinks", true); } catch (e) {}
+    if (V.getConfig?.("alwaysUpdateLinks") === true) out.ok.push({ label: M("Linkurile se actualizează când redenumești o notă", "Links update when you rename a note"), value: "Settings → Files and links → Automatically update internal links", state: M("pornit", "turned on") });
+    else out.todo.push({ msg: M("Nu am putut porni actualizarea linkurilor.", "Couldn't turn on link updates."), you: M("Settings → Files and links → Automatically update internal links.", "Settings → Files and links → Automatically update internal links.") });
+    try { W.P.notify?.(); } catch (e) {}
+    return out;
+  },
   // 2. bibliografia și stilurile de citare; lista referințelor, din notele de lectură pe care le ai deja
   async bibliography(W) {
     const P = W.P, out = none();
@@ -125,8 +136,12 @@ const AUTO = {
   // 4. PDF++: instalat prin Obsidian (ca din Community plugins) și pornit
   async pdfplus(W) {
     const P = W.P, out = none();
+    const wasOn = setup.pdfplus.check(P), wasFresh = !wasOn || PRE.isFresh(P.app.plugins.plugins["pdf-plus"]?.settings);
     let r = null; try { r = await setup.pdfplus.run(P, "install"); } catch (e) { console.error("Texere: PDF++", e); r = { ...none(), todo: [{ msg: M(`Nu am putut instala PDF++ (${e.message}).`, `I couldn't install PDF++ (${e.message}).`) }] }; }
-    if (setup.pdfplus.check(P)) out.ok.push({ label: M("PDF++", "PDF++"), value: M("adnotările din PDF: culori, etichete, legături spre pasaj", "PDF annotations: colours, tags, links back to the passage"), state: M(`instalat și pornit${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`, `installed and on${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`) });
+    // setările lui Texere pentru PDF++ (dacă PDF++ are încă setările lui de început; ce ți-ai setat tu rămâne)
+    let preset = false; if (setup.pdfplus.check(P)) { try { preset = await PRE.apply(P.app); } catch (e) { console.warn("Texere: setările PDF++", e); } }
+    if (setup.pdfplus.check(P) && (preset || PRE.hasTexere(P.app.plugins.plugins["pdf-plus"]?.settings))) out.ok.push({ label: M("Setările lui Texere pentru PDF++", "Texere's settings for PDF++"), value: M(PRE.SUMMARY.ro, PRE.SUMMARY.en), state: preset || wasFresh ? M("puse", "applied") : M("erau deja", "already there") });
+    if (setup.pdfplus.check(P)) out.ok.unshift({ label: M("PDF++", "PDF++"), value: M("adnotările din PDF: culori, etichete, legături spre pasaj", "PDF annotations: colours, tags, links back to the passage"), state: M(`instalat și pornit${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`, `installed and on${P.app.plugins.manifests?.["pdf-plus"]?.version ? " · " + P.app.plugins.manifests["pdf-plus"].version : ""}`) });
     out.todo.push(...(r?.todo || [])); out.tech.push(...(r?.tech || []));
     return out;
   },
@@ -156,8 +171,9 @@ function buildSteps(P, first) {
     explain: M("Texere poate aduce harta unei discipline: notele ei de bază, legate între ele, pe care le folosești în metadatele referințelor. Alege dacă o vrei; o poți adăuga și mai târziu.",
       "Texere can bring the map of a discipline: its core notes, linked together, which you use in your references' metadata. Choose whether you want it; you can also add it later."), fields: true,
     check: async () => { for (const m of P.maps?.() || []) { try { const st = await P.mapStatus(m); if (st.have < st.total) return false; } catch (e) { return false; } } return true; } });   // toate hărțile deja în vault: nimic de ales, „Înainte”
-  if (first && !S.pdfplus.check(P)) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
-    explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez din lista oficială Obsidian și îl pornesc.", "Texere uses PDF++ for your PDF annotations. I'm installing it from Obsidian's official list and turning it on.") });
+  const ppFresh = () => { try { const s = P.app.plugins.plugins["pdf-plus"]?.settings; return !!s && PRE.isFresh(s); } catch (e) { return false; } };
+  if (first && (!S.pdfplus.check(P) || ppFresh())) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
+    explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez din lista oficială Obsidian, îl pornesc și îi pun setările lui Texere: culorile ca etichete, auto-copy, auto-paste, formatele de copiere.", "Texere uses PDF++ for your PDF annotations. I'm installing it from Obsidian's official list, turning it on and giving it Texere's settings: colours as tags, auto-copy, auto-paste, copy formats.") });
   else if (!S.pdfplus.check(P)) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), explain: S.pdfplus.explain, setupStep: S.pdfplus, poll: true,
     check: () => S.pdfplus.check(P), extra: (row, W) => {
       // după ce ai apăsat Install și Enable în pagina lui PDF++: verifică din nou (pornirea o faci tu, cu un clic)
@@ -197,15 +213,20 @@ function completeSteps(P, miss) {
       if (miss.folders.length) add("folder-tree", M("Folderele lui Texere", "Texere's folders"), miss.folders.map(x => x.path).join(" · "));
       if (miss.bib) add("book-open", M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), "");
       if (miss.notes) add("layout-template", M(`Șabloanele și ghidurile de scris (${miss.notes})`, `Templates and writing guides (${miss.notes})`), "");
-      if (miss.pdf) add("highlighter", M("PDF++, pentru adnotările din PDF", "PDF++, for your PDF annotations"), ""); } });
+      if (miss.pdf) add("highlighter", M("PDF++, pentru adnotările din PDF", "PDF++, for your PDF annotations"), "");
+      if (miss.links) add("link", M("Linkurile se actualizează când redenumești o notă", "Links update when you rename a note"), "");
+      if (miss.pdf || miss.preset) add("palette", M("Setările lui Texere pentru PDF++", "Texere's settings for PDF++"), W.T(M(PRE.SUMMARY.ro, PRE.SUMMARY.en))); } });
   if (miss.folders.length) steps.push({ id: "folders", icon: "folder-tree", title: M("Folderele lui Texere", "Texere's folders"), auto: AUTO.coreFolders,
     explain: M("Creez folderele în care Texere ține referințele, PDF-urile, exporturile și șabloanele.", "I'm creating the folders where Texere keeps references, PDFs, exports and templates.") });
+  if (miss.links) steps.push({ id: "links", icon: "link", title: M("Linkurile", "Links"), auto: AUTO.links,
+    explain: M("Texere redenumește note (de ex. „Autor An – Titlu”); pornesc actualizarea linkurilor, ca să nu se rupă.", "Texere renames notes (e.g. “Author Year – Title”); I'm turning on link updates, so links don't break.") });
   if (miss.bib) steps.push({ id: "bibliography", icon: "book-open", title: M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), auto: AUTO.bibliography,
     explain: M("Din bibliografie se fac citările (@) și lista de referințe de la export.", "Citations (@) and the exported reference list come from the bibliography.") });
   if (miss.notes) steps.push({ id: "notes", icon: "layout-template", title: M("Șabloanele și ghidurile de scris", "Templates and writing guides"), auto: AUTO.notes,
     explain: M("Adaug doar ce lipsește; ce ai rămâne neatins.", "I add only what's missing; what you have stays untouched.") });
-  if (miss.pdf) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
-    explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez din lista oficială Obsidian și îl pornesc.", "Texere uses PDF++ for your PDF annotations. I'm installing it from Obsidian's official list and turning it on.") });
+  if (miss.pdf || miss.preset) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
+    explain: miss.pdf ? M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez din lista oficială Obsidian, îl pornesc și îi pun setările lui Texere.", "Texere uses PDF++ for your PDF annotations. I'm installing it from Obsidian's official list, turning it on and giving it Texere's settings.")
+      : M("PDF++ are încă setările lui de început. Îi pun setările lui Texere: culorile ca etichete, auto-copy, auto-paste, formatele de copiere, adnotările în PDF.", "PDF++ still has its default settings. I'm giving it Texere's: colours as tags, auto-copy, auto-paste, copy formats, annotations in the PDF.") });
   steps.push({ id: "done", icon: "check-circle", title: M("Gata", "All done"), info: true, last: true,
     explain: M("Texere are tot ce-i trebuie. Configurarea întreagă o poți rula oricând din Settings → Texere.", "Texere has everything it needs. You can run the full setup any time from Settings → Texere.") });
   return steps;

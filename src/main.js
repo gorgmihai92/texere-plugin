@@ -293,7 +293,7 @@ module.exports = class Texere extends Plugin {
   // ——— pluginurile: pornit / instalat, dar oprit / lipsă ———
   // un modul Texere (id-ul vechi al pluginului) e pornit sau oprit din setări; un plugin (PDF++): pornit / instalat, dar oprit / lipsă
   state(id) { if (MOD_KEY[id]) return this.modOn(MOD_KEY[id]) ? "on" : "off"; const P = this.app.plugins; return P.enabledPlugins?.has?.(id) ? "on" : P.manifests?.[id] ? "off" : "missing"; }
-  async enable(id) { if (MOD_KEY[id]) return this.setModule(MOD_KEY[id], true); await this.app.plugins.enablePluginAndSave(id); }
+  async enable(id) { if (MOD_KEY[id]) return this.setModule(MOD_KEY[id], true); if (id === "pdf-plus") { try { await require("./core/pdfpreset").apply(this.app, { reload: false }); } catch (e) {} } await this.app.plugins.enablePluginAndSave(id); }
   async disable(id) { if (MOD_KEY[id]) return this.setModule(MOD_KEY[id], false); await this.app.plugins.disablePluginAndSave(id); }
   // pagina unui plugin în Obsidian (Community plugins), unde apeși Install: Texere nu instalează singur alte pluginuri
   openPluginPage(id) { return setup.openPluginPage(this.app, id); }
@@ -344,7 +344,9 @@ module.exports = class Texere extends Plugin {
   }
   async doItem(it) {
     if (it.kind === "dep") {
-      if (it.st === "missing") this.openPluginPage(it.d.id); else await this.enable(it.d.id);
+      // PDF++: instalat prin Obsidian (ca din Community plugins), cu setările lui Texere; dacă nu merge, pagina lui
+      if (it.st === "missing" && it.d.id === "pdf-plus") { const r = await require("./core/setup").pdfplus.run(this, "install"); if (!this.app.plugins.enabledPlugins.has("pdf-plus")) this.openPluginPage(it.d.id); else new Notice(this.T("Am instalat și am pornit PDF++.", "Installed and turned on PDF++."), 5000); this.notify(); }
+      else if (it.st === "missing") this.openPluginPage(it.d.id); else await this.enable(it.d.id);
       return;
     }
     if (it.kind === "texere") { await this.enable(it.p.id); return; }
@@ -616,9 +618,13 @@ module.exports = class Texere extends Plugin {
     for (const d of DEPS) {
       const st = this.state(d.id); if (st === "on") continue;
       out.push({ text: st === "missing" ? T(`Lipsește ${d.name}.`, `${d.name} is missing.`) : T(`${d.name} e oprit.`, `${d.name} is off.`),
-        why: st === "missing" ? T("Fără el, adnotările din PDF nu ajung în note. Îți deschid pagina lui din Obsidian: apeși Install, apoi Enable.", "Without it, PDF annotations don't reach your notes. I'll open its page in Obsidian: click Install, then Enable.") : T("Fără el, adnotările din PDF nu ajung în note.", "Without it, PDF annotations don't reach your notes."),
-        btn: st === "missing" ? T("Deschide pagina lui", "Open its page") : T("Pornește", "Turn on"), fn: () => this.doItem({ kind: "dep", d, st }) });
+        why: st === "missing" ? T("Fără el, adnotările din PDF nu ajung în note. Îl instalez din lista oficială Obsidian, cu setările lui Texere.", "Without it, PDF annotations don't reach your notes. I'll install it from Obsidian's official list, with Texere's settings.") : T("Fără el, adnotările din PDF nu ajung în note.", "Without it, PDF annotations don't reach your notes."),
+        btn: st === "missing" ? T("Instalează", "Install") : T("Pornește", "Turn on"), fn: () => this.doItem({ kind: "dep", d, st }) });
     }
+    // PDF++ pornit, dar cu setările lui de început: fără paleta-etichete și auto-copy / auto-paste, adnotările nu ajung bine în note
+    try { const PRE = require("./core/pdfpreset"); const pps = this.app.plugins.plugins["pdf-plus"]?.settings; if (this.state("pdf-plus") === "on" && pps && PRE.isFresh(pps))
+      out.push({ text: T("PDF++ nu are încă setările lui Texere.", "PDF++ doesn't have Texere's settings yet."), why: T("Culorile ca etichete, auto-copy și auto-paste, formatele de copiere: ca adnotările să ajungă în nota de lectură.", "Colours as tags, auto-copy and auto-paste, the copy formats: so your annotations reach the reading note."),
+        btn: T("Pune-le", "Apply"), fn: async () => { const ok = await PRE.apply(this.app); new Notice(ok ? T("PDF++ are acum setările lui Texere.", "PDF++ now has Texere's settings.") : T("Nu am putut pune setările.", "Couldn't apply the settings."), 5000); this.notify(); } }); } catch (e) {}
     // (un modul oprit nu e o problemă: l-ai oprit tu, din setări sau din configurare)
     // setări care arată încă spre nume vechi de foldere („02. Notes/…” când folderul e acum „2. Notes”)
     try {

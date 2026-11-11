@@ -1,5 +1,5 @@
 // Actualizările lui Texere, din release-urile GitHub ale pluginului (în afara listei de pluginuri a Obsidian).
-//  • check(): o dată pe zi (sau la „Caută acum”), întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
+//  • check(): la pornire (cel mult o dată pe oră), din 6 în 6 ore și la „Caută acum”, întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
 //    Nu instalează nimic singur: o versiune nouă apare în pagina de pornire și în setări, cu butonul „Actualizează”.
 //  • update(): doar la clicul tău; install(): descarcă main.js, styles.css și manifest.json, le verifică (manifestul e al lui Texere, versiunea e cea a release-ului,
 //    main.js nu e gol), pune fișierele de acum în previous/ și le scrie pe cele noi. Atinge doar folderul pluginului, niciodată notele.
@@ -10,7 +10,7 @@ const { requestUrl, Notice } = require("obsidian");
 const REPO = "gorgmihai92/texere-plugin";
 const API = `https://api.github.com/repos/${REPO}/releases/latest`;
 const FILES = ["main.js", "styles.css", "manifest.json"];
-const DAY = 864e5;
+const DAY = 864e5, HOUR = 36e5;
 
 // „0.4.10” > „0.4.9”; un „v” în față nu contează
 const parse = v => String(v || "").trim().replace(/^v/i, "").split(/[.+-]/).slice(0, 3).map(n => parseInt(n, 10) || 0);
@@ -34,7 +34,7 @@ class Updater {
   start() {
     this.whatsNew();
     const tick = () => { if (this.auto) this.check(false).catch(e => console.warn("Texere: actualizări", e)); };
-    setTimeout(tick, 45e3);
+    setTimeout(tick, 20e3);
     this.timer = window.setInterval(tick, 6 * 36e5);
     this.P.register(() => window.clearInterval(this.timer));
   }
@@ -59,7 +59,7 @@ class Updater {
   async check(manual) {
     if (this.busy) return { state: "busy" };
     const c = this.conf;
-    if (!manual && c.checkedAt && Date.now() - c.checkedAt < DAY) return { state: "later" };
+    if (!manual && c.checkedAt && Date.now() - c.checkedAt < HOUR) return { state: "later" };   // la fiecare pornire (cel mult o dată pe oră) și din 6 în 6 ore
     this.busy = true;
     try {
       let rel = null; try { rel = await this.latest(); } catch (e) { rel = null; }
@@ -131,9 +131,13 @@ class Updater {
   }
 
   // o dată după o actualizare: ce s-a schimbat
+  // „Ce e nou”, o dată, după orice actualizare: din Texere, din BRAT sau de mână (versiunea de acum e mai nouă decât cea pornită data trecută)
   whatsNew() {
-    const c = this.conf, i = c.installed;
-    if (!i || i.to !== this.version || c.shown === this.version) return;
+    const c = this.conf, i = c.installed, last = c.lastRun;
+    c.lastRun = this.version;
+    // fără „lastRun” (versiuni dinainte de 0.4.5): un vault deja configurat înseamnă că Texere a mai rulat aici
+    const updated = (i && i.to === this.version) || (last ? newer(this.version, last) : !!this.P.settings.onboarded);
+    if (!updated || c.shown === this.version) { if (last !== this.version) this.P.save(); return; }
     c.shown = this.version; this.P.save();
     const T = (a, b) => this.T(a, b), frag = document.createDocumentFragment();
     frag.append(T(`Texere s-a actualizat la ${this.version}. `, `Texere was updated to ${this.version}. `));

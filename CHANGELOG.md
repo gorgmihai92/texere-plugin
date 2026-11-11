@@ -2,6 +2,13 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.5 (11 November 2026)
+
+- **PDF++ preset** (`assets/pdfplus-preset.json`, from the ready-made vault's `.obsidian/plugins/pdf-plus/data.json`, without the author): the Texere palette (colours as tags), auto-copy, auto-paste, auto-focus targets, copy commands (Quote in callout, Paragraf, …), display formats (Referință `@id, p.`), `defaultWriteFileToggle`, `proxyMDProperty: attachment`, `enablePDFEdit`. Applied when PDF++ is installed or turned on by Texere (written before it starts), in the setup's PDF++ step, in the completion window after an update, and from the home page (**Apply**) — only when PDF++ still has its default palette (Yellow, Red, Note, Important). PDF++ is restarted after the settings change so its toolbar and ribbon icons follow.
+- Home: **Install** for a missing PDF++ installs it through Obsidian (with the preset); its page opens only if that fails.
+- Updates: the automatic check runs at startup (at most once an hour; was once a day) and every 6 hours. **What's new** shows after any update (Texere's own, BRAT's or by hand): Texere remembers the last version it ran.
+- After an update, the completion window also turns on *Automatically update internal links* if it's off.
+
 ## 0.4.4 (11 November 2026)
 
 The setup does everything, one step at a time.

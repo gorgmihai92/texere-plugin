@@ -93,6 +93,8 @@ const pdfplus = {
       let ok = isInstalled(app, PDFPP.id), why = "";
       if (!ok) { try { ok = await this.install(plugin); } catch (e) { why = e.message; console.warn("Texere: PDF++", e); } }
       if (ok) {
+        // setările lui Texere pentru PDF++ (paleta-etichete, auto-copy, auto-paste, formatele de copiere), înainte să pornească
+        try { await require("./pdfpreset").apply(app, { reload: false }); } catch (e) { console.warn("Texere: setările PDF++", e); }
         try { await app.plugins.enablePluginAndSave(PDFPP.id); } catch (e) { why = e.message; }
         if (isOn(app, PDFPP.id)) { out.ok.push(M("Am instalat și am pornit PDF++.", "Installed and turned on PDF++.")); const v = app.plugins.manifests?.[PDFPP.id]?.version; if (v) out.tech.push(["PDF++", v]); return out; }
       }
@@ -100,6 +102,7 @@ const pdfplus = {
       return out;
     }
     if (choice === "enable" && isInstalled(app, PDFPP.id)) {
+      try { await require("./pdfpreset").apply(app, { reload: false }); } catch (e) {}
       try { await app.plugins.enablePluginAndSave(PDFPP.id); out.ok.push(M("Am pornit PDF++.", "Turned on PDF++.")); }
       catch (e) { out.todo.push({ msg: M(`Nu am putut porni PDF++ (${e.message}).`, `I couldn't turn on PDF++ (${e.message}).`), you: M("pornește-l din Settings → Community plugins.", "turn it on in Settings → Community plugins."), ref: { step: 3 } }); }
       return out;
