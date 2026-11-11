@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.8"
-date: "Version 0.4.8 · 11 November 2026"
+version: "0.4.9"
+date: "Version 0.4.9 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -387,6 +387,9 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.9** · 11 November 2026
+- **The discipline step says what it does:** "Your discipline's map" — I import the map of philosophy (435 notes: branches, concepts, theories, movements, periods, authors, linked together) into 2. Notes/Disciplines/Philosophy; untick it if you don't want it. In Settings, the button is now **Import the map**.
 
 **0.4.8** · 11 November 2026
 - **Starting over in an emptied vault:** if you delete everything from a vault where Texere was set up, Texere starts the setup again from the beginning, as in a new vault, instead of a list of "isn't in the vault anymore" alerts. Your language and modules stay.

@@ -167,9 +167,9 @@ function buildSteps(P, first) {
     steps.push({ id: "notes", icon: "layout-template", title: M("Șabloanele și ghidurile de scris", "Templates and writing guides"), auto: AUTO.notes,
       explain: M("Șabloane pentru un eseu, un autor, o lucrare de licență sau de disertație, plus ghidurile de scris.", "Templates for an essay, an author, a BA or MA thesis, plus the writing guides.") });
   }
-  if (first && !P.settings.fields?.asked && (P.maps?.() || []).length) steps.push({ id: "fields", icon: "network", title: M("Disciplina ta", "Your discipline"),
-    explain: M("Texere poate aduce harta unei discipline: notele ei de bază, legate între ele, pe care le folosești în metadatele referințelor. Alege dacă o vrei; o poți adăuga și mai târziu.",
-      "Texere can bring the map of a discipline: its core notes, linked together, which you use in your references' metadata. Choose whether you want it; you can also add it later."), fields: true,
+  if (first && !P.settings.fields?.asked && (P.maps?.() || []).length) steps.push({ id: "fields", icon: "network", title: M("Harta disciplinei tale", "Your discipline's map"),
+    explain: M("Pot importa în vault harta unei discipline: câte o notă pentru fiecare ramură, concept, teorie, curent, perioadă și autor, legate între ele, ca un mic dicționar al domeniului. Cu ea etichetezi referințele (de exemplu ramura: Etică) și vezi apoi tot ce ai citit într-o ramură.",
+      "I can import a discipline's map into your vault: one note for each branch, concept, theory, movement, period and author, linked together, like a small dictionary of the field. With it you tag your references (for example branch: Ethics), then see everything you read in a branch."), fields: true,
     check: async () => { for (const m of P.maps?.() || []) { try { const st = await P.mapStatus(m); if (st.have < st.total) return false; } catch (e) { return false; } } return true; } });   // toate hărțile deja în vault: nimic de ales, „Înainte”
   const ppFresh = () => { try { const s = P.app.plugins.plugins["pdf-plus"]?.settings; return !!s && PRE.isFresh(s); } catch (e) { return false; } };
   if (first && (!S.pdfplus.check(P) || ppFresh())) steps.push({ id: "pdfplus", icon: "highlighter", title: M("PDF++", "PDF++"), auto: AUTO.pdfplus,
@@ -468,18 +468,18 @@ class WizardModal extends Modal {
       cb.addEventListener("change", () => { if (cb.checked) picked.add(m.id); else picked.delete(m.id); card.toggleClass("is-off", !cb.checked); });
       if (!cb.checked) card.addClass("is-off");
       const t = card.createDiv("txw-field-t");
-      t.createDiv({ cls: "txw-field-name", text: T(M(m.ro, m.en)) });
+      t.createDiv({ cls: "txw-field-name", text: T(M(`Harta ${m.of?.ro || m.ro}${st ? ` · ${st.total} de note` : ""}`, `The map of ${m.of?.en || m.en}${st ? ` · ${st.total} notes` : ""}`)) });
       if (m.desc) t.createDiv({ cls: "txw-field-desc", text: T(M(m.desc.ro, m.desc.en)) });
-      const meta = st ? (full ? M(`Deja în vault-ul tău · ${st.folder}`, `Already in your vault · ${st.folder}`)
-        : part ? M(`${st.have} din ${st.total} note sunt deja în ${st.folder}; adaug doar ce lipsește`, `${st.have} of ${st.total} notes are already in ${st.folder}; I'll add only what's missing`)
-        : M(`${st.total} note · în ${st.folder}`, `${st.total} notes · in ${st.folder}`)) : null;
+      const meta = st ? (full ? M(`Importată · în ${st.folder}`, `Imported · in ${st.folder}`)
+        : part ? M(`${st.have} din ${st.total} note sunt deja în ${st.folder}; import doar ce lipsește`, `${st.have} of ${st.total} notes are already in ${st.folder}; I'll import only what's missing`)
+        : M(`La „Înainte” o import în ${st.folder}`, `On Next, I'll import it into ${st.folder}`)) : null;
       if (meta) t.createDiv({ cls: "txw-field-meta", text: T(meta) });
     }
-    body.createEl("p", { cls: "txw-muted", text: T(M("Alte discipline vin în versiunile următoare. O hartă o poți adăuga oricând din Settings → Texere → General → Foldere → Harta disciplinei.", "More disciplines are coming in later versions. You can add a map any time in Settings → Texere → General → Folders → Discipline map.")) });
+    body.createEl("p", { cls: "txw-muted", text: T(M("Nu o vrei? Debifeaz-o. O poți importa oricând din Settings → Texere → General → Foldere → Harta disciplinei. Alte discipline vin în versiunile următoare.", "Don't want it? Untick it. You can import it any time in Settings → Texere → General → Folders → Discipline map. More disciplines are coming in later versions.")) });
     this.stepRun = async () => {
       const ok = []; let bad = false;
       for (const { m } of list || []) if (picked.has(m.id)) {
-        try { await P.chooseField(m.id); const n = await P.createMap(m); ok.push(M(`Am adăugat harta ${m.ro} (${n} note).`, `Added the ${m.en} map (${n} notes).`)); }
+        try { await P.chooseField(m.id); const n = await P.createMap(m); ok.push(M(`Am importat harta ${m.of?.ro || m.ro}: ${n} de note în ${(await P.mapStatus(m).catch(() => null))?.folder || "vault"}.`, `Imported the map of ${m.of?.en || m.en}: ${n} notes in ${(await P.mapStatus(m).catch(() => null))?.folder || "your vault"}.`)); }
         catch (e) { console.error("Texere: harta", m.id, e); bad = true; this.results.map = { ...none(), todo: [{ msg: M(`N-a mers: ${e.message}`, `Didn't work: ${e.message}`) }] }; }
       }
       // hărțile debifate (și care nu sunt deja în vault): nu le vrei, deci nici câmpurile lor în nota de lectură

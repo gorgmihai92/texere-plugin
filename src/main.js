@@ -74,9 +74,9 @@ const DEPS = [
 const FOLDERS = ["02. Notes/Essays", "02. Notes/Personal", "02. Notes/Imported", "03. Workspace/01. Courses", "03. Workspace/02. Thesis", "03. Workspace/03. Articles", "03. Workspace/04. Projects"];
 // hărțile domeniilor: notele din Fields/<domeniu>, din care vin valorile proprietăților notelor (ramură, concepte, teorii…)
 const MAPS = [
-  { id: "philosophy", folder: "Philosophy", ro: "Filosofie", en: "Philosophy", load: () => require("../assets/philosophy.json"),
-    desc: { ro: "Ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii filosofiei, legate între ele, pornind de la nota Filosofie. Le folosești în metadatele referințelor (de exemplu branch: Etică), iar apoi vezi tot ce ai citit într-o ramură. Nume în engleză, aliasuri în română.",
-            en: "The branches, subfields, concepts, theories, movements, periods and authors of philosophy, linked together, starting from the Philosophy note. You use them in your references' metadata (for example branch: Ethics), then see everything you read in a branch. English names, Romanian aliases." } },
+  { id: "philosophy", folder: "Philosophy", ro: "Filosofie", en: "Philosophy", of: { ro: "filosofiei", en: "philosophy" }, load: () => require("../assets/philosophy.json"),
+    desc: { ro: "O notă „Philosophy”, din care pornesc ramurile (Etică, Epistemologie, Metafizică…), apoi subdomeniile, conceptele, teoriile, curentele, perioadele și autorii, toate legate între ele. Numele sunt în engleză, cu aliasuri în română, ca să le găsești în ambele limbi.",
+            en: "A “Philosophy” note, from which the branches start (Ethics, Epistemology, Metaphysics…), then the subfields, concepts, theories, movements, periods and authors, all linked together. Names in English, with Romanian aliases, so you find them in both languages." } },
 ];
 
 module.exports = class Texere extends Plugin {
@@ -341,7 +341,7 @@ module.exports = class Texere extends Plugin {
   async todo() {
     const T = (a, b) => this.T(a, b), out = [];
     for (const d of DEPS) { const st = this.state(d.id); if (st !== "on") out.push({ kind: "dep", d, st, label: st === "missing" ? T(`Instalează ${d.name} (din pagina lui din Obsidian)`, `Install ${d.name} (from its page in Obsidian)`) : T(`Pornește ${d.name}`, `Turn on ${d.name}`), why: this.en ? d.en : d.ro }); }
-    for (const m of MAPS.filter(x => this.mapWanted(x))) { try { const s = await this.mapStatus(m); if (!s.have) out.push({ kind: "map", m, label: T(`Creează harta: ${m.ro}`, `Create the map: ${m.en}`), why: T(`${s.total} note în ${s.folder}: ramuri, subdomenii, concepte, teorii, curente, perioade, autori (valorile pentru metadatele referințelor).`, `${s.total} notes in ${s.folder}: branches, subfields, concepts, theories, movements, periods, authors (the values for your references' metadata).`) }); } catch (e) {} }
+    for (const m of MAPS.filter(x => this.mapWanted(x))) { try { const s = await this.mapStatus(m); if (!s.have) out.push({ kind: "map", m, label: T(`Importă harta ${m.of?.ro || m.ro}`, `Import the map of ${m.of?.en || m.en}`), why: T(`${s.total} note în ${s.folder}: ramuri, subdomenii, concepte, teorii, curente, perioade, autori (valorile pentru metadatele referințelor).`, `${s.total} notes in ${s.folder}: branches, subfields, concepts, theories, movements, periods, authors (the values for your references' metadata).`) }); } catch (e) {} }
     return out;
   }
   async doItem(it) {
@@ -1113,7 +1113,7 @@ class TexereSettingTab extends PluginSettingTab {
       P.mapStatus(m).then(st => {
         s.setDesc(T("O notă pentru fiecare ramură, concept, autor…", "A note for each branch, concept, author…")); s.descEl.createDiv({ cls: "tx-mt6 ts-cur", text: T(`${st.folder} (${st.have} din ${st.total} note)`, `${st.folder} (${st.have} of ${st.total} notes)`) });
         if (st.have && this.app.vault.getAbstractFileByPath(st.folder)) s.addButton(b => b.setButtonText(T("Schimbă…", "Change…")).onClick(() => P.moveFolder(st.folder, () => this.display())));
-        if (st.have < st.total) s.addButton(b => b.setButtonText(st.have ? T(`Adaugă ce lipsește (${st.total - st.have})`, `Add what's missing (${st.total - st.have})`) : T("Creează harta", "Create the map")).onClick(() => busy(b, async () => { const n = await P.createMap(m); new Notice(T(`Am creat ${n} note.`, `Created ${n} notes.`), 5000); })));
+        if (st.have < st.total) s.addButton(b => b.setButtonText(st.have ? T(`Adaugă ce lipsește (${st.total - st.have})`, `Add what's missing (${st.total - st.have})`) : T("Importă harta", "Import the map")).onClick(() => busy(b, async () => { const n = await P.createMap(m); new Notice(T(`Am creat ${n} note.`, `Created ${n} notes.`), 5000); })));
       }).catch(e => s.setDesc(T("Nu pot citi harta: ", "Couldn't read the map: ") + e.message));
     }
     // 4. Avansat: PDF++, șabloanele și ghidurile de scris, AI

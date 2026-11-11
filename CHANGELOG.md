@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.9 (11 November 2026)
+
+- Setup, discipline step reworded: title "Your discipline's map"; it says the map is imported into the vault (one note per branch, concept, theory, movement, period and author, linked, like a small dictionary of the field) and what it's for; the card reads "The map of philosophy · 435 notes" with "On Next, I'll import it into …" / "Imported · in …"; how to skip or import later; result "Imported the map of philosophy: 435 notes in …". Settings and home: "Import the map".
+
 ## 0.4.8 (11 November 2026)
 
 - **Emptied vault → start over:** at startup, if Texere was set up but the vault has no notes of yours and none of Texere's folders exist (bibliography, reading notes, PDFs, export), the setup state is reset (onboarded, structure, seen folders, presets, completion, field map, folders) and the setup opens as in a new vault — instead of "isn't in the vault anymore" alerts. Language, modules and update state stay.
