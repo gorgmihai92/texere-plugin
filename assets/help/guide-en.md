@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.3"
-date: "Version 0.4.3 · 11 November 2026"
+version: "0.4.4"
+date: "Version 0.4.4 · 11 November 2026"
 ---
 ## 1. Start
 
@@ -25,22 +25,22 @@ Texere is a ready-made Obsidian vault for researchers who want one place for the
 1. Install [Obsidian](https://obsidian.md/download) (free).
 2. [Download the vault](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) and unzip it; in Obsidian, choose **Open folder as vault**.
 3. Click **Trust author and enable plugins**.
-4. The setup opens by itself. In each step, tick or pick what you want; **Next** applies it.
+4. The setup opens by itself. Choose **The Texere structure** (recommended): Texere sets up everything, one step at a time (folders, bibliography and citation styles, templates and guides, PDF++), shows you what it did, and you click **Next**. At the end, the home page opens in a new tab.
 5. At the end, **See what was done** shows a summary (later: **Help → Your last setup**).
 
 > [!tip] In a vault of your own, even an empty one
 > 1. **Settings → Community plugins → Turn on community plugins**.
 > 2. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub and keeps them up to date.
 > 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin**, click **Add plugin**.
-> 4. The setup opens by itself. In an empty vault, leave everything as it is and click **Next** at each step: you get the Texere structure. In a vault that already has your notes, **My own folders** is selected: choose where reading notes, PDFs and exports go (Texere moves nothing of yours).
+> 4. The setup opens by itself. In an empty vault, leave everything as it is and click **Next** at each step: you get the Texere structure, with everything set up. In a vault that already has your notes, **My own folders** is selected: Texere's folders (reading notes, PDFs, export, bibliography) are created with the names you choose; the other folders (notes, work) are yours, only if you tick them. Texere moves nothing of yours.
 >
 > Citations work from the start: Texere adds an empty bibliography and six citation styles (APA, Chicago, MLA, Harvard, IEEE) in **Support/Texere/Bibliography**.
 
 > [!warning] Clicked "Restricted mode" by mistake?
 > The plugins are off. Turn them on in **Settings → Community plugins**.
 
-> [!note] One plugin to install yourself
-> Texere needs **PDF++** for annotations. The setup opens its page: **Install**, then **Enable**.
+> [!note] PDF++
+> Texere needs **PDF++** for annotations. The setup installs it from Obsidian's official list and turns it on. Offline? **Try again** later, or **Open its page**: **Install**, then **Enable**.
 
 **Step 2. Work:** add a reference ([[#2. References and reading]]), read and annotate ([[#2.5 Reading and annotations]]), write and cite ([[#3. Writing]]), export ([[#4. Export]]).
 
@@ -387,6 +387,14 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.4** · 11 November 2026
+The setup does everything for you, one step at a time.
+
+- **The Texere structure** (recommended): the folders, the bibliography and citation styles, the templates and writing guides, and **PDF++** (installed and turned on). Each is its own step: you see what was done, then **Next**.
+- **My own folders:** Texere's folders (reading notes, PDFs, export, bibliography) are created with your names; your other folders only if you tick them. PDF++ is installed too.
+- **At the end:** the home page opens in a new tab and the Texere icon comes first in the ribbon.
+- **Already using Texere?** After this update, if something Texere needs is missing (one of its folders, the bibliography, a template, PDF++), a short window adds it, one step at a time.
 
 **0.4.3** · 11 November 2026
 Texere works from the first start, in a new vault and in one you already have.

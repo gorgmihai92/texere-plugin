@@ -9,9 +9,9 @@
 //  • run(plugin, choice) → Promise<{ ok: [M], todo: [{ msg: M, you?: M, ref?: {step}|{row: M} }], info: [M], tech: [[M|string, string]], restart? }>
 // La final: markConfigured(plugin) și writeReport(plugin, rezultate): ce s-a făcut, în Ajutor → „Ultima configurare” (nu o notă în vault).
 //
-// Regula marketplace-ului Obsidian: un plugin nu instalează alte pluginuri. Pentru PDF++, pasul deschide pagina lui
-// din Obsidian (obsidian://show-plugin?id=pdf-plus, același link ca butonul „Add to Obsidian” din directorul comunității);
-// omul apasă Install / Enable. Un plugin instalat, dar oprit, se pornește doar la clicul omului.
+// PDF++: la „Înainte” în configurare (clicul tău), Texere îl instalează prin instalatorul lui Obsidian (app.plugins.installPlugin,
+// același ca butonul Install din Community plugins, cu verificările lui), din lista oficială a pluginurilor comunității, apoi îl pornește.
+// Fără internet sau dacă Obsidian refuză: pagina lui din Obsidian (obsidian://show-plugin?id=pdf-plus), unde apeși Install / Enable.
 "use strict";
 const { Platform, moment } = require("obsidian");
 const { node } = require("../shared/node");
@@ -59,11 +59,11 @@ const language = {
 };
 
 // ---------- 2. PDF++ (singurul plugin de care depinde Texere) ----------
-const PDFPP = { id: "pdf-plus", name: "PDF++" };
+const PDFPP = { id: "pdf-plus", name: "PDF++", repo: "RyotaUshio/obsidian-pdf-plus" };
 const pdfplus = {
   id: "pdfplus", icon: "highlighter", label: M("PDF++", "PDF++"), title: M("PDF++, pentru adnotările din PDF", "PDF++, for your PDF annotations"),
-  explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalezi tu, din pagina lui din Obsidian: Install, apoi Enable.",
-    "Texere uses PDF++ for your PDF annotations. You install it from its page in Obsidian: Install, then Enable."),
+  explain: M("Texere folosește PDF++ pentru adnotările din PDF. Îl instalez și îl pornesc eu, din lista oficială Obsidian (sau îl instalezi tu, din pagina lui).",
+    "Texere uses PDF++ for your PDF annotations. I install and turn it on for you, from Obsidian's official list (or you install it from its page)."),
   question: M("PDF++ lipsește sau e oprit. Ce faci acum?", "PDF++ is missing or off. What now?"),
   check: plugin => isOn(plugin.app, PDFPP.id),
   options(plugin) {
@@ -71,11 +71,34 @@ const pdfplus = {
     const later = { v: "later", icon: "clock", label: M("Nu acum", "Not now") };
     return isInstalled(plugin.app, PDFPP.id)
       ? [{ v: "enable", icon: "power", label: M("Pornește PDF++", "Turn on PDF++"), rec: true }, later]
-      : [{ v: "open", icon: "download", label: M("Deschide PDF++ în Community plugins", "Open PDF++ in Community plugins"), rec: true, desc: M("Apasă Install, apoi Enable.", "Click Install, then Enable.") }, later];
+      : [{ v: "install", icon: "download", label: M("Instalează și pornește PDF++", "Install and turn on PDF++"), rec: true, desc: M("Din lista oficială a pluginurilor Obsidian.", "From Obsidian's official plugin list.") },
+         { v: "open", icon: "external-link", label: M("Deschide pagina lui", "Open its page"), desc: M("Apasă Install, apoi Enable.", "Click Install, then Enable.") }, later];
+  },
+  // instalarea prin Obsidian: repo-ul din lista oficială, versiunea din manifestul lui; true dacă e instalat
+  async install(plugin) {
+    const app = plugin.app, { requestUrl } = require("obsidian");
+    if (typeof app.plugins?.installPlugin !== "function") throw new Error("this Obsidian can't install plugins from here");
+    let repo = PDFPP.repo;
+    try { const list = JSON.parse((await requestUrl({ url: "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-plugins.json" })).text); repo = list.find(x => x.id === PDFPP.id)?.repo || repo; } catch (e) {}
+    const man = JSON.parse((await requestUrl({ url: `https://raw.githubusercontent.com/${repo}/HEAD/manifest.json` })).text);
+    if (man.id !== PDFPP.id) throw new Error("unexpected manifest");
+    const ok = await app.plugins.installPlugin(repo, man.version, man);
+    try { await app.plugins.loadManifests(); } catch (e) {}
+    return ok !== false && isInstalled(app, PDFPP.id);
   },
   async run(plugin, choice) {
     const app = plugin.app, out = empty();
     if (isOn(app, PDFPP.id)) { out.ok.push(M("PDF++ e pornit.", "PDF++ is on.")); const v = app.plugins.manifests?.[PDFPP.id]?.version; if (v) out.tech.push(["PDF++", v]); return out; }
+    if (choice === "install") {
+      let ok = isInstalled(app, PDFPP.id), why = "";
+      if (!ok) { try { ok = await this.install(plugin); } catch (e) { why = e.message; console.warn("Texere: PDF++", e); } }
+      if (ok) {
+        try { await app.plugins.enablePluginAndSave(PDFPP.id); } catch (e) { why = e.message; }
+        if (isOn(app, PDFPP.id)) { out.ok.push(M("Am instalat și am pornit PDF++.", "Installed and turned on PDF++.")); const v = app.plugins.manifests?.[PDFPP.id]?.version; if (v) out.tech.push(["PDF++", v]); return out; }
+      }
+      out.todo.push({ msg: M(`Nu am putut instala PDF++${why ? ` (${why})` : ""}.`, `I couldn't install PDF++${why ? ` (${why})` : ""}.`), you: M("Settings → Community plugins → Browse → PDF++ → Install, apoi Enable (sau din nou, cu internet).", "Settings → Community plugins → Browse → PDF++ → Install, then Enable (or again, online)."), ref: { step: 3 } });
+      return out;
+    }
     if (choice === "enable" && isInstalled(app, PDFPP.id)) {
       try { await app.plugins.enablePluginAndSave(PDFPP.id); out.ok.push(M("Am pornit PDF++.", "Turned on PDF++.")); }
       catch (e) { out.todo.push({ msg: M(`Nu am putut porni PDF++ (${e.message}).`, `I couldn't turn on PDF++ (${e.message}).`), you: M("pornește-l din Settings → Community plugins.", "turn it on in Settings → Community plugins."), ref: { step: 3 } }); }

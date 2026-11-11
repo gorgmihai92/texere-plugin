@@ -2,6 +2,18 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.4 (11 November 2026)
+
+The setup does everything, one step at a time.
+
+- **The Texere structure** (recommended): after you choose it, each thing is its own step that runs, shows what it did (✓ list), then waits for **Next**: folders (the whole structure of the ready-made vault), bibliography and citation styles, templates and writing guides, the discipline map (your choice), **PDF++**.
+- **PDF++ installed by Texere:** through Obsidian's own installer (`app.plugins.installPlugin`, the same as Community plugins → Install, with Obsidian's checks), from the repo in Obsidian's official plugin list, then turned on. If it can't (offline), the step says so, with **Try again** and **Open its page**. In a setup run again, PDF++ is a step with **Install and turn on PDF++** / **Open its page**.
+- **My own folders:** Texere's folders (reading notes, PDFs, inbox, export, templates) are filled in with the recommended names and created; the bibliography is shown; the other folders of the structure (Notes, Workspace, Media) are unticked, created only if you tick them. PDF++ is installed too.
+- **Finish** opens the home page in a new tab and puts the Texere icon first in the ribbon.
+- **After an update, in a vault set up before:** if one of Texere's folders, the bibliography or its styles, a template or writing guide, or PDF++ is missing, a short window adds them, one step at a time (once per version). A folder that was moved or renamed is not recreated empty; the home page offers to use the new one. Your other folders are never recreated.
+- **Put it back** for the bibliography only takes a folder with `bibliography.json` and Texere's citation styles (never another plugin's, e.g. BibLib).
+- **Home → Recent** lists files you opened or edited, not the notes the setup created.
+
 ## 0.4.3 (11 November 2026)
 
 Texere works from the first start, in a new vault and in one you already have.

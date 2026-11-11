@@ -1,6 +1,6 @@
 {
   "name": "texere",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": true,
   "description": "Texere — research vault plugin for Obsidian: references, citations, PDF annotations, export and insights.",
   "main": "main.js",

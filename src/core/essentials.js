@@ -20,11 +20,12 @@ async function mkdirs(V, dir) {
 }
 
 // { made: [căi create] }; nimic dacă modulul Referințe e oprit
-async function ensure(P) {
+// force: și dacă folderul a fost aici înainte (completarea configurării după o actualizare, când nu e nicăieri altundeva)
+async function ensure(P, opts = {}) {
   const H = P.mod?.("sources"), S = H?.sources; if (!S?.bibPath) return { made: [] };
   const V = P.app.vault, bib = S.bibPath(), dir = bib.includes("/") ? bib.slice(0, bib.lastIndexOf("/")) : "", made = [];
   if (dir && !V.getAbstractFileByPath(dir)) {
-    if (P.seen?.(dir)) return { made };   // a fost aici și a dispărut: „Pune-l la loc” (nu-l refacem gol peste bibliografia ta mutată)
+    if (!opts.force && P.seen?.(dir)) return { made };   // a fost aici și a dispărut: „Pune-l la loc” (nu-l refacem gol peste bibliografia ta mutată)
     // n-a fost niciodată aici: Texere își face bibliografia lui; un bibliography.json din altă parte (de ex. al pluginului BibLib) nu e atins
     await mkdirs(V, dir); made.push(dir);
   }

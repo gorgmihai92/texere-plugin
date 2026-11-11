@@ -389,6 +389,16 @@ module.exports = class Texere extends Plugin {
     this._ess = require("./core/essentials").ensure(this).then(r => { if (r?.made?.length) this.notify(); return r; }).catch(e => { console.error("Texere: bibliografia și stilurile", e); return { made: [] }; }).finally(() => { this._ess = null; });
     return this._ess;
   }
+  async completeSetup(force) {
+    const v = this.manifest?.version || "";
+    if (!this.settings.onboarded || this.needsConfig() || this._wiz || (!force && this.settings.completedFor === v)) return false;
+    const W = require("./core/wizard"), miss = W.missingSetup(this);
+    this.settings.completedFor = v; await this.save();   // o singură dată pe versiune; ce rămâne apare pe pagina de pornire
+    if (!miss.any) return false;
+    await sleep(1500); await this.toMainWindow();
+    new W.WizardModal(this, { complete: true, missing: miss }).open();
+    return true;
+  }
   // un vault nou: fără note ale tale (nota „Welcome” pe care o pune Obsidian într-un vault nou și ce a pus Texere nu contează)
   // vault-ul Texere descărcat (structura lui, ghidurile, exemplele) e tot unul nou; un vault deja configurat de Texere nu mai e
   isNewVault() {
@@ -411,6 +421,8 @@ module.exports = class Texere extends Plugin {
   async firstRun() {
     this.seenInit();
     await this.ensureEssentials();
+    // după o actualizare, într-un vault configurat înainte: dacă lipsește ceva de care Texere are nevoie, îl adaug pas cu pas (o dată pe versiune)
+    try { await this.completeSetup(); } catch (e) { console.error("Texere: completarea configurării", e); }
     if (!this.settings.presetDone) {
       const fresh = this.isNewVault();
       this.settings.presetDone = fresh ? "new" : "existing"; await this.save();
@@ -532,6 +544,13 @@ module.exports = class Texere extends Plugin {
       setTimeout(() => this.notify(), 300);
     }
   }
+  // bibliografia lui Texere mutată în afara lui Obsidian: un alt folder cu bibliography.json și cu stilurile lui Texere (cel puțin două .csl);
+  // nu bibliografia altui plugin (de ex. BibLib, cu un singur stil)
+  bibElsewhere(dir) {
+    const V = this.app.vault;
+    return V.getFiles().filter(g => g.name === "bibliography.json" && g.parent && g.parent.path !== dir && !g.path.startsWith(".")).map(g => g.parent)
+      .find(f => (f.children || []).filter(c => c.extension === "csl").length >= 2) || null;
+  }
   // pune la loc un folder fix: după redenumirea ținută minte, altfel după fișierul lui (ex. bibliography.json)
   async putBack(path) {
     const T = (a, b) => this.T(a, b), V = this.app.vault; this._putting = true;
@@ -539,7 +558,7 @@ module.exports = class Texere extends Plugin {
       if (V.getAbstractFileByPath(path)) return true;
       const rec = (this.settings.moved || []).slice().reverse().find(m => (path === m.from || path.startsWith(m.from + "/")) && V.getAbstractFileByPath(m.to) && !V.getAbstractFileByPath(m.from));
       let from = rec ? V.getAbstractFileByPath(rec.to) : null, to = rec ? rec.from : path;
-      if (!from) { const x = this.fixedFolders().find(y => y.path === path), mark = x && V.getFiles().find(g => g.name === x.mark && g.parent && g.parent.path !== path); if (mark) from = mark.parent; }
+      if (!from && this.fixedFolders().some(y => y.path === path)) from = this.bibElsewhere(path);
       if (!from) { new Notice(T(`Nu găsesc „${path}” în vault. Copiază-l din vault-ul Texere.`, `I can't find “${path}” in the vault. Copy it from the Texere vault.`), 10000); return false; }
       const parent = to.includes("/") ? to.slice(0, to.lastIndexOf("/")) : ""; let cur = "";
       for (const part of parent ? parent.split("/") : []) { cur = cur ? `${cur}/${part}` : part; if (!V.getAbstractFileByPath(cur)) await V.createFolder(cur); }
@@ -563,6 +582,8 @@ module.exports = class Texere extends Plugin {
     if (!this.mod("export") && !/^([\/~]|[A-Za-z]:[\\/])/.test(ex)) out.push(root(ex) || "04. Export");
     return [...new Set(out.filter(Boolean))];
   }
+  // celelalte foldere ale structurii Texere (notițe, lucrări, imagini): cum sunt sau ar fi numite în vault-ul tău
+  otherFolders() { return [...FOLDERS, "Support/Media"].map(p => P_.existing(this.app, normalizePath(p)) || P_.placeFor(this.app, normalizePath(p))); }
   missingFolders() { return this.folders().filter(p => !P_.existing(this.app, normalizePath(p))); }
   // numele de sus ale folderelor propuse, așa cum sunt (sau ar fi) în vault-ul tău: „1. Sources · 2. Notes · …”
   folderNames() { return [...new Set([...this.folders(), "04. Export"].map(p => (P_.existing(this.app, p) || P_.placeFor(this.app, p)).split("/")[0]))].join(" · "); }
@@ -736,7 +757,7 @@ module.exports = class Texere extends Plugin {
     try { const I = this.mod("insights"); if (I?.homeSection) I.homeSection(inner, leaf); } catch (e) { console.error("Texere: Insights în tab-ul nou", e); }
     // 4. ultimele 5 fișiere deschise, cu folderul și când le-ai deschis sau schimbat ultima dată
     let opened = {}; try { opened = this.app.loadLocalStorage("texere-opened") || {}; } catch (e) {}
-    const recent = this.app.workspace.getLastOpenFiles().map(p => this.app.vault.getAbstractFileByPath(p)).filter(f => f instanceof TFile && !/^(csl|json)$/i.test(f.extension)).slice(0, 5);   // nu și stilurile sau bibliografia (le creează Texere)
+    const recent = this.app.workspace.getLastOpenFiles().map(p => this.app.vault.getAbstractFileByPath(p)).filter(f => f instanceof TFile && !/^(csl|json)$/i.test(f.extension) && (opened[f.path] || (f.stat?.mtime || 0) - (f.stat?.ctime || 0) > 5000)).slice(0, 5);   // nu și ce a creat Texere (harta, șabloanele) fără să fi deschis   // nu și stilurile sau bibliografia (le creează Texere)
     if (recent.length) {
       inner.createDiv({ cls: "txh-label", text: T("Recente", "Recent") });
       const ul = inner.createDiv("txh-recent");

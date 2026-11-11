@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.3"
-date: "Versiunea 0.4.3 · 11 noiembrie 2026"
+version: "0.4.4"
+date: "Versiunea 0.4.4 · 11 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -25,22 +25,22 @@ Texere e un vault Obsidian gata făcut pentru cercetătorii care vor un singur l
 1. Instalează [Obsidian](https://obsidian.md/download) (gratuit).
 2. [Descarcă vault-ul](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) și dezarhivează-l; în Obsidian, alege **Open folder as vault**.
 3. Apasă **Trust author and enable plugins**.
-4. Configurarea se deschide singură. La fiecare pas bifezi sau alegi ce vrei; **Înainte** aplică alegerea.
+4. Configurarea se deschide singură. Alege **Structura Texere** (recomandat): Texere face tot, pas cu pas (folderele, bibliografia și stilurile de citare, șabloanele și ghidurile, PDF++), îți arată ce a făcut, iar tu apeși **Înainte**. La final, pagina de pornire se deschide într-un tab nou.
 5. La final, **Vezi ce s-a făcut** îți arată un rezumat (mai târziu: **Ajutor → Ultima configurare**).
 
 > [!tip] Într-un vault al tău, chiar gol
 > 1. **Settings → Community plugins → Turn on community plugins**.
 > 2. **Browse**, caută **BRAT**, apoi **Install** și **Enable**. BRAT instalează pluginuri de pe GitHub și le ține la zi.
 > 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, bifezi **Enable after installing the plugin**, apeși **Add plugin**.
-> 4. Configurarea se deschide singură. Într-un vault gol, lași totul cum e și apeși **Înainte** la fiecare pas: primești structura Texere. Într-un vault care are deja notele tale, e aleasă varianta **Folderele mele**: alegi unde ajung notele de lectură, PDF-urile și exporturile (Texere nu mută nimic din ce ai).
+> 4. Configurarea se deschide singură. Într-un vault gol, lași totul cum e și apeși **Înainte** la fiecare pas: primești structura Texere, cu totul pregătit. Într-un vault care are deja notele tale, e aleasă varianta **Folderele mele**: folderele lui Texere (notele de lectură, PDF-urile, exportul, bibliografia) se creează cu numele alese de tine; celelalte (notițe, lucrări) sunt ale tale, doar dacă le bifezi. Texere nu mută nimic din ce ai.
 >
 > Citările merg din prima: Texere adaugă o bibliografie goală și șase stiluri de citare (APA, Chicago, MLA, Harvard, IEEE) în **Support/Texere/Bibliography**.
 
 > [!warning] Ai ales din greșeală „Restricted mode”?
 > Pluginurile sunt oprite. Le pornești din **Settings → Community plugins**.
 
-> [!note] Un plugin pe care îl instalezi tu
-> Texere are nevoie de **PDF++** pentru adnotări. Configurarea îi deschide pagina: **Install**, apoi **Enable**.
+> [!note] PDF++
+> Texere are nevoie de **PDF++** pentru adnotări. Configurarea îl instalează din lista oficială Obsidian și îl pornește. Fără internet? **Încearcă din nou** mai târziu, sau **Deschide pagina lui**: **Install**, apoi **Enable**.
 
 **Pasul 2. Lucrează:** adaugi o referință ([[#2. Referințele și lectura]]), citești și subliniezi ([[#2.5 Lectura și adnotările]]), scrii și citezi ([[#3. Scrisul]]), exporți ([[#4. Exportul]]).
 
@@ -387,6 +387,14 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.4** · 11 noiembrie 2026
+Configurarea face totul pentru tine, pas cu pas.
+
+- **Structura Texere** (recomandat): folderele, bibliografia și stilurile de citare, șabloanele și ghidurile de scris, plus **PDF++** (instalat și pornit). Fiecare e un pas al lui: vezi ce s-a făcut, apoi **Înainte**.
+- **Folderele mele:** folderele lui Texere (notele de lectură, PDF-urile, exportul, bibliografia) se creează cu numele tale; celelalte foldere doar dacă le bifezi. Și aici se instalează PDF++.
+- **La final:** pagina de pornire se deschide într-un tab nou, iar iconița Texere e prima în ribbon.
+- **Folosești deja Texere?** După actualizare, dacă lipsește ceva de care Texere are nevoie (un folder al lui, bibliografia, un șablon, PDF++), o fereastră scurtă îl adaugă, pas cu pas.
 
 **0.4.3** · 11 noiembrie 2026
 Texere merge din prima pornire, într-un vault nou și într-unul pe care îl ai deja.
