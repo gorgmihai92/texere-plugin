@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.8 (11 November 2026)
+
+- **Emptied vault → start over:** at startup, if Texere was set up but the vault has no notes of yours and none of Texere's folders exist (bibliography, reading notes, PDFs, export), the setup state is reset (onboarded, structure, seen folders, presets, completion, field map, folders) and the setup opens as in a new vault — instead of "isn't in the vault anymore" alerts. Language, modules and update state stay.
+
 ## 0.4.7 (11 November 2026)
 
 - **Tag colours from PDF++** (`src/core/tagcolors.js`): one `<style>` built from PDF++'s palette, like the ready-made vault's `highlight-tags.css` snippet (text in the tag's colour, grey outline, transparent background; reading view, Live Preview, source mode). Rebuilt when the palette changes (checked every 3 s), removed when PDF++ is gone.

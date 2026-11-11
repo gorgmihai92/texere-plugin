@@ -422,7 +422,21 @@ module.exports = class Texere extends Plugin {
   }
   // O singură dată pe vault. Vault nou: pagina de pornire în tab-ul nou, iconița lui Texere prima în ribbon, linkurile se actualizează la redenumire.
   // Într-un vault existent nu schimbăm nimic din aranjamentul tău (iconița e la capătul ribbonului, unde Obsidian pune pluginurile).
+  // vault golit (nicio notă a ta și niciunul dintre folderele lui Texere): o luăm de la capăt, ca într-un vault nou,
+  // în loc de alerte „nu mai e în vault” pentru fiecare folder. Limba și modulele pornite rămân.
+  vaultEmptied() {
+    if (!this.settings.onboarded || !this.isNewVault.call({ settings: {}, app: this.app })) return false;
+    const V = this.app.vault, paths = [...this.fixedFolders(), ...this.movableFolders()].map(x => x.path).filter(Boolean);
+    return paths.length > 0 && paths.every(p => !V.getAbstractFileByPath(p));
+  }
+  async startOver() {
+    for (const k of ["onboarded", "structure", "seen", "presetDone", "completedFor", "foldersDone", "fields", "dirs", "lastSetup", "thesisFolder"]) delete this.settings[k];
+    await this.save();
+    try { this.app.saveLocalStorage(setup.FLAG, null); this.app.saveLocalStorage(LATER, null); } catch (e) {}
+    console.log("Texere: vault-ul e gol, configurarea o ia de la capăt");
+  }
   async firstRun() {
+    if (this.vaultEmptied()) { await this.startOver(); this._restart = true; }
     this.seenInit();
     await this.ensureEssentials();
     // PDF++ cu setările lui Texere, dar fără autor: fără el, PDF++ nu scrie evidențierile în PDF
@@ -438,6 +452,8 @@ module.exports = class Texere extends Plugin {
         try { if (!(this.app.workspace.getLeavesOfType?.("empty") || []).some(l => ![this.app.workspace.leftSplit, this.app.workspace.rightSplit].includes(l.getRoot?.()))) this.openHome(); } catch (e) {}
       }
     }
+    // luat de la capăt: configurarea se deschide (dacă pornirea n-a deschis-o deja)
+    if (this._restart) { this._restart = false; if (!this._wiz) { try { this.onboard(true); } catch (e) {} } }
     this.notify();
   }
   // bibliografia și stilurile de citare: dacă le muți în Obsidian, Texere le urmează; dacă dispar (mutate în afara lui Obsidian), le caută după bibliography.json
