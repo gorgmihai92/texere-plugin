@@ -105,6 +105,9 @@ module.exports = class Texere extends Plugin {
     this.app.workspace.onLayoutReady(() => { this.start().catch(e => console.error("Texere: configurarea", e)); });
     // actualizările, din release-urile GitHub ale pluginului (core/updater.js): „Ce e nou” după o actualizare; verificări la pornire, la fiecare oră și când deschizi pagina de pornire
     this.app.workspace.onLayoutReady(() => { try { this.updater = new Updater(this); this.updater.start(); } catch (e) { console.error("Texere: actualizările", e); } });
+    // modul concentrare: doar fișierele deschise (și cele puse unul lângă altul); aceeași scurtătură le readuce pe toate
+    { const { Focus } = require("./core/focus"); this.focus = new Focus(this); this.register(() => this.focus.unload());
+      this.coreCommand({ id: "focus-mode", name: this.T("Mod concentrare: doar fișierele deschise", "Focus mode: only the open files"), icon: "maximize", hotkeys: [{ modifiers: ["Mod", "Alt"], key: "f" }], callback: () => this.focus.toggle() }); }
     // etichetele evidențierilor (#fact, #claim…) în culorile paletei PDF++, legate de ea
     this.app.workspace.onLayoutReady(() => { try { require("./core/tagcolors").start(this); } catch (e) { console.error("Texere: culorile etichetelor", e); } });
     // ce aduce o versiune nouă în vault (core/vaultupdates.js): doar propuneri în pagina de pornire; nimic fără clicul tău
