@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.13"
-date: "Version 0.4.13 · 12 November 2026"
+version: "0.4.14"
+date: "Version 0.4.14 · 12 November 2026"
 ---
 ## 1. Start
 
@@ -388,8 +388,11 @@ The step numbers are those in [[#6.3 Manual setup]].
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
 
+**0.4.14** · 12 November 2026
+- **Focus mode is now Cmd/Ctrl + Shift + D.** Cmd + Option + F is Obsidian's own Find and replace, which won on Mac.
+
 **0.4.13** · 12 November 2026
-- **Focus mode:** **Ctrl/Cmd + Alt + F** hides everything except the files you have open (two side by side stay side by side): sidebars, ribbon, tabs, the note's top bar, the status bar. The same shortcut brings them back as they were. You can change it in Settings → Hotkeys ("Texere: Focus mode").
+- **Focus mode:** **Cmd/Ctrl + Shift + D** hides everything except the files you have open (two side by side stay side by side): sidebars, ribbon, tabs, the note's top bar, the status bar. The same shortcut brings them back as they were. You can change it in Settings → Hotkeys ("Texere: Focus mode").
 
 **0.4.12** · 11 November 2026
 - **Reload after an update reloads all of Obsidian**, so the new version starts and the message goes away (before, only Texere restarted and the message stayed).
