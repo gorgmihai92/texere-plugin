@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.20 (13 November 2026)
+
+- **The note scrolls to the pasted highlight** (`highlights.reveal`): in Reading view (written through `vault.process`, which used to leave the view where it was) via `previewMode.applyScroll`, in Source / Live Preview via `scrollIntoView` plus a direct `scrollTop` from `lineBlockAt` (CodeMirror only scrolls at its next measure, which can lag); repeated at 200 and 700 ms so a note that has just opened (Obsidian restores its old scroll position) still ends up at the new line.
+
 ## 0.4.19 (13 November 2026)
 
 - **No full PDF reload on highlight / delete** (`quietPdfReload`): the "written from Obsidian" mark used to be dropped 1.5 s after the first `modify`; on macOS (file watcher, iCloud) the same write can arrive again as a second `modify`, which then reloaded the whole PDF (blank pane, "0 of 269"). Now every `modify` within 15 s of a write from Obsidian takes the quiet path; a `modify` that comes while a redraw is running queues one more redraw. Also: pdf.js through `loadPdfJs()` when `window.pdfjsLib` isn't set, a page-count change still reloads fully, the patched handler is given back to open PDF views when Texere unloads (a Texere restart used to leave them on the old one), and every full reload is logged with its reason in `.obsidian/plugins/texere/pdf-reload.log` (last 200 lines).

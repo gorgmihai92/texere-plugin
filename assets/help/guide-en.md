@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.19"
-date: "Version 0.4.19 · 13 November 2026"
+version: "0.4.20"
+date: "Version 0.4.20 · 13 November 2026"
 ---
 ## 1. Start
 
@@ -392,6 +392,9 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.20** · 13 November 2026
+- **The note scrolls to the new highlight**, however it is open (Source, Live Preview or Reading) and even if it has just opened: you see right away where it went.
 
 **0.4.19** · 13 November 2026
 - **The PDF no longer reloads** when you highlight or delete a highlight: on a Mac the same save sometimes reached Obsidian twice, and the second one reloaded the whole PDF (a white screen, "0 of 269"). Now only the page is redrawn, without a flash.

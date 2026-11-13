@@ -648,15 +648,39 @@ class Highlights {
     if (at > 0 && L[at - 1].trim() !== "") add.push("");
     add.push(text);
     if (at < L.length && L[at].trim() !== "") add.push("");
+    let first = at;
     if (ed) {
       if (at < L.length) ed.replaceRange(add.join("\n") + "\n", { line: at, ch: 0 });
       else ed.replaceRange("\n" + add.join("\n"), { line: L.length - 1, ch: L[L.length - 1].length });
-      const first = at < L.length ? at : L.length;
-      try { ed.scrollIntoView({ from: { line: first, ch: 0 }, to: { line: first + add.length, ch: 0 } }, true); } catch (e) {}
+      first = at < L.length ? at : L.length;
     } else {
-      await this.app.vault.process(note, t => { const X = t.split("\n"); const pos = Math.min(at, X.length); X.splice(pos, 0, ...add); return X.join("\n"); });
+      await this.app.vault.process(note, t => { const X = t.split("\n"); const pos = Math.min(at, X.length); first = pos; X.splice(pos, 0, ...add); return X.join("\n"); });
     }
+    this.reveal(leaf, note, first, add.length);
     return true;
+  }
+  // nota se derulează la rândul nou, oricum ar fi deschisă (Editare, Live Preview sau Citire) și chiar dacă abia s-a deschis
+  // (Obsidian își pune la loc poziția de dinainte puțin după deschidere: mai încercăm de două ori)
+  reveal(leaf, note, line, n = 1) {
+    const go = () => {
+      try {
+        const lf = leaf?.view?.file === note ? leaf : this.app.workspace.getLeavesOfType("markdown").find(l => l.view?.file === note);
+        const v = lf?.view; if (!v) return;
+        if (v.getMode?.() === "preview") { const pm = v.previewMode || v.currentMode; pm?.applyScroll?.(Math.max(0, line - 3)); }
+        else {
+          const ed = v.editor; if (!ed) return;
+          ed.scrollIntoView({ from: { line, ch: 0 }, to: { line: line + n, ch: 0 } }, true);
+          // și direct, în pixeli (CodeMirror derulează abia la următoarea măsurare, care uneori întârzie)
+          const cm = ed.cm, sd = cm?.scrollDOM;
+          if (cm && sd && line < cm.state.doc.lines) {
+            const blk = cm.lineBlockAt(cm.state.doc.line(line + 1).from), off = cm.documentTop - sd.getBoundingClientRect().top + sd.scrollTop;
+            const y = Math.max(0, Math.round(off + blk.top - sd.clientHeight / 3));
+            if (Math.abs(sd.scrollTop - y) > 40) sd.scrollTop = y;
+          }
+        }
+      } catch (e) {}
+    };
+    go(); setTimeout(go, 200); setTimeout(go, 700);
   }
 
   // rândurile notei care trimit la acest PDF: { start, entries: [{ i, loc }] }
