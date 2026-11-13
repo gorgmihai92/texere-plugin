@@ -23,8 +23,11 @@ class Updater {
   get version() { return String(this.P.manifest?.version || "0.0.0"); }
   get conf() { const s = this.P.settings; return (s.updates = s.updates || {}); }
   T(a, b) { return this.P.T(a, b); }
-  // „Caută actualizări” (implicit pornit): doar întreabă; instalarea e mereu la clicul tău
+  // „Caută actualizări” (implicit pornit)
   get auto() { return this.conf.check !== false; }
+  // „Instalează singur versiunile noi” (implicit pornit): o versiune publicată se instalează în fundal și pornește la următoarea
+  // reîncărcare (sau imediat, cu „Reîncarcă”); oprit: doar o anunță, iar instalarea e la clicul tău
+  get autoInstall() { return this.conf.autoInstall !== false; }
   // versiunea nouă găsită (și nesărită), sau null
   get available() { const c = this.conf, v = c.latest; if (!v || !newer(v, this.version) || (c.skip && !newer(v, c.skip)) || this.pending === v) return null; return v; }
   // instalată, dar pornește abia după reîncărcare
@@ -77,8 +80,13 @@ class Updater {
         if (manual) new Notice(this.T(`Ai ultima versiune (${this.version}).`, `You have the latest version (${this.version}).`), 5000);
         return { state: "current", version: rel.version };
       }
-      if (manual) new Notice(this.T(`Texere ${rel.version} e disponibil. Îl instalezi din pagina de pornire sau de aici, cu „Actualizează”.`, `Texere ${rel.version} is available. Install it from the home page or here, with “Update”.`), 7000);
       this.rel = rel;
+      // instalare singură: aceleași verificări ca la clicul tău (manifestul lui Texere, versiunea release-ului, main.js întreg), versiunea de acum în previous/
+      if (this.autoInstall && this.pending !== rel.version) {
+        const ok = await this.install(rel);
+        if (ok) return { state: "installed", version: rel.version };
+      }
+      if (manual) new Notice(this.T(`Texere ${rel.version} e disponibil. Îl instalezi din pagina de pornire sau de aici, cu „Actualizează”.`, `Texere ${rel.version} is available. Install it from the home page or here, with “Update”.`), 7000);
       return { state: "available", version: rel.version };
     } finally { this.busy = false; }
   }

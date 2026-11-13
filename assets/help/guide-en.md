@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.17"
-date: "Version 0.4.17 · 13 November 2026"
+version: "0.4.18"
+date: "Version 0.4.18 · 13 November 2026"
 ---
 ## 1. Start
 
@@ -391,7 +391,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 
 ## 7. What's new
 
-When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+When there's a new version, Texere installs it by itself, in the background, and it starts when you reload Obsidian (the home page shows **Reload**). If you'd rather install it yourself, turn off **Settings → Texere → General → Install new versions by itself**: the home page then shows it with an **Update** button. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.18** · 13 November 2026
+- **New versions install by themselves.** When a new version is out, Texere installs it in the background (with the same checks, and the previous version kept as a fallback) and it starts when you reload Obsidian. You can turn this off in Settings → Texere → General → Install new versions by itself.
 
 **0.4.17** · 13 November 2026
 - **Changing your mind about a Zotero reference:** if you close the choice (Esc or a click elsewhere), nothing is added and the text goes back to what you typed.
