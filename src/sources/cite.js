@@ -124,7 +124,16 @@ class CiteSuggest extends EditorSuggest {
     if (!key) { new Notice(T("N-am putut face cheia de citare pentru această referință.", "Couldn't make a citation key for this reference.")); return; }
     // unde apare alegerea: sub citare
     let at = null; try { const off = ed.posToOffset(ctx.start), c = ed.cm?.coordsAtPos?.(off); if (c) at = { x: c.left, y: c.bottom + 4 }; } catch (e) {}
+    const ln = ctx.start.line, before = ed.getLine(ln), typed = "@" + (ctx.query || ""), end0 = { ...ctx.end };
     this.put(key, ctx);
+    const placed = ed.getLine(ln);
+    // renunți (Esc, clic în altă parte): nu se adaugă nimic, iar în text rămâne ce scriseseși („@ethic”)
+    const undo = () => {
+      try {
+        if (ed.getLine(ln) === placed) { ed.replaceRange(before, { line: ln, ch: 0 }, { line: ln, ch: placed.length }); ed.setCursor(end0); }
+        else this.rekey(ed, key, null, typed);
+      } catch (e) {}
+    };
     // ce are în Zotero (PDF? câte adnotări?); un Zotero lent nu ține pe loc: după 2,5 s întrebăm fără numărul adnotărilor
     const zk = x.zotero.key, timeout = ms => new Promise(r => setTimeout(() => r(undefined), ms));
     let att = null; try { att = await Promise.race([Z.attachment({ key: zk }), timeout(2500)]); } catch (e) { att = null; }
@@ -132,7 +141,7 @@ class CiteSuggest extends EditorSuggest {
     if (att !== null) {
       let hl; if (att) { try { hl = await Promise.race([Z.annotations(att).then(a => a.length), timeout(1500)]); } catch (e) {} }
       withPdf = await this.askPdf(at, hl, T);
-      if (withPdf === null) return;   // nu se întâmplă: închiderea alegerii = doar referința
+      if (withPdf === null) { undo(); return; }
     }
     const wait = new Notice(withPdf ? T(`Din Zotero: @${key}, cu PDF-ul și adnotările…`, `From Zotero: @${key}, with its PDF and annotations…`) : T(`Din Zotero: @${key}…`, `From Zotero: @${key}…`), 0);
     try {
@@ -146,7 +155,7 @@ class CiteSuggest extends EditorSuggest {
         : T(`Adăugată din Zotero: @${key} (nota de lectură și bibliografia).`, `Added from Zotero: @${key} (reading note and bibliography).`) + (att === null && Z.state?.local === "on" ? T(" În Zotero nu are PDF.", " It has no PDF in Zotero.") : ""), 6000);
     } catch (e) { wait.hide(); console.error("Texere: referința din Zotero", e); new Notice(T("Referința din Zotero n-a intrat: ", "The reference from Zotero didn't come in: ") + (e?.message || e), 8000); }
   }
-  // „Doar referința” / „Referința și PDF-ul · 12 adnotări”; Esc sau clic în altă parte: doar referința. hl: undefined = nu știm încă
+  // „Doar referința” (Enter) / „Referința și PDF-ul · 12 adnotări”; Esc sau clic în altă parte: null (nimic). hl: undefined = nu știm încă
   askPdf(at, hl, T) {
     return new Promise(res => {
       const { Menu } = require("obsidian"); let done = false; const end = v => { if (!done) { done = true; res(v); } };
@@ -156,18 +165,20 @@ class CiteSuggest extends EditorSuggest {
         : hl ? T(`Referința și PDF-ul · ${hl === 1 ? "1 adnotare" : hl + " adnotări"}`, `Reference and PDF · ${hl === 1 ? "1 annotation" : hl + " annotations"}`)
         : T("Referința și PDF-ul (fără adnotări)", "Reference and PDF (no annotations)");
       m.addItem(i => i.setTitle(pdfT).setIcon("file-text").onClick(() => end(true)));
-      m.onHide(() => setTimeout(() => end(false), 0));
+      m.onHide(() => setTimeout(() => end(null), 0));
       if (at) m.showAtPosition(at); else m.showAtPosition({ x: window.innerWidth / 2, y: window.innerHeight / 3 });
       try { m.select?.(0); } catch (e) {}   // Enter = doar referința
     });
   }
   // @veche → @nouă în notă (doar citările întregi)
-  rekey(ed, from, to) {
+  // plain: în locul citării întregi [@cheie] pune textul ăsta (renunțarea la o referință din Zotero)
+  rekey(ed, from, to, plain) {
     try {
-      const re = new RegExp("@" + from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w:.\\-])", "g");
+      const k = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re = plain != null ? new RegExp("\\[@" + k + "\\]", "g") : new RegExp("@" + k + "(?![\\w:.\\-])", "g");
       for (let l = 0; l < ed.lineCount(); l++) {
         const line = ed.getLine(l), hits = [...line.matchAll(re)];
-        for (const m of hits.reverse()) ed.replaceRange("@" + to, { line: l, ch: m.index }, { line: l, ch: m.index + m[0].length });
+        for (const m of hits.reverse()) ed.replaceRange(plain != null ? plain : "@" + to, { line: l, ch: m.index }, { line: l, ch: m.index + m[0].length });
       }
     } catch (e) {}
   }

@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.17 (13 November 2026)
+
+- Closing the "Reference only / Reference and PDF" menu (Esc, click outside) now cancels: nothing is added, and the line goes back to what you typed (`@denn`); if the line changed meanwhile, only the `[@key]` is put back to the typed text. Enter still picks "Reference only".
+
 ## 0.4.16 (13 November 2026)
 
 - **@ from Zotero, PDF on request** (`cite.pickZotero`, `askPdf`): after picking a Zotero item, Texere asks Zotero for its PDF attachment (2.5 s limit) and annotation count (1.5 s); with a PDF, a menu under the citation offers "Reference only" (preselected, Enter, also on Esc) or "Reference and PDF · n annotations"; without one, the reference is added directly. `add(..., { silent, noFreePdf: true, noZoteroPdf, zoteroHl: true })`; `pdfToVault({ highlights: true })` now forces the Zotero annotations even if the import default is off. One closing notice says what came in.
