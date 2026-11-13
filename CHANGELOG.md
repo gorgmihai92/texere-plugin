@@ -2,6 +2,15 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.15 (13 November 2026)
+
+- **@ citations from Zotero** (`src/sources/cite.js`): under the vault's matches, the `@` suggester lists Zotero items not yet in the vault (`Zotero.search`, local API with Zotero open, web API with a key; cached per query for a minute; 1.5 s / 3 s timeout so the list never waits on a slow Zotero; stale responses dropped). Picking one writes `[@key]` at once (`sources.keyFor`, the same key rule as new references) and adds the reference in the background (`add(x, { csl, key, stay: true })`: note, bibliography, PDF from Zotero; the note isn't opened). If the reference turned out to be in the vault under another key, the citation is rewritten. No Better BibTeX anywhere: Texere makes the citation keys.
+- **"…Better BibTeX plugin is installed"** notices from other plugins (Zotero Integration) get a Texere line and a **How to fix it** button (`hintNotices`, a MutationObserver on the notice container): a dialog with Zotero's live state (closed / open / Better BibTeX probed at `/better-bibtex/cayw?probe=true`), citing with Texere's `@`, turning the other plugin off, or installing Better BibTeX step by step.
+- **Bibliography right after the text** in Live Preview / Source mode: CodeMirror's scroll-past-end padding (`.cm-content` padding-bottom, ~half the window) sat between the last line and the panel; with a panel the padding moves under it (`.cm-sizer.tx-has-biblio`).
+- **Pointer in PDF** (`src/core/pdfhand.js`): a pointer button in every PDF toolbar (before PDF++'s palette), the **H** key in a PDF (not in PDF++'s Vim mode) and the command "Pointer in PDF": arrow cursor, drag pans the `.pdf-viewer-container`, the text layer can't be selected (so PDF++ copies/pastes nothing), the click after a drag is swallowed. PDF++'s selected colour is left as it was (only dimmed), so H brings back the same colour; picking a colour also turns it off.
+- **No new pane per highlight** (`highlights.showNote`): a note open in a sidebar, a popout window or a background tab didn't count as open, so every pasted highlight split a new pane. Now any leaf already showing the note (or holding it, deferred included) is used; a background tab in the main area is brought forward unless it sits behind the PDF itself.
+- **No more "Article 1"**: a note stores a journal's issue in `number`; it was copied to `issue` but also left in `number`, which APA prints as an article number (replacing the pages). Now moved, for the note's bibliography and for export.
+
 ## 0.4.14 (12 November 2026)
 
 - Focus mode's default hotkey is now **Mod+Shift+D**: Mod+Alt+F is Obsidian's editor Find and replace (an editor keymap, not a command, so it wins and doesn't show as a conflict in Hotkeys). Checked free in Obsidian's commands and the common plugins.

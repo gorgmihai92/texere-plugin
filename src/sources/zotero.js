@@ -221,6 +221,30 @@ class Zotero {
       button: { cls: B[0], chip: B[1], desc: B[2] },
       catalog: st.zotero === "on" ? { cls: "ok", text: T("conectat", "connected") } : st.key ? { cls: "ok", text: T("prin cheie", "via key") } : { cls: "warn", text: T("neconectat", "not connected") } };
   }
+  // ——— „Better BibTeX”: mesajul altui plugin (Zotero Integration) când Zotero n-are Better BibTeX. Texere nu-l cere; în mesaj adăugăm cum se rezolvă ———
+  async bbt() { try { const r = await this.rawLocal("/better-bibtex/cayw?probe=true", 1500); return r.status === 200 && /ready/i.test(r.body.toString("utf8")) ? "yes" : "no"; } catch (e) { return null; } }
+  // pluginul care cere Better BibTeX (de obicei Zotero Integration), dacă e pornit
+  bbtPlugin() {
+    const pl = this.app.plugins, ids = ["obsidian-zotero-desktop-connector", ...Object.keys(pl?.manifests || {}).filter(id => /zotero/i.test(id) && id !== this.S.host?.manifest?.id)];
+    const id = ids.find(i => pl?.enabledPlugins?.has(i)); return id ? { id, name: pl.manifests[id]?.name || id } : null;
+  }
+  hintNotices() {
+    const seen = new WeakSet(), T = (a, b) => this.T(a, b);
+    const check = n => {
+      if (!(n instanceof HTMLElement) || seen.has(n) || !n.classList.contains("notice")) return;
+      const t = n.textContent || ""; if (!/better\s*bibtex/i.test(t) || n.querySelector(".tx-bbt")) return;
+      seen.add(n);
+      const box = n.createDiv({ cls: "tx-bbt" }), who = this.bbtPlugin();
+      box.createDiv({ text: T(`Texere: mesajul e de la ${who ? who.name : "alt plugin"}. Texere nu are nevoie de Better BibTeX: scrie @ într-o notă și alegi direct din Zotero.`,
+        `Texere: this message comes from ${who ? who.name : "another plugin"}. Texere doesn't need Better BibTeX: type @ in a note and pick straight from Zotero.`) });
+      const go = box.createEl("button", { text: T("Cum rezolv", "How to fix it") });
+      go.addEventListener("click", e => { e.stopPropagation(); new BbtModal(this).open(); n.hide?.(); n.remove(); });
+    };
+    const watch = box => { if (box._txBbt) return; box._txBbt = new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(check))); box._txBbt.observe(box, { childList: true }); box.querySelectorAll(":scope > .notice").forEach(check); };
+    const find = () => { const b = document.body.querySelector(":scope > .notice-container"); if (b) watch(b); };
+    const top = new MutationObserver(find); top.observe(document.body, { childList: true }); find();
+    return () => { top.disconnect(); document.querySelectorAll(".notice-container").forEach(b => { b._txBbt?.disconnect(); delete b._txBbt; }); };
+  }
   // ——— API-ul web (cu o cheie gratuită de pe zotero.org) ———
   key() { return String(this.conf().zoteroKey || "").trim(); }
   async userId() {
@@ -1207,8 +1231,42 @@ class ZoteroPane {
   }
 }
 
+// „Cum rezolv”: ce e acum (Zotero deschis? Better BibTeX instalat?) și cele două drumuri
+class BbtModal extends Modal {
+  constructor(Z) { super(Z.app); this.Z = Z; }
+  T(a, b) { return this.Z.T(a, b); }
+  onOpen() { this.titleEl.setText(this.T("Zotero fără Better BibTeX", "Zotero without Better BibTeX")); this.modalEl.addClass("tx-bbt-modal"); this.draw(); }
+  async draw() {
+    const T = (a, b) => this.T(a, b), Z = this.Z, el = this.contentEl; el.empty();
+    const st = el.createDiv({ cls: "tx-bbt-st", text: T("Verific Zotero…", "Checking Zotero…") });
+    const local = await Z.localState(true), bbt = local === "closed" ? null : await Z.bbt(), who = Z.bbtPlugin(), name = who?.name || T("celălalt plugin", "the other plugin");
+    st.setText(local === "closed" ? T("Zotero e închis acum. Deschide-l: și " + name + " are nevoie de el.", "Zotero is closed right now. Open it: " + name + " needs it too.")
+      : bbt === "yes" ? T("Zotero e deschis și Better BibTeX e instalat: încearcă din nou.", "Zotero is open and Better BibTeX is installed: try again.")
+      : T("Zotero e deschis, dar Better BibTeX nu e instalat în el.", "Zotero is open, but Better BibTeX isn't installed in it."));
+    st.addClass(local !== "closed" && bbt === "yes" ? "is-ok" : "is-warn");
+    const opt = (title, steps) => { const o = el.createDiv({ cls: "tx-bbt-opt" }); o.createDiv({ cls: "tx-bbt-h", text: title }); const ol = o.createEl("ol"); for (const s of steps) { const li = ol.createEl("li"); typeof s === "function" ? s(li) : li.setText(s); } return o; };
+    const a = opt(T("Citezi cu Texere, fără Better BibTeX", "Cite with Texere, without Better BibTeX"), [
+      T("Scrie @ și câteva litere din autor sau titlu.", "Type @ and a few letters of the author or title."),
+      T("Referințele din Zotero apar sub cele din vault, cu eticheta Zotero. Alegi una: intră în vault cu nota, bibliografia și PDF-ul.", "References from Zotero show under the ones in your vault, labelled Zotero. Pick one: it comes into your vault with its note, bibliography entry and PDF."),
+      ...(local === "off" ? [T("Doar o dată, în Zotero: Setări → Avansat → bifează „Permite altor aplicații de pe acest computer să comunice cu Zotero”.", "Once, in Zotero: Settings → Advanced → tick “Allow other applications on this computer to communicate with Zotero”.")] : []),
+    ]);
+    if (who) { const b = a.createEl("button", { text: T(`Oprește ${who.name}`, `Turn off ${who.name}`) }); b.title = T("Mesajul nu mai apare. Îl poți porni oricând din Settings → Community plugins.", "The message stops. You can turn it back on anytime in Settings → Community plugins.");
+      b.addEventListener("click", async () => { b.disabled = true; try { await this.app.plugins.disablePluginAndSave(who.id); new Notice(T(`${who.name} e oprit.`, `${who.name} is off.`)); this.close(); } catch (e) { b.disabled = false; new Notice(e.message); } }); }
+    opt(T(`Păstrezi ${name}: instalezi Better BibTeX`, `Keep ${name}: install Better BibTeX`), [
+      li => { li.appendText(T("Descarcă fișierul .xpi de pe ", "Download the .xpi file from ")); li.createEl("a", { text: T("pagina Better BibTeX", "the Better BibTeX page"), href: "https://github.com/retorquere/zotero-better-bibtex/releases/latest" }); li.appendText(T(" (fișierul care se termină în .xpi).", " (the file ending in .xpi).")); },
+      T("În Zotero: Tools → Plugins (Unelte → Pluginuri).", "In Zotero: Tools → Plugins."),
+      T("Rotița din dreapta-sus → Install Plugin From File… → alege fișierul .xpi.", "The gear at the top right → Install Plugin From File… → choose the .xpi file."),
+      T("Repornește Zotero.", "Restart Zotero."),
+    ]);
+    const row = el.createDiv({ cls: "modal-button-container" });
+    const again = row.createEl("button", { text: T("Verifică din nou", "Check again") }); again.addEventListener("click", () => this.draw());
+    const ok = row.createEl("button", { cls: "mod-cta", text: T("Gata", "Done") }); ok.addEventListener("click", () => this.close());
+  }
+  onClose() { this.contentEl.empty(); }
+}
+
 module.exports = {
-  toCsl, Zotero, ZoteroPane,
+  toCsl, Zotero, ZoteroPane, BbtModal,
   install(S) {
     const Z = new Zotero(S); S.zotero = Z; S.ZoteroPane = ZoteroPane;   // fila „Zotero” din „Adaugă o sursă”
     const h = S.host;
@@ -1216,6 +1274,7 @@ module.exports = {
     // butonul din browser și starea lui Zotero: verificate la câteva secunde (doar cât timp butonul e pornit)
     S.app.workspace.onLayoutReady?.(() => later(() => Z.tick().catch(() => {}).finally(() => Z.schedule()), 2000));
     h.register(() => { Z.dead = true; unlater(Z._tt); Z.stopConnector(); });
+    try { h.register(Z.hintNotices()); } catch (e) { console.warn("Texere Zotero: mesajele despre Better BibTeX", e); }   // „…Better BibTeX plugin is installed” (de la alt plugin): cum se rezolvă
     return Z;
   },
 };

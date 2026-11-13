@@ -110,6 +110,10 @@ module.exports = class Texere extends Plugin {
       this.coreCommand({ id: "focus-mode", name: this.T("Mod concentrare: doar fișierele deschise", "Focus mode: only the open files"), icon: "maximize", hotkeys: [{ modifiers: ["Mod", "Shift"], key: "d" }], callback: () => this.focus.toggle() }); }
     // etichetele evidențierilor (#fact, #claim…) în culorile paletei PDF++, legate de ea
     this.app.workspace.onLayoutReady(() => { try { require("./core/tagcolors").start(this); } catch (e) { console.error("Texere: culorile etichetelor", e); } });
+    // pointerul în PDF: tragi ca să parcurgi, fără să evidențiezi (butonul din bara PDF-ului, tasta H)
+    { const { PdfHand } = require("./core/pdfhand"); this.pdfHand = new PdfHand(this);
+      this.coreCommand({ id: "pdf-hand", name: this.T("Pointer în PDF: parcurgi trăgând, fără să evidențiezi", "Pointer in PDF: drag to move through, without highlighting"), icon: "mouse-pointer-2", callback: () => this.pdfHand.toggle() });
+      this.app.workspace.onLayoutReady(() => { try { this.pdfHand.start(); } catch (e) { console.error("Texere: pointerul în PDF", e); } }); }
     // ce aduce o versiune nouă în vault (core/vaultupdates.js): doar propuneri în pagina de pornire; nimic fără clicul tău
     this.vaultUpdates = new VaultUpdates(this);
     this.app.workspace.onLayoutReady(() => { setTimeout(() => { (this._boot || Promise.resolve()).then(() => this.vaultUpdates.run()).catch(e => console.error("Texere: ce aduce versiunea nouă", e)); }, 4000); });

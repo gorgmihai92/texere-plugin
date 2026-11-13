@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.14"
-date: "Versiunea 0.4.14 · 12 noiembrie 2026"
+version: "0.4.15"
+date: "Versiunea 0.4.15 · 13 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -146,6 +146,8 @@ Primești nota, PDF-ul și adnotările, fiecare cu eticheta culorii ei.
 - **Nimic nu se dublează:** o referință care e deja în vault primește doar ce lipsește.
 - **Un PDF fără titlu și autori** intră în **PDFs/Inbox**, iar Texere te întreabă cărei referințe îi aparține.
 - **Ce etichetă primește fiecare culoare:** **Settings → Texere → Referințe → Zotero → Avansat**.
+- **Citezi direct din Zotero:** scrii `@` într-o notă și apar și referințele din Zotero ([[#3.2 Citarea referințelor]]).
+- **Better BibTeX nu trebuie.** Dacă alt plugin (de ex. Zotero Integration) îl cere, apasă **Cum rezolv** în mesajul lui.
 
 > [!tip] Recomandat: o cheie Zotero
 > O adaugi în același loc. Importul merge atunci și cu Zotero închis.
@@ -183,6 +185,8 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 | mov | `#question` | întrebări |
 | portocaliu | `#definition` | definiții |
 | gri | `#word` | termeni de reținut |
+
+**Doar citești?** Apasă pointerul din bara PDF-ului, înaintea culorilor (sau **H**): ții mouse-ul apăsat și tragi ca să parcurgi pagina, fără să evidențiezi. Apeși iar **H** și revii la culoarea de dinainte; sau alegi alta.
 
 **Adnotările făcute în altă parte** (Zotero, Preview, Acrobat) intră singure în notă, cu eticheta celei mai apropiate culori. Făcute după ce ai adăugat referința: clic dreapta pe PDF sau pe notă → **Texere** → **Importă adnotările din PDF**. Făcute sub alt nume: Texere te întreabă dacă sunt ale tale.
 
@@ -224,7 +228,7 @@ La lucrări completezi **title**, **autor**, **coordonator** și **an**. Regulil
 ### 3.2 Citarea referințelor
 
 1. Scrie `@` și un cuvânt din autor sau din titlu.
-2. Alege referința: Texere scrie `[@citekey]`.
+2. Alege referința: Texere scrie `[@citekey]`. Cu Zotero deschis (sau cu o cheie Zotero), sub referințele din vault apar și cele din Zotero, cu eticheta **Zotero**: alegi una și intră în vault, cu nota, bibliografia și PDF-ul.
 3. Adaugă pagina: `[@citekey, p. 29]`. Dă-o mereu când citezi sau parafrazezi.
 
 În notă, citarea se citește ca text: (Descartes, 1641/2022, p. 29). Un clic pe ea deschide referința sau PDF-ul, sau o editezi.
@@ -377,6 +381,7 @@ Configurarea face cu tine pașii 3, 4, 5 și 7. De mână:
 | alt font în export | fontul nu e instalat | pasul 6 |
 | lipsește un șablon sau un ghid de scris | a fost mutat sau șters | pasul 7 |
 | „Zotero e închis” | Zotero nu e pornit | deschide-l sau adaugă o cheie Zotero |
+| „…Better BibTeX plugin is installed” | mesajul altui plugin (Zotero Integration) | Texere nu are nevoie de Better BibTeX: apasă **Cum rezolv** în mesaj |
 | Zotero „nu-l lasă pe Texere să intre” | Zotero blochează alte aplicații | în Zotero: **Setări → Avansat** → permite altor aplicații |
 | butonul Zotero salvează doar în Zotero | butonul din browser e oprit | [[#2.3 Din browser, cu butonul Zotero]] |
 | lipsesc adnotări din notă | au fost făcute după ce ai adăugat referința | clic dreapta pe PDF → **Texere** → **Importă adnotările din PDF** |
@@ -387,6 +392,14 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.15** · 13 noiembrie 2026
+- **Citezi direct din Zotero.** Scrii `@` și câteva litere: sub referințele din vault apar și cele din Zotero. Alegi una, citarea se scrie pe loc, iar referința intră în vault cu nota, bibliografia și PDF-ul din Zotero. Fără Better BibTeX: merge cu Zotero deschis sau cu o cheie Zotero.
+- **Mesajul „…Better BibTeX plugin is installed”** (de la alt plugin, de ex. Zotero Integration) primește acum un buton **Cum rezolv**: citezi cu Texere, oprești celălalt plugin sau instalezi Better BibTeX, pas cu pas.
+- **Bibliografia notei vine imediat după text**, fără golul mare dinaintea ei.
+- **Articolele nu mai apar cu „Article 1”** în bibliografie: numărul revistei se scrie o singură dată, iar paginile apar din nou.
+- **Pointerul în PDF:** butonul cu pointer din bara PDF-ului (sau tasta **H**) îți lasă PDF-ul de parcurs trăgând cu mouse-ul, fără să evidențiezi. **H** te întoarce la culoarea de dinainte.
+- **O evidențiere nu mai deschide încă o fereastră** cu nota: dacă nota e deja deschisă (lângă PDF, în bara laterală, într-o fereastră separată sau într-un tab din spate), rândul intră acolo.
 
 **0.4.14** · 12 noiembrie 2026
 - **Modul concentrare e acum Cmd/Ctrl + Shift + D.** Cmd + Option + F e scurtătura lui Obsidian pentru Caută și înlocuiește, care avea prioritate pe Mac.

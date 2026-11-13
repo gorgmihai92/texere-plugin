@@ -63,31 +63,86 @@ class CiteSuggest extends EditorSuggest {
     return { start: { line: cursor.line, ch: cursor.ch - m[2].length - 1 }, end: cursor, query: m[2] };
   }
   // cel mult 10, cele mai potrivite întâi: cheia sau primul autor care încep cu ce ai scris, apoi restul;
-  // iartă diacriticele (vica → Vică) și o greșeală de tastare (ascombe → Anscombe)
+  // iartă diacriticele (vica → Vică) și o greșeală de tastare (ascombe → Anscombe).
+  // Sub ele, referințele din Zotero care nu sunt încă în vault (cu Zotero deschis sau cu cheia ta Zotero)
   async getSuggestions(ctx) {
+    const tok = this.tok = (this.tok || 0) + 1;
     const items = await this.load(), q = fold(ctx.query).split(/[\s_]+/).filter(Boolean), q0 = q[0] || "";
-    const found = items.map((it, i) => {
+    const score = list => list.map((it, i) => {
       let worst = 0;
       for (const w of q) { const m = matchWord(it, w); if (m > worst) worst = m; if (worst > 2) break; }
-      const start = !q0 || it.key.toLowerCase().startsWith(q0) || it.first.startsWith(q0) ? 0 : 1;
+      const start = !q0 || (it.key || "").toLowerCase().startsWith(q0) || it.first.startsWith(q0) ? 0 : 1;
       return [worst, start, i, it];
-    }).filter(x => x[0] <= 2).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).slice(0, this.limit).map(x => x[3]);
-    return found;   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
+    }).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+    const found = score(items).filter(x => x[0] <= 2).map(x => x[3]);
+    const z = await this.fromZotero(ctx.query);
+    if (tok !== this.tok) return new Promise(() => {});   // între timp ai mai scris: contează doar lista nouă
+    const zs = score(z).map(x => x[3]), mine = found.slice(0, zs.length ? 6 : this.limit);
+    return [...mine, ...zs.slice(0, this.limit - mine.length)];   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
+  }
+  // Zotero, căutat din mers: prin API-ul local (Zotero deschis) sau prin cheia ta (Zotero închis). Better BibTeX nu trebuie: cheia o face Texere.
+  // Fiecare căutare se ține minte un minut; un Zotero care răspunde încet nu ține lista pe loc (răspunsul lui intră la tasta următoare).
+  async fromZotero(query) {
+    const S = this.plugin?.sources, Z = S?.zotero, q = String(query || "").replace(/[_]+/g, " ").trim();
+    if (!Z || q.length < 2) return [];
+    const cache = this.zc || (this.zc = new Map()), hit = cache.get(q.toLowerCase());
+    let res = hit && Date.now() - hit.at < 60000 ? hit.items : null;
+    if (!res) {
+      const run = Z.search(q).then(items => { cache.set(q.toLowerCase(), { at: Date.now(), items }); if (cache.size > 60) cache.delete(cache.keys().next().value); return items; });
+      run.catch(() => {});
+      try { res = await Promise.race([run, new Promise(r => setTimeout(() => r(null), Z.state?.local === "on" ? 1500 : 3000))]); } catch (e) { res = null; }
+      if (!res) return [];
+    }
+    if (!this.libIdx || Date.now() - this.libIdx.at > 5000) this.libIdx = { at: Date.now(), lib: S.library() };
+    const lib = this.libIdx.lib;
+    return res.filter(x => x?.zotero?.csl && x.title && !lib.find(x)).map(x => {
+      const au = (x.authors || []).map(a => a.family || a.literal || "").filter(Boolean), year = x.year ? String(x.year) : "";
+      const hay = fold([au.join(" "), year, x.title].join(" "));
+      return { z: x, key: "", who: au.length > 2 ? au[0] + " et al." : au.join(" & "), year, title: x.title || "", first: fold(au[0] || ""), hay, words: hay.split(/[^\p{L}\p{N}]+/u).filter(Boolean) };
+    });
   }
   // un singur rând pe sursă: „Autor An – Titlu” (titlul se taie dacă e lung); cheia, în balon
   renderSuggestion(it, el) {
     el.addClass("tx-cite-sug"); el.title = "@" + it.key + (it.title ? "\n" + it.title : "");
-    el.createSpan({ cls: "tx-cite-sug-who", text: `${it.who || it.key}${it.year ? " " + it.year : ""}` });
+    el.createSpan({ cls: "tx-cite-sug-who", text: `${it.who || it.key || it.title}${it.year ? " " + it.year : ""}` });
     if (it.title) el.createSpan({ cls: "tx-cite-sug-title", text: " – " + it.title });
+    if (it.z) { el.addClass("is-zotero"); el.title = (isEn() ? "From Zotero: chosen, it comes into your vault (note, bibliography, PDF)" : "Din Zotero: aleasă, intră în vault (notă, bibliografie, PDF)") + (it.title ? "\n" + it.title : ""); el.createSpan({ cls: "tx-cite-sug-z", text: "Zotero" }); }
   }
   selectSuggestion(it) {
     const ctx = this.context; if (!ctx) return;
+    if (it.z) return this.pickZotero(it, ctx);
+    this.put(it.key, ctx);
+  }
+  // o referință din Zotero: citarea se scrie imediat, iar referința intră în vault în fundal (nota, bibliografia, PDF-ul din Zotero)
+  async pickZotero(it, ctx) {
+    const S = this.plugin.sources, x = it.z, csl = x.zotero.csl, ed = ctx.editor;
+    let key; try { key = S.keyFor(csl); } catch (e) { key = null; }
+    if (!key) { new Notice(isEn() ? "Couldn't make a citation key for this reference." : "N-am putut face cheia de citare pentru această referință."); return; }
+    this.put(key, ctx);
+    try {
+      const file = await S.add(x, { csl, key, stay: true });
+      if (!file) return;
+      const real = (this.plugin.lib.all() || []).find(e => e.obsidianPath === file.path)?.id || this.app.metadataCache.getFileCache(file)?.frontmatter?.id;
+      if (real && real !== key) this.rekey(ed, key, String(real));   // era deja în vault, sub altă cheie
+    } catch (e) { console.error("Texere: referința din Zotero", e); new Notice((isEn() ? "The reference from Zotero didn't come in: " : "Referința din Zotero n-a intrat: ") + (e?.message || e), 8000); }
+  }
+  // @veche → @nouă în notă (doar citările întregi)
+  rekey(ed, from, to) {
+    try {
+      const re = new RegExp("@" + from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w:.\\-])", "g");
+      for (let l = 0; l < ed.lineCount(); l++) {
+        const line = ed.getLine(l), hits = [...line.matchAll(re)];
+        for (const m of hits.reverse()) ed.replaceRange("@" + to, { line: l, ch: m.index }, { line: l, ch: m.index + m[0].length });
+      }
+    } catch (e) {}
+  }
+  put(key, ctx) {
     const ed = ctx.editor, line = ed.getLine(ctx.start.line);
     const inBracket = ctx.start.ch > 0 && /[\[;]\s*$/.test(line.slice(0, ctx.start.ch));
     const after = line.slice(ctx.end.ch);
     // după alegere, cursorul trece după „]” și urmează un spațiu, ca să scrii mai departe
     const closes = /^\s*\]/.test(after);
-    let text = inBracket ? "@" + it.key + (closes ? "" : "]") : "[@" + it.key + "]";
+    let text = inBracket ? "@" + key + (closes ? "" : "]") : "[@" + key + "]";
     ed.replaceRange(text, ctx.start, ctx.end);
     let ch = ctx.start.ch + text.length;
     if (closes) ch += after.indexOf("]") + 1;
@@ -232,7 +287,8 @@ class CiteEngine {
           else o[k] = v;
         }
         // nota ține numărul revistei în „number”; citeproc îl caută în „issue”
-        if (o.number && !o.issue && /^(article-journal|article-magazine|article-newspaper|article)$/.test(o.type)) o.issue = o.number;
+        // (lăsat și în „number”, APA l-ar mai scrie o dată, ca „Article 1”)
+        if (o.number && /^(article-journal|article-magazine|article-newspaper|article)$/.test(o.type) && (!o.issue || String(o.issue) === String(o.number))) { o.issue = o.number; delete o.number; }
         this.items[e.id] = o; this.raw[e.id] = e;
       }
     } catch (e) { console.error("Texere: bibliografia", e); }
@@ -467,7 +523,7 @@ const CiteStyleMixin = {
 
   // la finalul fiecărei note cu citări: bibliografia, în stilul notei (ca la export; nota nu se modifică)
   bibliographyPanel() {
-    this.register(() => { document.querySelectorAll(".texere-biblio").forEach(e => e.remove()); document.querySelectorAll(".cm-sizer, .markdown-preview-sizer").forEach(s => { s._txFit?.disconnect(); delete s._txFit; }); });
+    this.register(() => { document.querySelectorAll(".texere-biblio").forEach(e => e.remove()); document.querySelectorAll(".tx-has-biblio").forEach(e => e.removeClass("tx-has-biblio")); document.querySelectorAll(".cm-sizer, .markdown-preview-sizer").forEach(s => { s._txFit?.disconnect(); delete s._txFit; }); });
     const tick = this.bibTick = () => this.app.workspace.iterateAllLeaves(l => { if (l.view?.getViewType?.() === "markdown") { try { this.renderBiblio(l.view); } catch (e) { console.error("Texere: bibliografia notei", e); } } });
     let t = null; const soon = (ms = 80) => { clearTimeout(t); t = setTimeout(tick, ms); };
     for (const ev of ["file-open", "layout-change", "active-leaf-change"]) this.registerEvent(this.app.workspace.on(ev, () => soon()));
@@ -482,7 +538,7 @@ const CiteStyleMixin = {
     const targets = [root.querySelector(".markdown-source-view .cm-sizer"), root.querySelector(".markdown-reading-view .markdown-preview-sizer")].filter(Boolean);
     // liniște cât scrii: fără nicio sursă găsită nu apare panoul; o cheie pe care încă o scrii (începutul unei chei cunoscute) nu e „negăsită”
     if (b) b.missing = b.missing.filter(k => !Object.keys(E.items || {}).some(id => id !== k && id.startsWith(k)));
-    if (!b || !b.html.length) { root.querySelectorAll(".texere-biblio").forEach(e => e.remove()); return; }
+    if (!b || !b.html.length) { root.querySelectorAll(".texere-biblio").forEach(e => e.remove()); root.querySelectorAll(".tx-has-biblio").forEach(e => e.removeClass("tx-has-biblio")); return; }
     const en = isEn(this.app);
     // dacă nota are deja un titlu „Bibliografie” (ex. șablonul New essay), panoul nu-l mai repetă
     const hasHead = /^#{1,6}\s*(bibliography|bibliografie|references|referințe|referinte|works cited)\s*$/im.test(text);
@@ -502,6 +558,8 @@ const CiteStyleMixin = {
       n.textContent = E.label(b.style); n.title = en ? "Made from this note's citations; it updates by itself, and the export adds it the same way." : "Făcută din citările notei; se actualizează singură, iar exportul o adaugă la fel."; box.appendChild(n);
       if (p) p.replaceWith(box);
       else if (tg.classList.contains("cm-sizer")) { const cc = tg.querySelector(":scope > .cm-contentContainer"); tg.insertBefore(box, cc ? cc.nextSibling : null); }
+      // spațiul de sub ultimul rând (cât să poți derula textul până sus) trece sub bibliografie: ea vine imediat după text
+      if (tg.classList.contains("cm-sizer")) tg.addClass("tx-has-biblio");
       else { const ft = tg.querySelector(":scope > .mod-footer"); tg.insertBefore(box, ft || null); }
       keepFit(box);
     }

@@ -984,6 +984,8 @@ class Sources {
       issued: x.year ? { "date-parts": [[x.year]] } : undefined, DOI: x.doi, ISBN: x.isbn, URL: x.url, volume: x.volume, issue: x.issue, page: x.page, abstract: x.abstract });
   }
 
+  // cheia pe care o va primi o referință nouă (ca s-o scrii în [@cheie] înainte să existe nota)
+  keyFor(csl) { const lib = this.library(); return this.citekey(csl, new Set([...lib.keys, ...this.lib.all().map(e => e.id)])); }
   // cheia de citare după regula din Setări → Nume și foldere (implicit: {{author|lowercase}}_{{title|titleword}}_{{year}})
   citekey(csl, taken) {
     const base = this.citekeyBase(csl);
@@ -1602,7 +1604,7 @@ class Sources {
     if (!(await this.checkFolders())) return null;   // un folder al surselor a dispărut și ai renunțat
     opts.submitted?.();
     const lib = this.library(), have = lib.find(x);
-    if (have && !opts.force) { if (opts.silent) { opts.after?.(have); return have; } if (opts.pdfFile) await this.attachToNote(have, opts.pdfFile); if (opts.after) opts.after(have); else await this.app.workspace.getLeaf("tab").openFile(have); return have; }
+    if (have && !opts.force) { if (opts.silent) { opts.after?.(have); return have; } if (opts.pdfFile) await this.attachToNote(have, opts.pdfFile); if (opts.after) opts.after(have); else if (!opts.stay) await this.app.workspace.getLeaf("tab").openFile(have); return have; }
     const quiet = { hide() {}, setMessage() { return this; } };
     const wait = opts.silent ? quiet : new Notice(this.T("Adaug referința…", "Adding the reference…"), 0);
     const notice = (m, t) => { if (!opts.silent) new Notice(m, t); };
@@ -1610,9 +1612,9 @@ class Sources {
       const csl = opts.csl || await this.fullCsl(x);
       if (!x.doi && csl.DOI) x.doi = cleanDoi(csl.DOI);
       const again = lib.find({ ...x, title: csl.title, doi: x.doi, isbn: isbn13(csl.ISBN) });
-      if (again && !opts.force) { wait.hide(); if (opts.silent) { opts.after?.(again); return again; } if (opts.pdfFile) await this.attachToNote(again, opts.pdfFile); if (opts.after) opts.after(again); else await this.app.workspace.getLeaf("tab").openFile(again); return again; }
+      if (again && !opts.force) { wait.hide(); if (opts.silent) { opts.after?.(again); return again; } if (opts.pdfFile) await this.attachToNote(again, opts.pdfFile); if (opts.after) opts.after(again); else if (!opts.stay) await this.app.workspace.getLeaf("tab").openFile(again); return again; }
       const taken = new Set([...lib.keys, ...this.lib.all().map(e => e.id)]);
-      const key = this.citekey(csl, taken);
+      const key = opts.key && !taken.has(opts.key) && !this.app.vault.getAbstractFileByPath(normalizePath(this.litDir() + "@" + opts.key + ".md")) ? opts.key : this.citekey(csl, taken);   // key: cheia scrisă deja în [@cheie] (citarea din Zotero)
       // nota se creează imediat; PDF-ul se caută după, în fundal, și se atașează când e gata
       const base = this.fileBase(csl, key), readable = !base.startsWith("@");
       const { text, fm } = this.noteText(csl, key, null, opts.custom, { alias: readable });
@@ -1623,7 +1625,7 @@ class Sources {
       // în bibliografie intră aceleași date ca în notă („Refă bibliografia din note” o reface la fel)
       { const { tags, ...entry } = fm; await this.lib.add({ ...entry, obsidianPath: file.path }); }
       if (opts.pdfFile && !opts.silent) { if (!opts.after) { try { await (this.highlights?.showNote(file, opts.pdfFile) ?? this.app.workspace.getLeaf("tab").openFile(file)); } catch (e) {} } }   // lângă PDF, nu în locul lui
-      else if (!opts.silent && this.conf().openNote !== false) await this.app.workspace.getLeaf("tab").openFile(file);
+      else if (!opts.silent && !opts.stay && this.conf().openNote !== false) await this.app.workspace.getLeaf("tab").openFile(file);   // stay: rămâi în nota în care scrii
       // din Zotero: PDF-ul vine din biblioteca ta Zotero (nu se mai caută pe internet)
       if (!opts.pdfFile && !opts.noZoteroPdf && x.zotero && this.zotero) {
         wait.setMessage(this.T(`Referință adăugată: @${key}. Aduc PDF-ul din Zotero…`, `Reference added: @${key}. Bringing the PDF from Zotero…`));

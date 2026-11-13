@@ -590,20 +590,29 @@ class Highlights {
     return text.split(`[[${oldPath}#`).join(`[[${now}#`);
   }
 
-  // nota se arată lângă PDF (în cealaltă coloană, dacă există una), fără să-ți ia PDF-ul din față
+  // nota se arată lângă PDF (în cealaltă coloană, dacă există una), fără să-ți ia PDF-ul din față.
+  // Dacă nota e deja deschisă undeva (lângă PDF, într-o bară laterală, într-o fereastră separată sau într-un tab din spate),
+  // rândul intră acolo: nu se deschide niciodată încă o fereastră pentru aceeași notă.
   async showNote(note, pdf) {
     const ws = this.app.workspace;
     const pdfs = ws.getLeavesOfType("pdf").filter(l => l.view?.file === pdf), pdfLeaf = pdfs.find(l => this.visible(l)) || pdfs[0] || null;
-    const mds = ws.getLeavesOfType("markdown");
-    let leaf = mds.find(l => l.view?.file === note && this.visible(l));
-    if (!leaf) { const hidden = mds.find(l => l.view?.file === note && (!l.getRoot || l.getRoot() === ws.rootSplit)); if (hidden) { await ws.revealLeaf(hidden); leaf = hidden; } }
+    const has = l => l.view?.file === note || (() => { try { return l.getViewState?.()?.state?.file === note.path; } catch (e) { return false; } })();
+    const shown = l => { const el = l?.view?.containerEl; return !!el && (el.isShown ? el.isShown() : el.offsetParent !== null); };
+    const mds = ws.getLeavesOfType("markdown"), mine = mds.filter(has);
+    let leaf = mine.find(l => this.visible(l)) || mine.find(shown) || null;
+    if (!leaf && mine.length) {
+      // deschisă, dar în spate: în zona principală vine în față (doar dacă nu stă în spatele PDF-ului, în același grup); altundeva rămâne unde e
+      const front = mine.find(l => (!l.getRoot || l.getRoot() === ws.rootSplit) && (!pdfLeaf || l.parent !== pdfLeaf.parent));
+      if (front) { await ws.revealLeaf(front); leaf = front; } else leaf = mine[0];
+    }
     if (!leaf) {
       const other = mds.find(l => this.visible(l) && l.parent && l.parent !== pdfLeaf?.parent);
       leaf = other && ws.createLeafInParent ? ws.createLeafInParent(other.parent, other.parent.children?.length ?? 0) : pdfLeaf ? ws.createLeafBySplit(pdfLeaf, "vertical") : ws.getLeaf("split", "vertical");
       await leaf.openFile(note, { active: false });
       if (other) await ws.revealLeaf(leaf);
     }
-    if (pdfLeaf) ws.setActiveLeaf(pdfLeaf, { focus: true });   // continui să citești
+    try { await leaf.loadIfDeferred?.(); } catch (e) {}   // un tab din spate, încă neîncărcat
+    if (pdfLeaf && ws.activeLeaf !== pdfLeaf) ws.setActiveLeaf(pdfLeaf, { focus: true });   // continui să citești
     return leaf;
   }
   // scrierile într-o notă se fac pe rând (lipirea din PDF++ și importul nu se calcă pe picioare)

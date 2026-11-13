@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.14"
-date: "Version 0.4.14 · 12 November 2026"
+version: "0.4.15"
+date: "Version 0.4.15 · 13 November 2026"
 ---
 ## 1. Start
 
@@ -146,6 +146,8 @@ You get the note, the PDF and the annotations, each tagged by its color.
 - **Nothing is doubled:** a reference already in the vault only gets what's missing.
 - **A PDF without title or authors** goes to **PDFs/Inbox**, and Texere asks which reference it belongs to.
 - **Which color becomes which tag:** **Settings → Texere → References → Zotero → Advanced**.
+- **Cite straight from Zotero:** type `@` in a note and your Zotero references show up too ([[#3.2 Citing references]]).
+- **No Better BibTeX needed.** If another plugin (e.g. Zotero Integration) asks for it, click **How to fix it** in its message.
 
 > [!tip] Recommended: a Zotero key
 > Add it in the same place. Import then works with Zotero closed.
@@ -183,6 +185,8 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 | purple | `#question` | questions |
 | orange | `#definition` | definitions |
 | gray | `#word` | terms to remember |
+
+**Just reading?** Click the pointer in the PDF toolbar, before the colours (or press **H**): hold the mouse and drag to move through the page, without highlighting. Press **H** again to go back to the colour you had, or pick another.
 
 **Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
 
@@ -224,7 +228,7 @@ For the theses, fill in **title**, **autor**, **coordonator** and **an**. The ru
 ### 3.2 Citing references
 
 1. Type `@` and a word from the author or the title.
-2. Pick the reference: Texere writes `[@citekey]`.
+2. Pick the reference: Texere writes `[@citekey]`. With Zotero open (or with a Zotero key), the references from Zotero show under the ones in your vault, labelled **Zotero**: pick one and it comes into your vault, with its note, bibliography entry and PDF.
 3. Add the page: `[@citekey, p. 29]`. Always give it when you quote or paraphrase.
 
 In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click it to open the reference or the PDF, or to edit it.
@@ -377,6 +381,7 @@ The setup does steps 3, 4, 5 and 7 with you. By hand:
 | another font in the export | the font isn't installed | step 6 |
 | a template or writing guide is missing | it was moved or deleted | step 7 |
 | "Zotero is closed" | Zotero isn't running | open it, or add a Zotero key |
+| "…Better BibTeX plugin is installed" | another plugin's message (Zotero Integration) | Texere doesn't need Better BibTeX: click **How to fix it** in the message |
 | Zotero "doesn't let Texere in" | Zotero blocks other apps | Zotero **Settings → Advanced** → allow other applications |
 | the Zotero button saves only to Zotero | the browser button is off | [[#2.3 From the browser, with the Zotero button]] |
 | annotations missing from the note | made after the reference was added | right-click the PDF → **Texere** → **Import annotations from PDF** |
@@ -387,6 +392,14 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.15** · 13 November 2026
+- **Cite straight from Zotero.** Type `@` and a few letters: under the references in your vault, the ones in Zotero show up too. Pick one, the citation is written right away, and the reference comes into your vault with its note, bibliography entry and the PDF from Zotero. No Better BibTeX: it works with Zotero open or with a Zotero key.
+- **The "…Better BibTeX plugin is installed" message** (from another plugin, e.g. Zotero Integration) now gets a **How to fix it** button: cite with Texere, turn the other plugin off, or install Better BibTeX, step by step.
+- **A note's bibliography comes right after the text**, without the big gap before it.
+- **Articles no longer show "Article 1"** in the bibliography: the issue is written once, and the pages show again.
+- **Pointer in PDF:** the pointer button in the PDF toolbar (or the **H** key) lets you move through a PDF by dragging, without highlighting. **H** takes you back to the colour you had.
+- **A highlight no longer opens another window** with the note: if the note is already open (next to the PDF, in a sidebar, in a separate window or in a tab behind), the line goes there.
 
 **0.4.14** · 12 November 2026
 - **Focus mode is now Cmd/Ctrl + Shift + D.** Cmd + Option + F is Obsidian's own Find and replace, which won on Mac.
