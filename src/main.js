@@ -1103,11 +1103,8 @@ class TexereSettingTab extends PluginSettingTab {
       const U = P.updater, c = (P.settings.updates = P.settings.updates || {});
       new Setting(body).setName(T("Actualizări", "Updates")).setHeading();
       new Setting(body).setName(T("Caută actualizări", "Check for updates"))
-        .setDesc(T(`La pornire, la 20 de minute și când revii în Obsidian, Texere întreabă GitHub (${REPO_URL.replace("https://", "")}) dacă e o versiune nouă. Nu trimite nimic despre tine.`, `At startup, every 20 minutes and when you come back to Obsidian, Texere asks GitHub (${REPO_URL.replace("https://", "")}) for a new version. Nothing about you is sent.`))
+        .setDesc(T(`La pornire, la 20 de minute și când revii în Obsidian, Texere întreabă GitHub (${REPO_URL.replace("https://", "")}) dacă e o versiune nouă și ți-o arată în pagina de pornire; se instalează doar când apeși „Actualizează”. Nu trimite nimic despre tine.`, `At startup, every 20 minutes and when you come back to Obsidian, Texere asks GitHub (${REPO_URL.replace("https://", "")}) for a new version. It shows it on the home page; it installs only when you press “Update”. Nothing about you is sent.`))
         .addToggle(t => t.setValue(c.check !== false).onChange(async v => { c.check = v; await P.save(); }));
-      new Setting(body).setName(T("Instalează singur versiunile noi", "Install new versions by itself"))
-        .setDesc(T("O versiune nouă se instalează în fundal și pornește când reîncarci Obsidian (sau la următoarea pornire). Oprit: doar ți-o arată în pagina de pornire, iar o instalezi tu, cu „Actualizează”.", "A new version installs in the background and starts when you reload Obsidian (or next time you start it). Off: it's only shown on the home page, and you install it with “Update”."))
-        .addToggle(t => t.setValue(c.autoInstall !== false).onChange(async v => { c.autoInstall = v; await P.save(); }));
       const when = c.checkedAt && U ? U.ago(c.checkedAt) : T("niciodată", "never"), nv = U?.available, pv = U?.pending;
       const vs = new Setting(body).setName(T("Versiunea ta", "Your version") + ": " + P.manifest.version)
         .setDesc(T(`Verificat ${when}`, `Checked ${when}`) + (nv ? T(` · ${nv} e disponibil`, ` · ${nv} is available`) : pv ? T(` · ${pv} e instalat, pornește după reîncărcare`, ` · ${pv} is installed, starts after a reload`) : ""));

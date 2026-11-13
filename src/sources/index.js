@@ -6,6 +6,7 @@
  * Codul e în acest folder; aici doar îl pornim. Setările stau în data.json-ul lui Texere (modules.sources).
  */
 const { ModuleHost } = require("../shared/host");
+const { loadPdfJs } = require("obsidian");
 
 module.exports = class TexereSources extends ModuleHost {
   async onload() {
@@ -269,12 +270,22 @@ module.exports = class TexereSources extends ModuleHost {
   // Pentru modificările făcute din Obsidian, redesenăm doar paginile vizibile, din fișierul nou citit în fundal;
   // poziția și celelalte pagini rămân neatinse. Dacă ceva nu merge, revine la reîncărcarea obișnuită.
   quietPdfReload() {
-    const app = this.app, silent = new Map();
+    const app = this.app, silent = new Map(), busy = new Map();
+    // jurnalul reîncărcărilor complete (de ce n-a mers varianta fără clipire): .obsidian/plugins/texere/pdf-reload.log, ultimele 200 de rânduri
+    const LOG = `${app.vault.configDir}/plugins/texere/pdf-reload.log`;
+    const log = async (...parts) => {
+      try {
+        const ad = app.vault.adapter, line = `${new Date().toISOString()} ${parts.map(x => (x instanceof Error ? (x.stack || x.message) : typeof x === "string" ? x : JSON.stringify(x))).join(" ")}`.replace(/\n/g, " | ");
+        let old = ""; try { if (await ad.exists(LOG)) old = await ad.read(LOG); } catch (e) {}
+        await ad.write(LOG, (old ? old.split("\n").filter(Boolean).slice(-199).join("\n") + "\n" : "") + line + "\n");
+      } catch (e) {}
+    };
+    this.__pdfLog = log;
     const isOpen = f => app.workspace.getLeavesOfType("pdf").some(l => l.view?.file === f);
     const vault = app.vault, origMB = vault.modifyBinary;
     if (!origMB.__texere) {
       const mb = function (file, data, ...rest) {
-        if (file?.extension === "pdf" && isOpen(file)) silent.set(file.path, Date.now());
+        if (file?.extension === "pdf") silent.set(file.path, Date.now());   // scris din Obsidian (PDF++, Texere): fără reîncărcarea întregului PDF
         return origMB.call(this, file, data, ...rest);
       };
       mb.__texere = true; vault.modifyBinary = mb;
@@ -282,12 +293,17 @@ module.exports = class TexereSources extends ModuleHost {
     }
     const KEYS = ["cMapUrl", "cMapPacked", "standardFontDataUrl", "wasmUrl", "iccUrl", "useSystemFonts", "isEvalSupported", "disableFontFace", "fontExtraProperties", "enableXfa"];
     const refresh = async view => {
-      const pv = view.viewer?.child?.pdfViewer?.pdfViewer;
-      if (!pv || !pv.pdfDocument || !window.pdfjsLib || typeof pv._getVisiblePages !== "function") throw new Error("no viewer");
+      const ch = view.viewer?.child, pv = [ch?.pdfViewer?.pdfViewer, ch?.pdfViewer].find(x => x && typeof x._getVisiblePages === "function");
+      if (!pv) throw new Error("no viewer (" + Object.keys(ch?.pdfViewer || {}).slice(0, 12).join(",") + ")");
+      if (!pv.pdfDocument) throw new Error("no document");
+      let lib = window.pdfjsLib; if (!lib) { try { lib = await loadPdfJs(); } catch (e) {} }
+      if (!lib?.getDocument) throw new Error("no pdf.js");
       const data = new Uint8Array(await vault.readBinary(view.file));
       const base = pv.pdfDocument._transport?._params || {}, params = { data };
       for (const k of KEYS) if (base[k] !== undefined) params[k] = base[k];
-      const doc = await window.pdfjsLib.getDocument(params).promise;
+      const doc = await lib.getDocument(params).promise;
+      // alt număr de pagini: alt document (înlocuit din afara lui Obsidian), se reîncarcă tot
+      if (doc.numPages !== pv.pdfDocument.numPages) { try { doc.destroy(); } catch (e) {} throw new Error(`pages ${pv.pdfDocument.numPages} → ${doc.numPages}`); }
       const vis = pv._getVisiblePages().views || [];
       if (!vis.length) throw new Error("no visible pages");
       for (const { id, view: pageView } of vis) {
@@ -336,21 +352,35 @@ module.exports = class TexereSources extends ModuleHost {
       });
     };
     const patch = () => {
-      const leaf = app.workspace.getLeavesOfType("pdf")[0]; if (!leaf) return;
+      const leaf = app.workspace.getLeavesOfType("pdf").find(l => l.view?.getViewType?.() === "pdf" && l.view.file); if (!leaf) return;
       const proto = Object.getPrototypeOf(leaf.view);
-      if (!proto || typeof proto.onModify !== "function" || proto.onModify.__texere) return;
+      if (!proto || proto.onModify?.__texere) return;
+      if (typeof proto.onModify !== "function") { if (!this.__pdfNoHook) { this.__pdfNoHook = true; log("no onModify on the PDF view:", Object.getOwnPropertyNames(proto).join(",")); } return; }
       const orig = proto.onModify;
+      // pe macOS (și cu iCloud / sincronizare), aceeași scriere poate ajunge de două-trei ori ca „modify” (salvarea lui Obsidian, apoi
+      // supravegherea fișierelor): toate cele din următoarele 15 secunde se tratează la fel, fără reîncărcarea întregului PDF;
+      // dacă una vine cât încă redesenăm, o mai facem o dată la sfârșit
       const wrapped = function (file, ...rest) {
         const t = file && silent.get(file.path);
-        if (file === this.file && t && Date.now() - t < 10000) {
-          setTimeout(() => silent.delete(file.path), 1500);   // toate ferestrele deschise pe același PDF
-          refresh(this).catch(e => { console.warn("Texere: reîncărcare completă a PDF-ului", e); orig.call(this, file, ...rest); });
+        if (file === this.file && t && Date.now() - t < 15000) {
+          const run = () => {
+            const cur = busy.get(this); if (cur) { cur.again = true; return; }
+            const st = { again: false }; busy.set(this, st);
+            refresh(this).then(() => { busy.delete(this); if (st.again) run(); })
+              .catch(e => { busy.delete(this); console.warn("Texere: reîncărcare completă a PDF-ului", e); log("full reload (refresh failed):", file.path, e); orig.call(this, file, ...rest); });
+          };
+          run();
           return;
         }
+        if (file === this.file) log("full reload (not written from Obsidian in the last 15 s):", file?.path, t ? `last write ${Math.round((Date.now() - t) / 1000)} s ago` : "no write seen");
         return orig.call(this, file, ...rest);
       };
       wrapped.__texere = true; proto.onModify = wrapped; this.__pdfOnModify = { orig, wrapped };
-      this.register(() => { if (proto.onModify === wrapped) proto.onModify = orig; });
+      this.register(() => {
+        if (proto.onModify === wrapped) proto.onModify = orig;
+        // și ferestrele deschise primesc înapoi funcția lui Obsidian (altfel, după o repornire a lui Texere, ar rămâne cu cea veche)
+        const store = vault._ || vault._events || {}; for (const r of store.modify || []) if (r && r.fn === wrapped) r.fn = orig;
+      });
     };
     // ferestrele PDF deschise înainte de patch și-au înregistrat deja funcția veche: o înlocuim și acolo
     const relink = () => {
