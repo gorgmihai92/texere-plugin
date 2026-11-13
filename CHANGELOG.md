@@ -2,6 +2,12 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.21 (13 November 2026)
+
+- Fixed 0.4.17's cancel: Obsidian hides a menu before it runs the clicked item's action, so the `onHide` cancel (after 0 ms) won over a mouse click on "Reference only" / "Reference and PDF"; it now waits 400 ms and only cancels if no choice was made. Enter, Esc and click-outside were already right.
+
+- `highlights.reveal`: in Source / Live Preview the note's cursor is put at the end of the pasted lines (anything that later scrolls to the cursor lands there too), one more attempt at 1.5 s, and each paste / scroll is written to `.obsidian/plugins/texere/highlights.log` (last 200 lines: mode, target line, scrollTop before and after each attempt) to find out why a note sometimes stays put.
+
 ## 0.4.20 (13 November 2026)
 
 - **The note scrolls to the pasted highlight** (`highlights.reveal`): in Reading view (written through `vault.process`, which used to leave the view where it was) via `previewMode.applyScroll`, in Source / Live Preview via `scrollIntoView` plus a direct `scrollTop` from `lineBlockAt` (CodeMirror only scrolls at its next measure, which can lag); repeated at 200 and 700 ms so a note that has just opened (Obsidian restores its old scroll position) still ends up at the new line.

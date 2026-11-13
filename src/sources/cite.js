@@ -165,7 +165,8 @@ class CiteSuggest extends EditorSuggest {
         : hl ? T(`Referința și PDF-ul · ${hl === 1 ? "1 adnotare" : hl + " adnotări"}`, `Reference and PDF · ${hl === 1 ? "1 annotation" : hl + " annotations"}`)
         : T("Referința și PDF-ul (fără adnotări)", "Reference and PDF (no annotations)");
       m.addItem(i => i.setTitle(pdfT).setIcon("file-text").onClick(() => end(true)));
-      m.onHide(() => setTimeout(() => end(null), 0));
+      // clicul pe o variantă închide meniul înainte să-și ruleze acțiunea: „renunțarea” vine doar dacă nicio variantă n-a fost aleasă între timp
+      m.onHide(() => setTimeout(() => end(null), 400));
       if (at) m.showAtPosition(at); else m.showAtPosition({ x: window.innerWidth / 2, y: window.innerHeight / 3 });
       try { m.select?.(0); } catch (e) {}   // Enter = doar referința
     });

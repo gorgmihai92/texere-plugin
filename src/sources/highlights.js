@@ -473,6 +473,7 @@ class Highlights {
       await this.S.save(); this.keptNotice(pdf, true);
       return true;
     }
+    this.debug?.("paste", { pdf: pdf.path, note: note.path, notes: notes.length });
     await this.insert(note, pdf, text);
     return true;
   }
@@ -656,31 +657,50 @@ class Highlights {
     } else {
       await this.app.vault.process(note, t => { const X = t.split("\n"); const pos = Math.min(at, X.length); first = pos; X.splice(pos, 0, ...add); return X.join("\n"); });
     }
-    this.reveal(leaf, note, first, add.length);
+    this.reveal(leaf, note, first, add.length, ed ? "editor" : "file");
     return true;
   }
   // nota se derulează la rândul nou, oricum ar fi deschisă (Editare, Live Preview sau Citire) și chiar dacă abia s-a deschis
   // (Obsidian își pune la loc poziția de dinainte puțin după deschidere: mai încercăm de două ori)
-  reveal(leaf, note, line, n = 1) {
-    const go = () => {
+  reveal(leaf, note, line, n = 1, how = "") {
+    const steps = [];
+    const go = tag => {
+      const r = { t: tag };
       try {
         const lf = leaf?.view?.file === note ? leaf : this.app.workspace.getLeavesOfType("markdown").find(l => l.view?.file === note);
-        const v = lf?.view; if (!v) return;
-        if (v.getMode?.() === "preview") { const pm = v.previewMode || v.currentMode; pm?.applyScroll?.(Math.max(0, line - 3)); }
-        else {
-          const ed = v.editor; if (!ed) return;
+        const v = lf?.view; if (!v) { r.err = "no view"; return steps.push(r); }
+        r.mode = v.getMode?.(); r.shown = !!v.containerEl?.isShown?.(); r.same = lf === leaf;
+        if (r.mode === "preview") {
+          const pm = v.previewMode || v.currentMode, el = pm?.containerEl?.querySelector?.(".markdown-preview-view") || pm?.containerEl;
+          r.before = Math.round(el?.scrollTop || 0); pm?.applyScroll?.(Math.max(0, line - 3)); r.after = Math.round(el?.scrollTop || 0);
+        } else {
+          const ed = v.editor; if (!ed) { r.err = "no editor"; return steps.push(r); }
+          const cm = ed.cm, sd = cm?.scrollDOM; r.before = Math.round(sd?.scrollTop || 0);
+          // cursorul vine pe rândul nou (dacă Obsidian derulează la cursor, rămâne aici), apoi derularea
+          if (tag === 0) { try { const end = line + n - 1; ed.setCursor({ line: end, ch: ed.getLine(end)?.length || 0 }); } catch (e) {} }
           ed.scrollIntoView({ from: { line, ch: 0 }, to: { line: line + n, ch: 0 } }, true);
           // și direct, în pixeli (CodeMirror derulează abia la următoarea măsurare, care uneori întârzie)
-          const cm = ed.cm, sd = cm?.scrollDOM;
           if (cm && sd && line < cm.state.doc.lines) {
             const blk = cm.lineBlockAt(cm.state.doc.line(line + 1).from), off = cm.documentTop - sd.getBoundingClientRect().top + sd.scrollTop;
             const y = Math.max(0, Math.round(off + blk.top - sd.clientHeight / 3));
             if (Math.abs(sd.scrollTop - y) > 40) sd.scrollTop = y;
+            r.target = y;
           }
+          r.after = Math.round(sd?.scrollTop || 0);
         }
-      } catch (e) {}
+      } catch (e) { r.err = String(e?.message || e); }
+      steps.push(r);
     };
-    go(); setTimeout(go, 200); setTimeout(go, 700);
+    go(0); setTimeout(() => go(200), 200); setTimeout(() => go(700), 700);
+    setTimeout(() => { go(1500); this.debug?.("scroll", { note: note.path, line, how, steps }); }, 1500);
+  }
+  // jurnal pentru depanare (.obsidian/plugins/texere/highlights.log, ultimele 200 de rânduri)
+  async debug(kind, data) {
+    try {
+      const ad = this.app.vault.adapter, f = `${this.app.vault.configDir}/plugins/texere/highlights.log`;
+      let old = ""; try { if (await ad.exists(f)) old = await ad.read(f); } catch (e) {}
+      await ad.write(f, (old ? old.split("\n").filter(Boolean).slice(-199).join("\n") + "\n" : "") + `${new Date().toISOString()} ${kind} ${JSON.stringify(data)}\n`);
+    } catch (e) {}
   }
 
   // rândurile notei care trimit la acest PDF: { start, entries: [{ i, loc }] }
