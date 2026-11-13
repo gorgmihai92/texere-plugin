@@ -33,7 +33,9 @@ function matchWord(it, w) {
 
 // ---------- Citări din mers: scrii „@” (sau „[@”) și alegi sursa din bibliografie ----------
 class CiteSuggest extends EditorSuggest {
-  constructor(plugin) { super(plugin.app); this.plugin = plugin; this.items = null; this.mtime = 0; this.limit = 10; }
+  constructor(plugin) {
+    super(plugin.app); this.plugin = plugin; this.items = null; this.mtime = 0; this.limit = 10;
+  }
   bibPath() { return this.plugin?.sources?.bibPath?.() || require("../shared/paths").BIB_DEFAULT; }
   async load() {
     const lib = this.plugin.lib;
@@ -77,8 +79,8 @@ class CiteSuggest extends EditorSuggest {
     const found = score(items).filter(x => x[0] <= 2).map(x => x[3]);
     const z = await this.fromZotero(ctx.query);
     if (tok !== this.tok) return new Promise(() => {});   // între timp ai mai scris: contează doar lista nouă
-    const zs = score(z).map(x => x[3]), mine = found.slice(0, zs.length ? 6 : this.limit);
-    return [...mine, ...zs.slice(0, this.limit - mine.length)];   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
+    const zs = score(z).map(x => x[3]), mine = found.slice(0, zs.length ? 6 : this.limit), out = [...mine, ...zs.slice(0, this.limit - mine.length)];
+    return out;   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
   }
   // Zotero, căutat din mers: prin API-ul local (Zotero deschis) sau prin cheia ta (Zotero închis). Better BibTeX nu trebuie: cheia o face Texere.
   // Fiecare căutare se ține minte un minut; un Zotero care răspunde încet nu ține lista pe loc (răspunsul lui intră la tasta următoare).
@@ -108,23 +110,56 @@ class CiteSuggest extends EditorSuggest {
     if (it.title) el.createSpan({ cls: "tx-cite-sug-title", text: " – " + it.title });
     if (it.z) { el.addClass("is-zotero"); el.title = (isEn() ? "From Zotero: chosen, it comes into your vault (note, bibliography, PDF)" : "Din Zotero: aleasă, intră în vault (notă, bibliografie, PDF)") + (it.title ? "\n" + it.title : ""); el.createSpan({ cls: "tx-cite-sug-z", text: "Zotero" }); }
   }
-  selectSuggestion(it) {
+  selectSuggestion(it, evt) {
     const ctx = this.context; if (!ctx) return;
     if (it.z) return this.pickZotero(it, ctx);
     this.put(it.key, ctx);
   }
-  // o referință din Zotero: citarea se scrie imediat, iar referința intră în vault în fundal (nota, bibliografia, PDF-ul din Zotero)
+  // o referință din Zotero: citarea se scrie imediat. Dacă în Zotero are PDF, alegi: doar referința (nota de lectură și bibliografia)
+  // sau referința și PDF-ul, cu evidențierile și adnotările din Zotero. Fără PDF în Zotero: doar referința, fără întrebare.
   async pickZotero(it, ctx) {
-    const S = this.plugin.sources, x = it.z, csl = x.zotero.csl, ed = ctx.editor;
+    const S = this.plugin.sources, Z = S.zotero, x = it.z, csl = x.zotero.csl, ed = ctx.editor, en = isEn();
+    const T = (a, b) => (en ? b : a);
     let key; try { key = S.keyFor(csl); } catch (e) { key = null; }
-    if (!key) { new Notice(isEn() ? "Couldn't make a citation key for this reference." : "N-am putut face cheia de citare pentru această referință."); return; }
+    if (!key) { new Notice(T("N-am putut face cheia de citare pentru această referință.", "Couldn't make a citation key for this reference.")); return; }
+    // unde apare alegerea: sub citare
+    let at = null; try { const off = ed.posToOffset(ctx.start), c = ed.cm?.coordsAtPos?.(off); if (c) at = { x: c.left, y: c.bottom + 4 }; } catch (e) {}
     this.put(key, ctx);
+    // ce are în Zotero (PDF? câte adnotări?); un Zotero lent nu ține pe loc: după 2,5 s întrebăm fără numărul adnotărilor
+    const zk = x.zotero.key, timeout = ms => new Promise(r => setTimeout(() => r(undefined), ms));
+    let att = null; try { att = await Promise.race([Z.attachment({ key: zk }), timeout(2500)]); } catch (e) { att = null; }
+    let withPdf = false;
+    if (att !== null) {
+      let hl; if (att) { try { hl = await Promise.race([Z.annotations(att).then(a => a.length), timeout(1500)]); } catch (e) {} }
+      withPdf = await this.askPdf(at, hl, T);
+      if (withPdf === null) return;   // nu se întâmplă: închiderea alegerii = doar referința
+    }
+    const wait = new Notice(withPdf ? T(`Din Zotero: @${key}, cu PDF-ul și adnotările…`, `From Zotero: @${key}, with its PDF and annotations…`) : T(`Din Zotero: @${key}…`, `From Zotero: @${key}…`), 0);
     try {
-      const file = await S.add(x, { csl, key, stay: true });
-      if (!file) return;
+      const file = await S.add(x, { csl, key, stay: true, silent: true, noFreePdf: true, noZoteroPdf: !withPdf, zoteroHl: true });
+      wait.hide(); if (!file) return;
       const real = (this.plugin.lib.all() || []).find(e => e.obsidianPath === file.path)?.id || this.app.metadataCache.getFileCache(file)?.frontmatter?.id;
-      if (real && real !== key) this.rekey(ed, key, String(real));   // era deja în vault, sub altă cheie
-    } catch (e) { console.error("Texere: referința din Zotero", e); new Notice((isEn() ? "The reference from Zotero didn't come in: " : "Referința din Zotero n-a intrat: ") + (e?.message || e), 8000); }
+      if (real && real !== key) { this.rekey(ed, key, String(real)); key = String(real); }   // era deja în vault, sub altă cheie
+      const f = this.app.vault.getAbstractFileByPath(file.path) || file, has = !!S.attachedPdfs?.(f)?.length, n = x.zotero.hl?.written || 0;
+      new Notice(withPdf && has ? T(`Adăugată din Zotero: @${key}, cu PDF-ul`, `Added from Zotero: @${key}, with its PDF`) + (n ? T(` și ${Z.hlText(n)}.`, ` and ${Z.hlText(n)}.`) : ".")
+        : withPdf ? T(`Adăugată din Zotero: @${key}. PDF-ul n-a venit din Zotero.`, `Added from Zotero: @${key}. The PDF didn't come from Zotero.`)
+        : T(`Adăugată din Zotero: @${key} (nota de lectură și bibliografia).`, `Added from Zotero: @${key} (reading note and bibliography).`) + (att === null && Z.state?.local === "on" ? T(" În Zotero nu are PDF.", " It has no PDF in Zotero.") : ""), 6000);
+    } catch (e) { wait.hide(); console.error("Texere: referința din Zotero", e); new Notice(T("Referința din Zotero n-a intrat: ", "The reference from Zotero didn't come in: ") + (e?.message || e), 8000); }
+  }
+  // „Doar referința” / „Referința și PDF-ul · 12 adnotări”; Esc sau clic în altă parte: doar referința. hl: undefined = nu știm încă
+  askPdf(at, hl, T) {
+    return new Promise(res => {
+      const { Menu } = require("obsidian"); let done = false; const end = v => { if (!done) { done = true; res(v); } };
+      const m = new Menu();
+      m.addItem(i => i.setTitle(T("Doar referința", "Reference only")).setIcon("quote").onClick(() => end(false)));
+      const pdfT = hl === undefined ? T("Referința și PDF-ul, cu adnotările", "Reference and PDF, with annotations")
+        : hl ? T(`Referința și PDF-ul · ${hl === 1 ? "1 adnotare" : hl + " adnotări"}`, `Reference and PDF · ${hl === 1 ? "1 annotation" : hl + " annotations"}`)
+        : T("Referința și PDF-ul (fără adnotări)", "Reference and PDF (no annotations)");
+      m.addItem(i => i.setTitle(pdfT).setIcon("file-text").onClick(() => end(true)));
+      m.onHide(() => setTimeout(() => end(false), 0));
+      if (at) m.showAtPosition(at); else m.showAtPosition({ x: window.innerWidth / 2, y: window.innerHeight / 3 });
+      try { m.select?.(0); } catch (e) {}   // Enter = doar referința
+    });
   }
   // @veche → @nouă în notă (doar citările întregi)
   rekey(ed, from, to) {

@@ -2,6 +2,13 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.16 (13 November 2026)
+
+- **@ from Zotero, PDF on request** (`cite.pickZotero`, `askPdf`): after picking a Zotero item, Texere asks Zotero for its PDF attachment (2.5 s limit) and annotation count (1.5 s); with a PDF, a menu under the citation offers "Reference only" (preselected, Enter, also on Esc) or "Reference and PDF · n annotations"; without one, the reference is added directly. `add(..., { silent, noFreePdf: true, noZoteroPdf, zoteroHl: true })`; `pdfToVault({ highlights: true })` now forces the Zotero annotations even if the import default is off. One closing notice says what came in.
+- **Pointer in PDF selects without copying** (`pdfhand.js`): instead of panning, the pointer turns PDF++'s auto-copy off in memory (PDF++'s mouseup handler checks `settings.autoCopy`), so a selection stays as a reading marker and nothing is written to the PDF or pasted; H / a palette colour restores it. A flag in Texere's settings restores auto-copy if Obsidian closes with the pointer on.
+- **Faster highlight placement** (`highlights.docOf`): `positions` and `headSpots` use the PDF document already open in the viewer (falling back to reading the file only for an annotation the viewer doesn't have yet) instead of re-reading and re-parsing the whole file for every paste; one `getTextContent` instead of two; the heading index is kept while the page count stays the same (PDF++ rewrites the file on every highlight, which used to throw it away). On a 20 MB, 300-page PDF Texere's part went from ~770 ms to ~390 ms per highlight.
+- **Update checks**: every 20 minutes, on window focus and on the home page, at most once every 2 minutes (was hourly / 10 minutes).
+
 ## 0.4.15 (13 November 2026)
 
 - **@ citations from Zotero** (`src/sources/cite.js`): under the vault's matches, the `@` suggester lists Zotero items not yet in the vault (`Zotero.search`, local API with Zotero open, web API with a key; cached per query for a minute; 1.5 s / 3 s timeout so the list never waits on a slow Zotero; stale responses dropped). Picking one writes `[@key]` at once (`sources.keyFor`, the same key rule as new references) and adds the reference in the background (`add(x, { csl, key, stay: true })`: note, bibliography, PDF from Zotero; the note isn't opened). If the reference turned out to be in the vault under another key, the citation is rewritten. No Better BibTeX anywhere: Texere makes the citation keys.

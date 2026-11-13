@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.15"
-date: "Versiunea 0.4.15 · 13 noiembrie 2026"
+version: "0.4.16"
+date: "Versiunea 0.4.16 · 13 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -186,7 +186,7 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 | portocaliu | `#definition` | definiții |
 | gri | `#word` | termeni de reținut |
 
-**Doar citești?** Apasă pointerul din bara PDF-ului, înaintea culorilor (sau **H**): ții mouse-ul apăsat și tragi ca să parcurgi pagina, fără să evidențiezi. Apeși iar **H** și revii la culoarea de dinainte; sau alegi alta.
+**Doar citești?** Apasă pointerul din bara PDF-ului, înaintea culorilor (sau **H**): selectezi text ca să urmărești pe unde citești, iar nimic nu se copiază în notă. Apeși iar **H** și revii la culoarea de dinainte; sau alegi alta.
 
 **Adnotările făcute în altă parte** (Zotero, Preview, Acrobat) intră singure în notă, cu eticheta celei mai apropiate culori. Făcute după ce ai adăugat referința: clic dreapta pe PDF sau pe notă → **Texere** → **Importă adnotările din PDF**. Făcute sub alt nume: Texere te întreabă dacă sunt ale tale.
 
@@ -228,7 +228,7 @@ La lucrări completezi **title**, **autor**, **coordonator** și **an**. Regulil
 ### 3.2 Citarea referințelor
 
 1. Scrie `@` și un cuvânt din autor sau din titlu.
-2. Alege referința: Texere scrie `[@citekey]`. Cu Zotero deschis (sau cu o cheie Zotero), sub referințele din vault apar și cele din Zotero, cu eticheta **Zotero**: alegi una și intră în vault, cu nota, bibliografia și PDF-ul.
+2. Alege referința: Texere scrie `[@citekey]`. Cu Zotero deschis (sau cu o cheie Zotero), sub referințele din vault apar și cele din Zotero, cu eticheta **Zotero**: alegi una și, dacă în Zotero are PDF, alegi **Doar referința** (nota de lectură și bibliografia) sau **Referința și PDF-ul**, cu evidențierile și adnotările din Zotero.
 3. Adaugă pagina: `[@citekey, p. 29]`. Dă-o mereu când citezi sau parafrazezi.
 
 În notă, citarea se citește ca text: (Descartes, 1641/2022, p. 29). Un clic pe ea deschide referința sau PDF-ul, sau o editezi.
@@ -392,6 +392,12 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.16** · 13 noiembrie 2026
+- **Citarea din Zotero: alegi dacă vine și PDF-ul.** După ce alegi o referință din Zotero, dacă are PDF, alegi **Doar referința** (Enter) sau **Referința și PDF-ul**, cu numărul adnotărilor din Zotero; PDF-ul vine cu evidențierile și adnotările lui. Fără PDF în Zotero, intră doar referința. Mesajul de la sfârșit spune ce s-a adăugat.
+- **Pointerul selectează:** cu pointerul (sau **H**) selectezi text ca să urmărești pe unde citești, fără să se copieze în notă și fără să se scrie în PDF.
+- **Evidențierile intră mai repede în notă:** Texere folosește PDF-ul deschis deja, în loc să citească din nou tot fișierul la fiecare evidențiere.
+- **Versiunile noi apar mai repede pe pagina de pornire:** Texere verifică la pornire, la 20 de minute și când revii în Obsidian.
 
 **0.4.15** · 13 noiembrie 2026
 - **Citezi direct din Zotero.** Scrii `@` și câteva litere: sub referințele din vault apar și cele din Zotero. Alegi una, citarea se scrie pe loc, iar referința intră în vault cu nota, bibliografia și PDF-ul din Zotero. Fără Better BibTeX: merge cu Zotero deschis sau cu o cheie Zotero.

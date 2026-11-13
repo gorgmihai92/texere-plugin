@@ -1,5 +1,5 @@
 // Actualizările lui Texere, din release-urile GitHub ale pluginului (în afara listei de pluginuri a Obsidian).
-//  • check(): la pornire, la fiecare oră, când deschizi pagina de pornire (cel mult o dată la 10 minute) și la „Caută acum”, întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
+//  • check(): la pornire, la 20 de minute, când revii în Obsidian, când deschizi pagina de pornire (cel mult o dată la 2 minute) și la „Caută acum”, întreabă GitHub care e ultimul release publicat; cererea nu trimite nimic despre tine.
 //    Nu instalează nimic singur: o versiune nouă apare în pagina de pornire și în setări, cu butonul „Actualizează”.
 //  • update(): doar la clicul tău; install(): descarcă main.js, styles.css și manifest.json, le verifică (manifestul e al lui Texere, versiunea e cea a release-ului,
 //    main.js nu e gol), pune fișierele de acum în previous/ și le scrie pe cele noi. Atinge doar folderul pluginului, niciodată notele.
@@ -10,7 +10,7 @@ const { requestUrl, Notice } = require("obsidian");
 const REPO = "gorgmihai92/texere-plugin";
 const API = `https://api.github.com/repos/${REPO}/releases/latest`;
 const FILES = ["main.js", "styles.css", "manifest.json"];
-const DAY = 864e5, HOUR = 36e5, GAP = 10 * 6e4;   // între două verificări automate: cel puțin 10 minute
+const DAY = 864e5, HOUR = 36e5, GAP = 2 * 6e4;   // între două verificări automate: cel puțin 2 minute (GitHub lasă 60 de întrebări pe oră)
 
 // „0.4.10” > „0.4.9”; un „v” în față nu contează
 const parse = v => String(v || "").trim().replace(/^v/i, "").split(/[.+-]/).slice(0, 3).map(n => parseInt(n, 10) || 0);
@@ -35,11 +35,13 @@ class Updater {
     this.whatsNew();
     const tick = () => this.soon();
     setTimeout(tick, 8e3);
-    this.timer = window.setInterval(tick, HOUR);
+    this.timer = window.setInterval(tick, 20 * 6e4);   // la 20 de minute
     this.P.register(() => window.clearInterval(this.timer));
+    // și când revii în Obsidian (o versiune publicată cât ai lucrat în altă parte apare imediat)
+    try { this.P.registerDomEvent(window, "focus", tick); } catch (e) {}
   }
 
-  // verificare automată, în tăcere: la pornire, la fiecare oră și când deschizi pagina de pornire (cel mult o dată la 10 minute)
+  // verificare automată, în tăcere: la pornire, la 20 de minute, când revii în Obsidian și când deschizi pagina de pornire (cel mult o dată la 2 minute)
   soon() { if (this.auto && !this.busy) this.check(false).catch(e => console.warn("Texere: actualizări", e)); }
   // „acum 5 minute” / „5 minutes ago”, fără să depindă de limba lui moment
   ago(t) {
@@ -61,7 +63,7 @@ class Updater {
   async check(manual) {
     if (this.busy) return { state: "busy" };
     const c = this.conf;
-    // automat: cel mult o dată la 10 minute; imediat dacă Texere s-a schimbat de la ultima verificare (de ex. actualizat de BRAT)
+    // automat: cel mult o dată la 2 minute; imediat dacă Texere s-a schimbat de la ultima verificare (de ex. actualizat de BRAT)
     if (!manual && c.checkedAt && c.checkedFor === this.version && Date.now() - c.checkedAt < GAP) return { state: "later" };
     this.busy = true;
     try {

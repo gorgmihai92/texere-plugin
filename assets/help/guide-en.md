@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.15"
-date: "Version 0.4.15 · 13 November 2026"
+version: "0.4.16"
+date: "Version 0.4.16 · 13 November 2026"
 ---
 ## 1. Start
 
@@ -186,7 +186,7 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 | orange | `#definition` | definitions |
 | gray | `#word` | terms to remember |
 
-**Just reading?** Click the pointer in the PDF toolbar, before the colours (or press **H**): hold the mouse and drag to move through the page, without highlighting. Press **H** again to go back to the colour you had, or pick another.
+**Just reading?** Click the pointer in the PDF toolbar, before the colours (or press **H**): select text to follow where you're reading, and nothing is copied into the note. Press **H** again to go back to the colour you had, or pick another.
 
 **Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
 
@@ -228,7 +228,7 @@ For the theses, fill in **title**, **autor**, **coordonator** and **an**. The ru
 ### 3.2 Citing references
 
 1. Type `@` and a word from the author or the title.
-2. Pick the reference: Texere writes `[@citekey]`. With Zotero open (or with a Zotero key), the references from Zotero show under the ones in your vault, labelled **Zotero**: pick one and it comes into your vault, with its note, bibliography entry and PDF.
+2. Pick the reference: Texere writes `[@citekey]`. With Zotero open (or with a Zotero key), the references from Zotero show under the ones in your vault, labelled **Zotero**: pick one and, if it has a PDF in Zotero, choose **Reference only** (reading note and bibliography) or **Reference and PDF**, with its highlights and annotations from Zotero.
 3. Add the page: `[@citekey, p. 29]`. Always give it when you quote or paraphrase.
 
 In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click it to open the reference or the PDF, or to edit it.
@@ -392,6 +392,12 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.16** · 13 November 2026
+- **Citing from Zotero: you choose whether the PDF comes too.** After you pick a Zotero reference that has a PDF, choose **Reference only** (Enter) or **Reference and PDF**, with the number of its Zotero annotations; the PDF comes with its highlights and annotations. Without a PDF in Zotero, only the reference comes in. The message at the end says what was added.
+- **The pointer selects:** with the pointer (or **H**) you select text to follow where you're reading, without copying it into the note or writing it into the PDF.
+- **Highlights reach the note faster:** Texere uses the PDF that's already open instead of reading the whole file again for every highlight.
+- **New versions show up sooner on the home page:** Texere checks at startup, every 20 minutes and when you come back to Obsidian.
 
 **0.4.15** · 13 November 2026
 - **Cite straight from Zotero.** Type `@` and a few letters: under the references in your vault, the ones in Zotero show up too. Pick one, the citation is written right away, and the reference comes into your vault with its note, bibliography entry and the PDF from Zotero. No Better BibTeX: it works with Zotero open or with a Zotero key.

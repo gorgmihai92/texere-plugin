@@ -758,14 +758,26 @@ class Highlights {
   }
   // unde începe în PDF fiecare titlu: { page, key } (din cuprins: începutul paginii; din pagini: rândul-titlu) sau null (negăsit)
   // asks: [{ id, core, lo, hi }] → Map(id → loc | null); prima potrivire de la „lo” încolo (titlul vine după evidențierea dinainte)
+  // documentul PDF deschis deja în Obsidian (cel în care evidențiezi): fără să citim și să parcurgem din nou fișierul (zeci de MB);
+  // altfel îl citim din fișier. own: al nostru, se închide după
+  async docOf(pdf, fresh) {
+    if (!fresh) for (const l of this.app.workspace.getLeavesOfType("pdf")) {
+      if (l.view?.file !== pdf) continue;
+      const d = l.view?.viewer?.child?.pdfViewer?.pdfViewer?.pdfDocument || l.view?.viewer?.child?.pdfViewer?.pdfDocument;
+      if (d && typeof d.getPage === "function" && !d.destroyed) return { doc: d, own: false };
+    }
+    const pdfjs = await loadPdfJs();
+    return { doc: await pdfjs.getDocument({ data: new Uint8Array(await this.app.vault.readBinary(pdf)) }).promise, own: true };
+  }
   async headSpots(pdf, asks) {
-    const out = new Map(); let doc = null;
+    const out = new Map(); let doc = null, own = false;
     try {
-      const pdfjs = await loadPdfJs(); doc = await pdfjs.getDocument({ data: new Uint8Array(await this.app.vault.readBinary(pdf)) }).promise;
-      const mt = pdf.stat?.mtime || 0; let ix = this.hidx.get(pdf.path);
-      if (!ix || ix.mt !== mt) { ix = { mt, outline: await outlineOf(doc), pages: new Map() }; this.hidx.set(pdf.path, ix); }
+      ({ doc, own } = await this.docOf(pdf));
+      // titlurile din PDF nu se schimbă când adaugi evidențieri (fișierul se rescrie la fiecare): indexul ține cât timp PDF-ul are aceleași pagini
+      const sig = `${doc.numPages}|${(doc.fingerprints || [])[0] || ""}`; let ix = this.hidx.get(pdf.path);
+      if (!ix || (ix.sig !== sig && ix.np !== doc.numPages)) { ix = { sig, np: doc.numPages, outline: await outlineOf(doc), pages: new Map() }; this.hidx.set(pdf.path, ix); }
       const linesOn = async p => {
-        if (!ix.pages.has(p)) { let ls = []; try { const pg = await doc.getPage(p); try { ls = await titleLines(pg); } finally { try { pg.cleanup(); } catch (e) {} } } catch (e) {} ix.pages.set(p, ls); }
+        if (!ix.pages.has(p)) { let ls = []; try { const pg = await doc.getPage(p); try { ls = await titleLines(pg); } finally { if (own) { try { pg.cleanup(); } catch (e) {} } } } catch (e) {} ix.pages.set(p, ls); }
         return ix.pages.get(p);
       };
       for (const a of asks) {
@@ -780,7 +792,7 @@ class Highlights {
         out.set(a.id, spot);
       }
     } catch (e) { console.warn("Texere: titlurile din notă față de PDF", e); }
-    finally { try { doc?.destroy(); } catch (e) {} }
+    finally { if (own) { try { doc?.destroy(); } catch (e) {} } }
     return out;
   }
   // rândul pe care intră evidențierea nouă (lipită de PDF++)
@@ -796,23 +808,26 @@ class Highlights {
     return this.placeAt(L, start, entries, me, cmp, decide ? k => decide(L, k, me) : null);
   }
   // pozițiile pe pagină: dreptunghiul evidențierii scrise în PDF (annotation=…) sau textul selectat (selection=…)
-  async positions(pdf, pageNo, locs) {
-    const map = new Map();
+  async positions(pdf, pageNo, locs, fresh) {
+    const map = new Map(); let missing = false;
     try {
-      const pdfjs = await loadPdfJs(), doc = await pdfjs.getDocument({ data: new Uint8Array(await this.app.vault.readBinary(pdf)) }).promise;
+      const { doc, own } = await this.docOf(pdf, fresh);
       try {
         const page = await doc.getPage(pageNo);
         const annots = locs.some(l => l.annot) ? await page.getAnnotations() : [];
-        const items = locs.some(l => l.sel) ? (await page.getTextContent({ includeMarkedContent: true, disableNormalization: true })).items : [];
-        let g = null; try { const tc = await page.getTextContent(); g = gutterOf(mergeRuns(tc.items.filter(it => typeof it.str === "string").map(it => layout(it, tc.styles))), page.view); } catch (e) {}   // două coloane?
+        // un singur getTextContent: aceleași rânduri dau și pozițiile selecțiilor, și coloanele paginii
+        const tc = await page.getTextContent({ includeMarkedContent: true, disableNormalization: true }), items = tc.items;
+        let g = null; try { g = gutterOf(mergeRuns(items.filter(it => typeof it.str === "string").map(it => layout(it, tc.styles))), page.view); } catch (e) {}   // două coloane?
         for (const l of locs) {
           let y = null, x = 0, col = 0;
-          if (l.annot) { const a = annots.find(a => a.id === l.annot); if (a?.rect || a?.quadPoints) { const q = quadsOf(a), s0 = startOf(q); y = s0.y; x = s0.x; col = colOf(q, g); } }
+          if (l.annot) { const a = annots.find(a => a.id === l.annot); if (a?.rect || a?.quadPoints) { const q = quadsOf(a), s0 = startOf(q); y = s0.y; x = s0.x; col = colOf(q, g); } else if (!l.sel) missing = true; }
           if (y === null && l.sel) { let k = l.sel[0]; while (k < items.length && !items[k]?.transform) k++; const it = items[k]; if (it) { y = it.transform[5] + (it.height || 0); x = it.transform[4]; col = g && x >= g.x ? 1 : 0; } }
           if (y !== null) map.set(l, ordKey(col, y, x));
         }
-      } finally { try { doc.destroy(); } catch (e) {} }
+      } finally { if (own) { try { doc.destroy(); } catch (e) {} } }
     } catch (e) { console.warn("Texere: poziția adnotării", e); }
+    // o evidențiere tocmai scrisă în PDF, pe care documentul deschis încă n-o are: o căutăm în fișier
+    if (missing && !fresh) return this.positions(pdf, pageNo, locs, true);
     return l => (map.has(l) ? map.get(l) : Number.MAX_SAFE_INTEGER);   // necunoscută → după celelalte de pe pagină
   }
 

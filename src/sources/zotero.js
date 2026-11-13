@@ -574,6 +574,14 @@ class Zotero {
     if (r.written || r.already) { try { await this.S.highlights?.importFromPdf(target, note); } catch (e) { console.warn("Texere Zotero: adnotările în notă", e); } }
     return r;
   }
+  // ——— citarea cu @ din Zotero ———
+  // ce are în Zotero: { pdf: true/false, hl: numărul evidențierilor și adnotărilor }
+  async zstatus(zkey) {
+    const att = await this.attachment({ key: zkey }); if (!att) return { pdf: false, hl: 0 };
+    let hl = 0; try { hl = (await this.annotations(att)).length; } catch (e) {}
+    return { pdf: true, hl };
+  }
+  hlText(n) { return n === 1 ? this.T("1 adnotare", "1 annotation") : this.T(`${n} adnotări`, `${n} annotations`); }
   // PDF-ul intră în vault (în folderul PDF-urilor; Texere îl redenumește și îl atașează notei)
   async pdfToVault(x, opts = {}) {
     const p = await this.pdf(x.zotero); if (!p) return null;
@@ -583,7 +591,7 @@ class Zotero {
     const buf = p.data instanceof ArrayBuffer ? p.data : p.data.buffer.slice(p.data.byteOffset, p.data.byteOffset + p.data.byteLength);
     const file = await this.app.vault.createBinary(path, buf);
     // evidențierile tale din Zotero intră în PDF (Texere le aduce apoi în notă, când îl atașează)
-    if (opts.highlights !== false && this.conf().zoteroHighlights !== false) {
+    if (opts.highlights === true || (opts.highlights !== false && this.conf().zoteroHighlights !== false)) {   // true: cerute anume (de ex. „citează și adu PDF-ul”)
       try { const anns = await this.annotations(p.att); if (anns.length) x.zotero.hl = await this.writeHighlights(file, anns); } catch (e) { console.warn("Texere Zotero: adnotările", e); x.zotero.hl = { written: 0, error: e?.message || String(e) }; }
     }
     return file;

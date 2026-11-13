@@ -1629,7 +1629,7 @@ class Sources {
       // din Zotero: PDF-ul vine din biblioteca ta Zotero (nu se mai caută pe internet)
       if (!opts.pdfFile && !opts.noZoteroPdf && x.zotero && this.zotero) {
         wait.setMessage(this.T(`Referință adăugată: @${key}. Aduc PDF-ul din Zotero…`, `Reference added: @${key}. Bringing the PDF from Zotero…`));
-        try { const zf = await this.zotero.pdfToVault(x); if (zf) { await this.placePdf(file, csl, key, zf, readable ? base : key); wait.hide(); notice(this.T(`Referință adăugată din Zotero, cu PDF-ul: @${key}`, `Reference added from Zotero, with its PDF: @${key}`), 5000); opts.after?.(file); return file; } }
+        try { const zf = await this.zotero.pdfToVault(x, { highlights: opts.zoteroHl }); if (zf) { await this.placePdf(file, csl, key, zf, readable ? base : key); wait.hide(); notice(this.T(`Referință adăugată din Zotero, cu PDF-ul: @${key}`, `Reference added from Zotero, with its PDF: @${key}`), 5000); opts.after?.(file); return file; } }
         catch (e) { console.warn("Texere Referințe: PDF-ul din Zotero", e); }
       }
       if (opts.pdfFile) {   // catalogare: PDF-ul pe care îl ai deja se mută lângă celelalte și se atașează
