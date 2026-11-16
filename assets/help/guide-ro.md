@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.3"
-date: "Versiunea 0.5.3 · 16 noiembrie 2026"
+version: "0.5.4"
+date: "Versiunea 0.5.4 · 16 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -57,12 +57,14 @@ Pentru ca Texere să comunice cu Zotero, activează **Allow other applications o
 
 Cum funcționează:
 - **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în seif** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
+
+  <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/search.mp4" title="Cauți într-un catalog și adaugi o referință" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 - **Zotero**: îți vezi biblioteca din Zotero și bifezi ce vrei să adaugi. **Importă referințele** aduce doar metadatele, iar **Importă referințele și PDF-urile** aduce și PDF-urile, cu evidențierile și adnotările făcute în Zotero, fiecare cu eticheta culorii ei.
+
+  <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/zotero.mp4" title="Imporți referințe și PDF-uri din Zotero" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 - **Alte variante**: poți lipi o citare, un BibTeX sau un DOI, poți completa metadatele de mână, poți salva o referință din browser prin Zotero Connector sau poți face o referință dintr-un PDF pe care îl ai deja, cu **Ctrl/Cmd + P** și **Texere: Adaugă acest PDF ca referință**.
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/cauta.png)
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/zotero.png)
 
 **Avantaje**: referința, PDF-ul și notițele tale stau împreună, în fișiere Markdown, pe calculatorul tău.
 
@@ -72,12 +74,12 @@ O referință din Zotero care e deja în seif primește doar ce îi lipsește, a
 
 PDF-urile se citesc și se adnotează direct în Obsidian. Fiecare culoare are o etichetă, iar pasajul pe care îl subliniezi ajunge automat în nota de lectură, cu pagina, citarea și un link înapoi la locul exact din PDF.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/evidentiere.gif)
-
 Cum funcționează:
 1. Deschizi PDF-ul în paralel cu nota de lectură.
 2. Alegi o culoare și selectezi un pasaj.
 3. Pasajul este adăugat automat în notă.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/highlight.mp4" title="Subliniezi pasaje în PDF, iar ele intră în nota de lectură" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 | Culoare | Etichetă | Ce marchezi |
 | --- | --- | --- |
@@ -91,6 +93,8 @@ Cum funcționează:
 | gri | `#word` | termeni de reținut |
 
 **Avantaje**: într-un cititor de PDF obișnuit, sublinierile rămân în fișier. Aici devin notițe pe care le poți căuta în toate lecturile, de exemplu tot ce ai marcat cu `#disagree`. Culoarea pe care o alegi în timp ce citești este deja o primă judecată asupra textului. Sub fiecare pasaj poți scrie una sau două propoziții cu cuvintele tale (**Distilează**, din pagina de pornire), astfel că atunci când începi să scrii, materialul este deja sortat și citat.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Scrii o propoziție cu cuvintele tale sub un pasaj" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă. O evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF**.
 
@@ -117,14 +121,24 @@ Citările se adaugă direct în text, din referințele tale sau din Zotero, iar 
 Cum funcționează:
 1. Scrii `@` într-o notă, urmat de un cuvânt din numele autorului sau din titlu.
 2. Apar referințele tale și, dacă Zotero este deschis, și cele din Zotero, marcate cu eticheta **Zotero**.
-3. Alegi referința. Pentru una din Zotero poți alege între **Doar referința**, care aduce doar metadatele, și **Referința și PDF-ul**, care aduce și adnotările din Zotero.
-4. Adaugi pagina, de exemplu `[@descartes_meditations_2022, p. 29]`.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/citare.gif)
+   <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/cite.mp4" title="Citezi o referință cu @" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+3. Alegi referința. Pentru una din Zotero poți alege între **Doar referința**, care aduce doar metadatele, și **Referința și PDF-ul**, care aduce și adnotările din Zotero.
+
+   <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/cite-zotero.mp4" title="Citezi o referință din Zotero" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+4. Adaugi pagina, de exemplu `[@descartes_meditations_2022, p. 29]`.
 
 În notă, citarea apare formatată, de pildă *(Descartes, 1641/2022, p. 29)*. Bibliografia se actualizează pe măsură ce scrii, așa că fiecare referință citată apare imediat în ea, iar una pe care nu o mai citezi dispare.
 
+Ca să schimbi o citare, dai clic pe ea și alegi **Editează citarea**. Poți pune altă referință sau pagina, iar bibliografia se schimbă odată cu ea.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/fix-citation.mp4" title="Schimbi referința unei citări și adaugi pagina" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 Stilul citărilor se schimbă din bara de jos. Dai clic pe **APA** și alegi alt stil (Chicago, MLA, Harvard, IEEE) sau **Adaugă un stil de citare…**, dintre peste 10.000 disponibile. Citările din text și bibliografia se refac pe loc, iar exportul folosește același stil.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/style.mp4" title="Treci stilul citărilor de la APA la Chicago" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 | Scrii | Primești (APA) |
 | --- | --- |
@@ -148,9 +162,14 @@ Orice notă se poate exporta în PDF, Word sau Markdown, cu citările și biblio
 
 Cum funcționează: apeși **Export** în bara de jos, alegi **PDF**, **Word** sau **Markdown**, verifici previzualizarea și apeși **Exportă**.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/export.png)
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export.mp4" title="Deschizi exportul și verifici previzualizarea" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export-formats.mp4" title="Treci între PDF, Word și Markdown, apoi exporți" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 Aspectul paginii vine din șablon, care poate fi unul general sau cel al Facultății de Filosofie, după ghidul de redactare pentru licență și disertație. Cuprinsul și numerele paginilor se adaugă automat, iar fișierul Word poate fi trimis mai departe pentru corecturi, ca orice alt document.
+
+Tot în fereastra exportului poți schimba stilul citărilor sau poți adăuga un cuprins, iar previzualizarea se schimbă pe loc.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export-style.mp4" title="Schimbi stilul citărilor și adaugi un cuprins la export" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 Un șablon al tău îl faci în **Settings → Texere → Export**, iar folderul în care ajung fișierele îl alegi în **Settings → Texere → General → Foldere**. Cuprinsul îl pui unde vrei cu clic dreapta în notă, **Texere** și **Pune cuprinsul aici**.
 
@@ -165,17 +184,13 @@ Cum funcționează:
 2. Alegi ce te interesează din filtrele de sus, de exemplu **Nu ești de acord** și **Afirmații și definiții**.
 3. Apeși **Începe o notă din cele…**, iar Texere creează schița unui text nou cu pasajele alese, grupate pe tipuri, cu citările deja puse și cu un rând pentru răspunsul tău sub fiecare.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/dezbatere.gif)
-
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/debate-map.mp4" title="Filtrezi harta dezbaterii și pornești o notă din pasaje" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 - **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*.
 - **Panoul conceptului**: în nota unui concept apar definițiile lui din referințele tale, notele în care îl folosești și conceptele alături de care apare în aceleași paragrafe.
 - **Tipare**: vezi ce citești, dar nu folosești în scris, subiectele care revin des și conceptele care apar împreună fără să fie legate.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/revizuieste.png)
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/panou.png)
-
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/concept.mp4" title="Panoul conceptului: legi o mențiune și citești definițiile" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 În fila **Scrisul** vezi cât scrii și cum scrii, iar **Verifică ciorna**, din **Însoțitorul scrisului** (clic dreapta pe notă și **Texere**), îți arată ce face fiecare paragraf și ce mai lipsește, după ghidurile de scris din Texere.
 
 **Avantaje**: într-un folder cu documente Word, legătura dintre un text citit acum doi ani și ideea de azi depinde de memorie. În Texere, pasajele subliniate despre același concept se adună singure din toate lecturile, iar un articol nou poate porni direct de la ele.
@@ -214,6 +229,9 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 ## 7. Ce e nou
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.4** · 16 noiembrie 2026
+- **Ajutorul arată fiecare pas într-un clip scurt:** căutarea, importul din Zotero, sublinierea, citarea, schimbarea unei citări, exportul și Insights.
 
 **0.5.3** · 16 noiembrie 2026
 - **PDF-urile încuiate se pot sublinia:** un PDF încuiat de editor (fără parolă) e descuiat când îl deschizi, fără să i se strice cuprinsul. Când o evidențiere nu se poate scrie, mesajul îți spune de ce și ce poți face.

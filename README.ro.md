@@ -40,12 +40,14 @@ Pentru ca Texere să comunice cu Zotero, activează **Allow other applications o
 
 Cum funcționează:
 - **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în seif** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
+
+  ![Cauți într-un catalog și adaugi o referință](docs/clips/search.gif)
+
 - **Zotero**: îți vezi biblioteca din Zotero și bifezi ce vrei să adaugi. **Importă referințele** aduce doar metadatele, iar **Importă referințele și PDF-urile** aduce și PDF-urile, cu evidențierile și adnotările făcute în Zotero.
+
+  ![Imporți referințe și PDF-uri din Zotero](docs/clips/zotero.gif)
+
 - **Alte variante**: poți lipi o citare, un BibTeX sau un DOI, poți completa metadatele de mână sau poți salva o referință din browser prin Zotero Connector.
-
-![](docs/img/cauta.png)
-
-![](docs/img/zotero.png)
 
 **Avantaje**: referința, PDF-ul și notițele tale stau împreună, în fișiere Markdown, pe calculatorul tău.
 
@@ -53,12 +55,12 @@ Cum funcționează:
 
 PDF-urile se citesc și se adnotează direct în Obsidian. Fiecare culoare are o etichetă, iar pasajul pe care îl subliniezi ajunge automat în nota de lectură, cu pagina, citarea și un link înapoi la locul exact din PDF.
 
-![](docs/img/evidentiere.gif)
-
 Cum funcționează:
 1. Deschizi PDF-ul în paralel cu nota de lectură.
 2. Alegi o culoare și selectezi un pasaj.
 3. Pasajul este adăugat automat în notă.
+
+![Subliniezi pasaje în PDF, iar ele intră în nota de lectură](docs/clips/highlight.gif)
 
 | Culoare | Etichetă | Ce marchezi |
 | --- | --- | --- |
@@ -72,6 +74,8 @@ Cum funcționează:
 | gri | `#word` | termeni de reținut |
 
 **Avantaje**: într-un cititor de PDF obișnuit, sublinierile rămân în fișier. Aici devin notițe pe care le poți căuta în toate lecturile, de exemplu tot ce ai marcat cu `#disagree`. Culoarea pe care o alegi în timp ce citești este deja o primă judecată asupra textului. Sub fiecare pasaj poți scrie una sau două propoziții cu cuvintele tale (**Distilează**), astfel că atunci când începi să scrii, materialul este deja sortat și citat.
+
+![Scrii o propoziție cu cuvintele tale sub un pasaj](docs/clips/own-words.gif)
 
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă.
 
@@ -96,14 +100,24 @@ Citările se adaugă direct în text, din referințele tale sau din Zotero, iar 
 Cum funcționează:
 1. Scrii `@` într-o notă, urmat de un cuvânt din numele autorului sau din titlu.
 2. Apar referințele tale și, dacă Zotero este deschis, și cele din Zotero, marcate cu eticheta **Zotero**.
-3. Alegi referința. Pentru una din Zotero poți alege între **Doar referința**, care aduce doar metadatele, și **Referința și PDF-ul**, care aduce și adnotările din Zotero.
-4. Adaugi pagina, de exemplu `[@descartes_meditations_2022, p. 29]`.
 
-![](docs/img/citare.gif)
+   ![Citezi o referință cu @](docs/clips/cite.gif)
+
+3. Alegi referința. Pentru una din Zotero poți alege între **Doar referința**, care aduce doar metadatele, și **Referința și PDF-ul**, care aduce și adnotările din Zotero.
+
+   ![Citezi o referință din Zotero](docs/clips/cite-zotero.gif)
+
+4. Adaugi pagina, de exemplu `[@descartes_meditations_2022, p. 29]`.
 
 În notă, citarea apare formatată, de pildă *(Descartes, 1641/2022, p. 29)*. Bibliografia se actualizează pe măsură ce scrii, așa că fiecare referință citată apare imediat în ea, iar una pe care nu o mai citezi dispare.
 
+Ca să schimbi o citare, dai clic pe ea și alegi **Editează citarea**. Poți pune altă referință sau pagina, iar bibliografia se schimbă odată cu ea.
+
+![Schimbi referința unei citări și adaugi pagina](docs/clips/fix-citation.gif)
+
 Stilul citărilor se schimbă din bara de jos. Dai clic pe **APA** și alegi alt stil (Chicago, MLA, Harvard, IEEE) sau **Adaugă un stil de citare…**, dintre peste 10.000 disponibile. Citările din text și bibliografia se refac pe loc, iar exportul folosește același stil.
+
+![Treci stilul citărilor de la APA la Chicago](docs/clips/style.gif)
 
 **Avantaje**: funcționează asemănător pluginului Zotero din Word, dar în același loc cu notițele și PDF-urile. Un clic pe o citare te duce la referință sau la pagina din PDF.
 
@@ -113,9 +127,14 @@ Orice notă se poate exporta în PDF, Word sau Markdown, cu citările și biblio
 
 Cum funcționează: apeși **Export** în bara de jos, alegi **PDF**, **Word** sau **Markdown**, verifici previzualizarea și apeși **Exportă**.
 
-![](docs/img/export.png)
+![Deschizi exportul și verifici previzualizarea](docs/clips/export.gif)
 
+![Treci între PDF, Word și Markdown, apoi exporți](docs/clips/export-formats.gif)
 Aspectul paginii vine din șablon, care poate fi unul general sau cel al Facultății de Filosofie, după ghidul de redactare pentru licență și disertație. Cuprinsul și numerele paginilor se adaugă automat, iar fișierul Word poate fi trimis mai departe pentru corecturi, ca orice alt document.
+
+Tot în fereastra exportului poți schimba stilul citărilor sau poți adăuga un cuprins, iar previzualizarea se schimbă pe loc.
+
+![Schimbi stilul citărilor și adaugi un cuprins la export](docs/clips/export-style.gif)
 
 ## 7. Insights (BETA)
 
@@ -128,17 +147,13 @@ Cum funcționează:
 2. Alegi ce te interesează din filtrele de sus, de exemplu **Nu ești de acord** și **Afirmații și definiții**.
 3. Apeși **Începe o notă din cele…**, iar Texere creează schița unui text nou cu pasajele alese, grupate pe tipuri, cu citările deja puse și cu un rând pentru răspunsul tău sub fiecare.
 
-![](docs/img/dezbatere.gif)
-
+![Filtrezi harta dezbaterii și pornești o notă din pasaje](docs/clips/debate-map.gif)
 Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 - **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*.
 - **Panoul conceptului**: în nota unui concept apar definițiile lui din referințele tale, notele în care îl folosești și conceptele alături de care apare în aceleași paragrafe.
 - **Tipare**: vezi ce citești, dar nu folosești în scris, subiectele care revin des și conceptele care apar împreună fără să fie legate.
 
-![](docs/img/revizuieste.png)
-
-![](docs/img/panou.png)
-
+![Panoul conceptului: legi o mențiune și citești definițiile](docs/clips/concept.gif)
 **Avantaje**: într-un folder cu documente Word, legătura dintre un text citit acum doi ani și ideea de azi depinde de memorie. În Texere, pasajele subliniate despre același concept se adună singure din toate lecturile, iar un articol nou poate porni direct de la ele.
 
 ## Mai multe detalii

@@ -40,12 +40,14 @@ For Texere to talk to Zotero, turn on **Allow other applications on this compute
 
 How it works:
 - **Search**: type the title, author, DOI or ISBN, and Texere searches open academic catalogs such as OpenAlex, Crossref, Semantic Scholar and Google Books. For each result you see the year, the journal, the number of citations and whether the PDF is free. **Add to vault** brings the metadata (author, title, year, journal, DOI) together with the PDF, when there is one.
+
+  ![Searching a catalog and adding a reference](docs/clips/search.gif)
+
 - **Zotero**: you see your Zotero library and tick what you want to add. **Import references** brings only the metadata, while **Import references and PDFs** also brings the PDFs, with the highlights and annotations you made in Zotero.
+
+  ![Importing references and PDFs from Zotero](docs/clips/zotero.gif)
+
 - **Other ways**: you can paste a citation, a BibTeX entry or a DOI, fill in the metadata by hand, or save a reference from your browser with Zotero Connector.
-
-![](docs/img/en/cauta.png)
-
-![](docs/img/en/zotero.png)
 
 **Why it helps**: the reference, the PDF and your notes stay together, in Markdown files, on your computer.
 
@@ -53,12 +55,12 @@ How it works:
 
 You read and annotate PDFs right in Obsidian. Each colour has a tag, and the passage you highlight goes into the reading note by itself, with the page, the citation and a link back to the exact place in the PDF.
 
-![](docs/img/en/evidentiere.gif)
-
 How it works:
 1. Open the PDF next to the reading note.
 2. Choose a colour and select a passage.
 3. The passage is added to the note by itself.
+
+![Highlighting passages in a PDF, which go into the reading note](docs/clips/highlight.gif)
 
 | Colour | Tag | What you mark |
 | --- | --- | --- |
@@ -72,6 +74,8 @@ How it works:
 | grey | `#word` | terms to remember |
 
 **Why it helps**: in an ordinary PDF reader, highlights stay in the file. Here they become notes you can search across all your readings, for example everything you marked `#disagree`. The colour you choose while reading is already a first judgement about the text. Under each passage you can write one or two sentences in your own words (**Distil**), so that when you start writing, your material is already sorted and cited.
+
+![Writing a sentence in your own words under a passage](docs/clips/own-words.gif)
 
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note.
 
@@ -96,14 +100,24 @@ You add citations right in the text, from your references or from Zotero, and th
 How it works:
 1. Type `@` in a note, followed by a word from the author's name or the title.
 2. Your references appear and, if Zotero is open, those from Zotero too, marked with the **Zotero** label.
-3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
-4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
 
-![](docs/img/en/citare.gif)
+   ![Citing a reference with @](docs/clips/cite.gif)
+
+3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
+
+   ![Citing a reference from Zotero](docs/clips/cite-zotero.gif)
+
+4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
 
 In the note, the citation shows formatted, for example *(Descartes, 1641/2022, p. 29)*. The bibliography updates as you write, so each reference you cite appears in it at once, and one you no longer cite disappears.
 
+To change a citation, click it and choose **Edit the citation**: you can swap the reference or add the page, and the bibliography follows.
+
+![Changing the reference of a citation and adding the page](docs/clips/fix-citation.gif)
+
 You change the citation style from the bottom bar. Click **APA** and choose another style (Chicago, MLA, Harvard, IEEE) or **Add a citation style…**, from more than 10,000 available. The citations in the text and the bibliography are redone on the spot, and the export uses the same style.
+
+![Switching the citation style from APA to Chicago](docs/clips/style.gif)
 
 **Why it helps**: it works much like the Zotero plugin for Word, but in the same place as your notes and PDFs. A click on a citation takes you to the reference or to the page in the PDF.
 
@@ -113,9 +127,14 @@ Any note can be exported to PDF, Word or Markdown, with the citations and biblio
 
 How it works: click **Export** in the bottom bar, choose **PDF**, **Word** or **Markdown**, check the preview and click **Export**.
 
-![](docs/img/en/export.png)
+![Opening the export window and checking the preview](docs/clips/export.gif)
 
+![Switching between PDF, Word and Markdown, then exporting](docs/clips/export-formats.gif)
 The page layout comes from the template, which can be a general one or the Faculty of Philosophy's, following the writing guide for BA and MA theses. The table of contents and page numbers are added by themselves, and the Word file can be sent on for corrections like any other document.
+
+In the same window you can change the citation style or add a table of contents, and the preview follows.
+
+![Changing the citation style and adding a table of contents in the export](docs/clips/export-style.gif)
 
 ## 7. Insights (BETA)
 
@@ -128,17 +147,13 @@ How it works:
 2. Choose what interests you with the filters at the top, for example **You disagree** and **Claims and definitions**.
 3. Click **Start a note from these…**, and Texere creates the draft of a new text with the passages you chose, grouped by kind, with the citations already in place and a line for your answer under each one.
 
-![](docs/img/en/dezbatere.gif)
-
+![Filtering the debate map and starting a note from the passages](docs/clips/debate-map.gif)
 Besides the debate map, Insights helps you in three more ways:
 - **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
 - **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
 - **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
-![](docs/img/en/revizuieste.png)
-
-![](docs/img/en/panou.png)
-
+![The concept panel: linking a mention and reading the definitions](docs/clips/concept.gif)
 **Why it helps**: in a folder of Word documents, the link between a text read two years ago and today's idea depends on memory. In Texere, the passages you highlighted about the same concept gather by themselves from all your readings, and a new article can start straight from them.
 
 ## More details

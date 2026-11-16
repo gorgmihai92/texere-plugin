@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.3"
-date: "Version 0.5.3 · 16 November 2026"
+version: "0.5.4"
+date: "Version 0.5.4 · 16 November 2026"
 ---
 
 ## 1. Start
@@ -57,12 +57,14 @@ For Texere to talk to Zotero, turn on **Allow other applications on this compute
 
 How it works:
 - **Search**: type the title, author, DOI or ISBN, and Texere searches open academic catalogs such as OpenAlex, Crossref, Semantic Scholar and Google Books. For each result you see the year, the journal, the number of citations and whether the PDF is free. **Add to vault** brings the metadata (author, title, year, journal, DOI) together with the PDF, when there is one.
+
+  <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/search.mp4" title="Searching a catalog and adding a reference" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 - **Zotero**: you see your Zotero library and tick what you want to add. **Import references** brings only the metadata, while **Import references and PDFs** also brings the PDFs, with the highlights and annotations you made in Zotero, each tagged by its colour.
+
+  <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/zotero.mp4" title="Importing references and PDFs from Zotero" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 - **Other ways**: you can paste a citation, a BibTeX entry or a DOI, fill in the metadata by hand, save a reference from your browser with Zotero Connector, or turn a PDF you already have into a reference, with **Ctrl/Cmd + P** and **Texere: Add this PDF as a reference**.
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/cauta.png)
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/zotero.png)
 
 **Why it helps**: the reference, the PDF and your notes stay together, in Markdown files, on your computer.
 
@@ -72,12 +74,12 @@ A Zotero reference already in your vault only gets what it is missing, so nothin
 
 You read and annotate PDFs right in Obsidian. Each colour has a tag, and the passage you highlight goes into the reading note by itself, with the page, the citation and a link back to the exact place in the PDF.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/evidentiere.gif)
-
 How it works:
 1. Open the PDF next to the reading note.
 2. Choose a colour and select a passage.
 3. The passage is added to the note by itself.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/highlight.mp4" title="Highlighting passages in a PDF, which go into the reading note" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 | Colour | Tag | What you mark |
 | --- | --- | --- |
@@ -91,6 +93,8 @@ How it works:
 | grey | `#word` | terms to remember |
 
 **Why it helps**: in an ordinary PDF reader, highlights stay in the file. Here they become notes you can search across all your readings, for example everything you marked `#disagree`. The colour you choose while reading is already a first judgement about the text. Under each passage you can write one or two sentences in your own words (**Distil**, from the home page), so that when you start writing, your material is already sorted and cited.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Writing a sentence in your own words under a passage" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the PDF, **Texere** and **Import annotations from PDF**.
 
@@ -117,14 +121,24 @@ You add citations right in the text, from your references or from Zotero, and th
 How it works:
 1. Type `@` in a note, followed by a word from the author's name or the title.
 2. Your references appear and, if Zotero is open, those from Zotero too, marked with the **Zotero** label.
-3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
-4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/citare.gif)
+   <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/cite.mp4" title="Citing a reference with @" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
+
+   <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/cite-zotero.mp4" title="Citing a reference from Zotero" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
 
 In the note, the citation shows formatted, for example *(Descartes, 1641/2022, p. 29)*. The bibliography updates as you write, so each reference you cite appears in it at once, and one you no longer cite disappears.
 
+To change a citation, click it and choose **Edit the citation**: you can swap the reference or add the page, and the bibliography follows.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/fix-citation.mp4" title="Changing the reference of a citation and adding the page" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
 You change the citation style from the bottom bar. Click **APA** and choose another style (Chicago, MLA, Harvard, IEEE) or **Add a citation style…**, from more than 10,000 available. The citations in the text and the bibliography are redone on the spot, and the export uses the same style.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/style.mp4" title="Switching the citation style from APA to Chicago" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 | You type | You get (APA) |
 | --- | --- |
@@ -148,9 +162,14 @@ Any note can be exported to PDF, Word or Markdown, with the citations and biblio
 
 How it works: click **Export** in the bottom bar, choose **PDF**, **Word** or **Markdown**, check the preview and click **Export**.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/export.png)
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export.mp4" title="Opening the export window and checking the preview" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export-formats.mp4" title="Switching between PDF, Word and Markdown, then exporting" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 The page layout comes from the template, which can be a general one or the Faculty of Philosophy's, following the writing guide for BA and MA theses. The table of contents and page numbers are added by themselves, and the Word file can be sent on for corrections like any other document.
+
+In the same window you can change the citation style or add a table of contents, and the preview follows.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/export-style.mp4" title="Changing the citation style and adding a table of contents in the export" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
 You make a template of your own in **Settings → Texere → Export**, and you choose the folder the files go to in **Settings → Texere → General → Folders**. You put the table of contents where you want it with a right-click in the note, **Texere** and **Insert the contents here**.
 
@@ -165,17 +184,13 @@ How it works:
 2. Choose what interests you with the filters at the top, for example **You disagree** and **Claims and definitions**.
 3. Click **Start a note from these…**, and Texere creates the draft of a new text with the passages you chose, grouped by kind, with the citations already in place and a line for your answer under each one.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/dezbatere.gif)
-
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/debate-map.mp4" title="Filtering the debate map and starting a note from the passages" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 Besides the debate map, Insights helps you in three more ways:
 - **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
 - **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
 - **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/revizuieste.png)
-
-![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/en/panou.png)
-
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/concept.mp4" title="The concept panel: linking a mention and reading the definitions" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 The **Writing** tab shows how much and how you write, and **Check this draft**, in the **Writing companion** (right-click on a note and **Texere**), shows what each paragraph does and what is still missing, following Texere's writing guides.
 
 **Why it helps**: in a folder of Word documents, the link between a text read two years ago and today's idea depends on memory. In Texere, the passages you highlighted about the same concept gather by themselves from all your readings, and a new article can start straight from them.
@@ -214,6 +229,9 @@ If the setup couldn't do a step, you do it yourself, by hand:
 ## 7. What's new
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.4** · 16 November 2026
+- **Help shows each step as a short clip:** searching, importing from Zotero, highlighting, citing, changing a citation, exporting and Insights.
 
 **0.5.3** · 16 November 2026
 - **Locked PDFs can be highlighted:** a PDF locked by its publisher (no password) is unlocked when you open it, without damaging its bookmarks. When a highlight can't be written, the message tells you why and what to do.

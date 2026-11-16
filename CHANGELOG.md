@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.4 (16 November 2026)
+
+- **Help and README show each step as a short clip** instead of still pictures: searching and adding, importing from Zotero, highlighting, writing in your own words, citing (from the vault and from Zotero), changing a citation, switching the style, the export window, formats, the concept panel and the debate map. Help plays them as small videos (`docs/clips/*.mp4`), the README as GIFs (`docs/clips/*.gif`); both languages use the English recordings. The guide also says how to change a citation (**Edit the citation**) and that the export window can change the style and add a table of contents.
+
 ## 0.5.3 (16 November 2026)
 
 - **Locked PDFs can be highlighted.** Many PDFs from publishers and libraries are encrypted with an empty password: they open, but PDF++ can't write into them and only says "An error occurred while attempting to add an annotation". Texere now unlocks such a PDF when you open it (and, if a highlight still meets a locked file, unlocks it and writes the highlight again), with a short notice.
