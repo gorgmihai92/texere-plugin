@@ -257,7 +257,7 @@ function makeHelp(plugin) {
     philo: { icon: "network", label: ["Deschide nota Philosophy", "Open the Philosophy note"], run: lg => openNote("Philosophy", lg) },
     versions: { icon: "history", label: ["Vezi istoricul versiunilor", "See the version history"], guide: ["7", "nou", "new"] },
     recovery: { icon: "rotate-ccw", label: ["Deschide File recovery", "Open File recovery"], run: () => settings("file-recovery") },
-    vault: { icon: "folder-open", label: ["Arată vault-ul în Finder / Explorer", "Show the vault in Finder / Explorer"], run: lg => showOS(C.basePath(app), lg) },
+    vault: { icon: "folder-open", label: ["Arată seiful în Finder / Explorer", "Show the vault in Finder / Explorer"], run: lg => showOS(C.basePath(app), lg) },
     lang: { icon: "languages", label: ["Switch to English", "Treci la română"], stay: true },
     mail: { icon: "mail", label: ["Scrie un e-mail", "Send an e-mail"], url: "mailto:hi@georgemihai.com" },
     site: { icon: "globe", label: ["www.georgemihai.com", "www.georgemihai.com"], url: "https://www.georgemihai.com/?utm_source=texere&utm_medium=help&utm_campaign=texere" },

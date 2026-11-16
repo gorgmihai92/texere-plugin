@@ -28,7 +28,7 @@ Texere's home page opens from the braided icon at the top left or from any new t
 - **Export**: you get your essay, article or thesis as PDF, Word or Markdown, with the citations and bibliography in the style you chose.
 - **Insights**: statistics about what you write and read, together with the links between ideas.
 
-![](docs/img/home.png)
+![](docs/img/en/home.png)
 
 ## 2. References
 
@@ -43,9 +43,9 @@ How it works:
 - **Zotero**: you see your Zotero library and tick what you want to add. **Import references** brings only the metadata, while **Import references and PDFs** also brings the PDFs, with the highlights and annotations you made in Zotero.
 - **Other ways**: you can paste a citation, a BibTeX entry or a DOI, fill in the metadata by hand, or save a reference from your browser with Zotero Connector.
 
-![](docs/img/cauta.png)
+![](docs/img/en/cauta.png)
 
-![](docs/img/zotero.png)
+![](docs/img/en/zotero.png)
 
 **Why it helps**: the reference, the PDF and your notes stay together, in Markdown files, on your computer.
 
@@ -53,7 +53,7 @@ How it works:
 
 You read and annotate PDFs right in Obsidian. Each colour has a tag, and the passage you highlight goes into the reading note by itself, with the page, the citation and a link back to the exact place in the PDF.
 
-![](docs/img/evidentiere.gif)
+![](docs/img/en/evidentiere.gif)
 
 How it works:
 1. Open the PDF next to the reading note.
@@ -79,13 +79,13 @@ If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key
 
 Texere comes with a map of philosophy, with a note for each branch, theory, concept, movement, period and author, starting from the *Philosophy* note. The notes have English names and Romanian aliases, so typing `[[Etică` gives you *Ethics*.
 
-![](docs/img/harta.png)
+![](docs/img/en/harta.png)
 
 How it works: each reference and each note gets a few properties (*discipline*, *branch*, concepts, authors) that point to notes in the map. A reading marked *branch: Epistemology* shows up on the Epistemology page, next to the other readings in the same branch.
 
 In the Obsidian graph, which you open with **Ctrl/Cmd + G**, each dot is a note and the lines are the links between them. Branches, subfields, concepts, theories, movements, periods and authors each have their own colour. The colours come with Texere, and in an older vault the home page offers them with the **Add** button.
 
-![](docs/img/graf.png)
+![](docs/img/en/graf.png)
 
 **Why it helps**: your readings are no longer ordered only by folders or courses, but also by branches and concepts. When you open a concept, you see everything you have read and written about it. The map can be adapted to other disciplines too.
 
@@ -99,7 +99,7 @@ How it works:
 3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
 4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
 
-![](docs/img/citare.gif)
+![](docs/img/en/citare.gif)
 
 In the note, the citation shows formatted, for example *(Descartes, 1641/2022, p. 29)*. The bibliography updates as you write, so each reference you cite appears in it at once, and one you no longer cite disappears.
 
@@ -113,7 +113,7 @@ Any note can be exported to PDF, Word or Markdown, with the citations and biblio
 
 How it works: click **Export** in the bottom bar, choose **PDF**, **Word** or **Markdown**, check the preview and click **Export**.
 
-![](docs/img/export.png)
+![](docs/img/en/export.png)
 
 The page layout comes from the template, which can be a general one or the Faculty of Philosophy's, following the writing guide for BA and MA theses. The table of contents and page numbers are added by themselves, and the Word file can be sent on for corrections like any other document.
 
@@ -128,16 +128,16 @@ How it works:
 2. Choose what interests you with the filters at the top, for example **You disagree** and **Claims and definitions**.
 3. Click **Start a note from these…**, and Texere creates the draft of a new text with the passages you chose, grouped by kind, with the citations already in place and a line for your answer under each one.
 
-![](docs/img/dezbatere.gif)
+![](docs/img/en/dezbatere.gif)
 
 Besides the debate map, Insights helps you in three more ways:
 - **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
 - **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
 - **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
-![](docs/img/revizuieste.png)
+![](docs/img/en/revizuieste.png)
 
-![](docs/img/panou.png)
+![](docs/img/en/panou.png)
 
 **Why it helps**: in a folder of Word documents, the link between a text read two years ago and today's idea depends on memory. In Texere, the passages you highlighted about the same concept gather by themselves from all your readings, and a new article can start straight from them.
 

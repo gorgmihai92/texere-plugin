@@ -130,7 +130,7 @@ module.exports = class Texere extends Plugin {
     { const { PdfHand } = require("./core/pdfhand"); this.pdfHand = new PdfHand(this);
       // culorile hărții în graficul Obsidian (Graph view → Groups): doar cele care lipsesc
       this.coreCommand({ id: "graph-colors", name: this.T("Culori în grafic pentru harta disciplinei", "Colours in the graph for the discipline map"), icon: "palette", callback: async () => {
-        const GC = require("./core/graphcolors"); if (!(await GC.mapFolder(this))) return new Notice(this.T("Harta disciplinei nu e în vault: o creezi din Settings → Texere → Foldere → Harta disciplinei.", "The discipline map isn't in your vault: create it in Settings → Texere → Folders → Discipline map."), 8000);
+        const GC = require("./core/graphcolors"); if (!(await GC.mapFolder(this))) return new Notice(this.T("Harta disciplinei nu e în seif: o creezi din Settings → Texere → Foldere → Harta disciplinei.", "The discipline map isn't in your vault: create it in Settings → Texere → Folders → Discipline map."), 8000);
         const n = await GC.apply(this); new Notice(n ? this.T(`Graficul are acum culori pentru ${GC.legend(this)}.`, `The graph now has colours for ${GC.legend(this)}.`) : this.T("Culorile hărții sunt deja în grafic.", "The map's colours are already in the graph."), 7000); } });
       this.coreCommand({ id: "pdf-hand", name: this.T("Pointer în PDF: selectezi fără să copiezi în notă", "Pointer in PDF: select without copying into the note"), icon: "mouse-pointer-2", callback: () => this.pdfHand.toggle() });
       this.app.workspace.onLayoutReady(() => { try { this.pdfHand.start(); } catch (e) { console.error("Texere: pointerul în PDF", e); } }); }
@@ -291,7 +291,7 @@ module.exports = class Texere extends Plugin {
   // mută un folder al lui Texere în alt folder din vault, prin Obsidian (linkurile și setările lui Texere urmează)
   moveFolder(path, done) {
     const P = this, T = (a, b) => this.T(a, b), f = this.app.vault.getAbstractFileByPath(path); if (!f || !Array.isArray(f.children)) { new Notice(T(`Nu găsesc „${path}”.`, `Can't find “${path}”.`)); return; }
-    const ROOT = T("(rădăcina vault-ului)", "(the vault's root)"), name = f.name;
+    const ROOT = T("(rădăcina seifului)", "(the vault's root)"), name = f.name;
     const M = class extends FuzzySuggestModal {
       getItems() { return [ROOT, ...vaultFolders(P.app).filter(x => x !== path && !x.startsWith(path + "/") && x !== (f.parent?.path || ""))]; }
       getItemText(x) { return x; }
@@ -474,7 +474,7 @@ module.exports = class Texere extends Plugin {
     for (const k of ["onboarded", "structure", "seen", "presetDone", "completedFor", "foldersDone", "fields", "dirs", "lastSetup", "thesisFolder"]) delete this.settings[k];
     await this.save();
     try { this.app.saveLocalStorage(setup.FLAG, null); this.app.saveLocalStorage(LATER, null); } catch (e) {}
-    console.log("Texere: vault-ul e gol, configurarea o ia de la capăt");
+    console.log("Texere: seiful e gol, configurarea o ia de la capăt");
   }
   async firstRun() {
     if (this.vaultEmptied()) { await this.startOver(); this._restart = true; }
@@ -622,7 +622,7 @@ module.exports = class Texere extends Plugin {
       const rec = (this.settings.moved || []).slice().reverse().find(m => (path === m.from || path.startsWith(m.from + "/")) && V.getAbstractFileByPath(m.to) && !V.getAbstractFileByPath(m.from));
       let from = rec ? V.getAbstractFileByPath(rec.to) : null, to = rec ? rec.from : path;
       if (!from && this.fixedFolders().some(y => y.path === path)) from = this.bibElsewhere(path);
-      if (!from) { new Notice(T(`Nu găsesc „${path}” în vault. Copiază-l din vault-ul Texere.`, `I can't find “${path}” in the vault. Copy it from the Texere vault.`), 10000); return false; }
+      if (!from) { new Notice(T(`Nu găsesc „${path}” în seif. Copiază-l din seiful Texere.`, `I can't find “${path}” in the vault. Copy it from the Texere vault.`), 10000); return false; }
       const parent = to.includes("/") ? to.slice(0, to.lastIndexOf("/")) : ""; let cur = "";
       for (const part of parent ? parent.split("/") : []) { cur = cur ? `${cur}/${part}` : part; if (!V.getAbstractFileByPath(cur)) await V.createFolder(cur); }
       await this.app.fileManager.renameFile(from, to);
@@ -674,7 +674,7 @@ module.exports = class Texere extends Plugin {
   async problems() {
     const T = (a, b) => this.T(a, b), out = [], P = this.app.plugins;
     // neconfigurat (vault nou, laptop nou): un singur lucru de făcut, configurarea; restul îl rezolvă ea
-    if (this.needsConfig()) return [{ text: T("Texere nu e încă configurat aici.", "Texere isn't set up here yet."), why: T("Câțiva pași scurți: limba, unde ține Texere lucrurile, disciplina ta și ce lipsește din vault.", "A few short steps: language, where Texere keeps things, your discipline and what's missing in the vault."), btn: T("Configurează", "Set up"), fn: () => this.onboard(true) }];
+    if (this.needsConfig()) return [{ text: T("Texere nu e încă configurat aici.", "Texere isn't set up here yet."), why: T("Câțiva pași scurți: limba, unde ține Texere lucrurile, disciplina ta și ce lipsește din seif.", "A few short steps: language, where Texere keeps things, your discipline and what's missing in the vault."), btn: T("Configurează", "Set up"), fn: () => this.onboard(true) }];
     this.trackSeen();
     for (const d of DEPS) {
       const st = this.state(d.id); if (st === "on") continue;
@@ -703,8 +703,8 @@ module.exports = class Texere extends Plugin {
       if (!(m && m.from === x.path) && x.key !== "export") { try { m = this.mod("sources")?.sources?.movedFor?.(x.key, x.path) || m; } catch (e) {} }
       const to = m && m.from === x.path && this.app.vault.getAbstractFileByPath(m.to) ? m.to : null, guess = !!m?.guess;
       const L = x.label.charAt(0).toUpperCase() + x.label.slice(1), wait = T(`Până alegi, ${x.next} se oprește și te întreabă unde să ajungă.`, `Until you choose, ${x.next} will stop and ask where to go.`);
-      out.push(to ? { text: x.breaks, why: (guess ? T(`${L}, „${x.path}”, nu mai e în vault; pare că l-ai redenumit în afara lui Obsidian în „${to}”. `, `${L}, “${x.path}”, isn't in the vault anymore; it looks like you renamed it outside Obsidian to “${to}”. `) : T(`Ai redenumit ${x.label}: „${x.path}” e acum „${to}”, dar Texere încă îl caută pe „${x.path}”. `, `You renamed ${x.label}: “${x.path}” is now “${to}”, but Texere still looks for “${x.path}”. `)) + wait, btn: T(`Folosește „${to}”`, `Use “${to}”`), fn: () => x.use(to) }
-        : { text: x.breaks, why: T(`${L}, „${x.path}”, nu mai e în vault, iar Texere încă îl caută. `, `${L}, “${x.path}”, isn't in the vault anymore, but Texere still looks for it. `) + wait, btn: T("Alege…", "Choose…"), fn: () => x.choose() });
+      out.push(to ? { text: x.breaks, why: (guess ? T(`${L}, „${x.path}”, nu mai e în seif; pare că l-ai redenumit în afara lui Obsidian în „${to}”. `, `${L}, “${x.path}”, isn't in the vault anymore; it looks like you renamed it outside Obsidian to “${to}”. `) : T(`Ai redenumit ${x.label}: „${x.path}” e acum „${to}”, dar Texere încă îl caută pe „${x.path}”. `, `You renamed ${x.label}: “${x.path}” is now “${to}”, but Texere still looks for “${x.path}”. `)) + wait, btn: T(`Folosește „${to}”`, `Use “${to}”`), fn: () => x.use(to) }
+        : { text: x.breaks, why: T(`${L}, „${x.path}”, nu mai e în seif, iar Texere încă îl caută. `, `${L}, “${x.path}”, isn't in the vault anymore, but Texere still looks for it. `) + wait, btn: T("Alege…", "Choose…"), fn: () => x.choose() });
     }
     if (this.app.vault.getConfig?.("alwaysUpdateLinks") === false) out.push({ text: T("Linkurile nu se actualizează când redenumești o notă.", "Links don't update when you rename a note."), why: T("Texere redenumește note; fără asta, linkurile spre ele se rup.", "Texere renames notes; without this, links to them break."), btn: T("Repară", "Fix"), fn: () => this.app.vault.setConfig("alwaysUpdateLinks", true) });
     return out;
@@ -1066,7 +1066,7 @@ class TexereSettingTab extends PluginSettingTab {
     const P = this.P, T = (a, b) => P.T(a, b); el.addClass("texere-core-settings");
     const head = el.createDiv("ts-head"); head.createSpan({ cls: "ts-head-t", text: T("Despre Texere", "About Texere") });
     const body = el.createDiv("ts-body");
-    body.createEl("p", { cls: "ts-intro", text: T("Un vault de cercetare pentru Obsidian. Gratuit și deschis.", "A research vault for Obsidian. Free and open.") });
+    body.createEl("p", { cls: "ts-intro", text: T("Un seif de cercetare pentru Obsidian. Gratuit și deschis.", "A research vault for Obsidian. Free and open.") });
     const open = (name, desc, fn) => new Setting(body).setName(name).setDesc(desc).addButton(b => b.setButtonText(T("Deschide", "Open")).onClick(fn));
     new Setting(body).setName(T("Versiunea", "Version")).setDesc(String(P.manifest.version || ""));
     // ghidul și întrebările: în Ajutor (nu în vault)

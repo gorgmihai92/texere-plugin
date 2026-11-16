@@ -270,7 +270,7 @@ const StatsMixin = {
     }
 
     // 3. În vault: evidențieri pe tipuri, pagini, note care citează, lectura
-    const r3 = row(T("În vault", "In your vault")), names = Object.keys(pal).map(n => n.toLowerCase());
+    const r3 = row(T("În seif", "In your vault")), names = Object.keys(pal).map(n => n.toLowerCase());
     const counts = new Map(), pages = new Set(); let total = 0;
     for (const line of text.split("\n")) {
       const m = /(?:^|\s)#([\w-]+)/.exec(line);

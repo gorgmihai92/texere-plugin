@@ -17,7 +17,7 @@ const PLACES = [
   { key: "inbox", icon: "inbox", rec: "01. References/PDFs/Inbox",
     label: M("Inbox pentru PDF-uri", "Inbox for PDFs"), desc: M("Unde pui PDF-urile care încă nu au o referință; Texere te întreabă cărei referințe le aparțin.", "Where you drop PDFs that don't have a reference yet; Texere asks which reference they belong to.") },
   { key: "export", icon: "download", rec: "04. Export", outside: true,
-    label: M("Exportul", "Export"), desc: M("Unde ajung fișierele exportate (PDF, Word). Poate fi și în afara vault-ului.", "Where exported files (PDF, Word) go. It can be outside the vault too.") },
+    label: M("Exportul", "Export"), desc: M("Unde ajung fișierele exportate (PDF, Word). Poate fi și în afara seifului.", "Where exported files (PDF, Word) go. It can be outside the vault too.") },
   { key: "templates", icon: "layout-template", rec: "Support/Templates",
     label: M("Șabloanele", "Templates"), desc: M("Șabloanele pentru un articol și pentru lucrarea de licență sau de disertație.", "The templates for an article and for a BA or MA thesis.") },
 ];
@@ -34,15 +34,15 @@ function clean(value, { outside = false, base = "" } = {}) {
   if (!v) return { error: M("Alege un folder.", "Choose a folder.") };
   // o cale din vault lipită întreagă (/Users/ana/Vault/Refs sau C:\…\Vault\Refs): o facem relativă la vault
   const b = String(base || "").replace(/[\\/]+$/, "");
-  if (b && (v + "/").replace(/\\/g, "/").startsWith(b.replace(/\\/g, "/") + "/")) { v = v.replace(/\\/g, "/").slice(b.replace(/\\/g, "/").length).replace(/^\/+/, ""); if (!v) return { error: M("Alege un folder din vault (nu chiar rădăcina lui).", "Choose a folder inside the vault (not its root).") }; }
+  if (b && (v + "/").replace(/\\/g, "/").startsWith(b.replace(/\\/g, "/") + "/")) { v = v.replace(/\\/g, "/").slice(b.replace(/\\/g, "/").length).replace(/^\/+/, ""); if (!v) return { error: M("Alege un folder din seif (nu chiar rădăcina lui).", "Choose a folder inside the vault (not its root).") }; }
   // „/Refs” scris cu bară la început e tot un folder din vault; o cale de calculator (/Users/…, /home/…, /Volumes/…, C:\…, ~/…) nu
   else if (!outside && /^\/(?!(Users|home|Volumes|mnt|tmp|private|var|opt|media)(\/|$))/.test(v)) v = v.replace(/^\/+/, "");
   if (isAbs(v)) {
-    if (!outside) return { error: M("Alege un folder din vault (nu o cale de pe calculator).", "Choose a folder inside the vault (not a path on your computer).") };
+    if (!outside) return { error: M("Alege un folder din seif (nu o cale de pe calculator).", "Choose a folder inside the vault (not a path on your computer).") };
     return { value: v.replace(/[\\/]+$/, "") || v, abs: true };
   }
   v = v.replace(/\\/g, "/").replace(/\/{2,}/g, "/").replace(/^\/+|\/+$/g, "");
-  if (!v) return { error: M("Alege un folder din vault (nu chiar rădăcina lui).", "Choose a folder inside the vault (not its root).") };
+  if (!v) return { error: M("Alege un folder din seif (nu chiar rădăcina lui).", "Choose a folder inside the vault (not its root).") };
   const segs = v.split("/");
   if (segs.some(s => s === ".." || s === ".")) return { error: M("Calea nu poate conține „..”.", "The path can't contain “..”.") };
   if (segs.some(s => s.startsWith("."))) return { error: M("Folderele ascunse (care încep cu „.”) nu se pot folosi.", "Hidden folders (starting with “.”) can't be used.") };

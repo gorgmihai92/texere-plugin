@@ -189,8 +189,8 @@ class InsightsView extends ItemView {
     const P = this.P, T = (a, b) => P.T(a, b), en = P.en, c = this.contentEl, keep = c.scrollTop;
     c.empty(); const w = c.createDiv("txi-wrap");
     const head = w.createDiv("txi-head"); beta(head.createDiv({ cls: "txi-title", text: "Insights" }), T("Insights e încă în lucru: unele măsurători și sugestii se pot schimba.", "Insights is still in the works: some counts and suggestions may change."));
-    const sub = head.createDiv("txi-sub"); sub.createSpan({ text: P.scanCache?.at ? T(`actualizat ${P.ago(P.scanCache.at)}`, `updated ${P.ago(P.scanCache.at)}`) : T("se citește vault-ul…", "reading your vault…") });
-    const rb = sub.createEl("button", { text: T("Caută acum", "Scan now") }); rb.title = T("Recitește vault-ul: cuvintele, menționările, tiparele", "Read your vault again: words, mentions, patterns");
+    const sub = head.createDiv("txi-sub"); sub.createSpan({ text: P.scanCache?.at ? T(`actualizat ${P.ago(P.scanCache.at)}`, `updated ${P.ago(P.scanCache.at)}`) : T("se citește seiful…", "reading your vault…") });
+    const rb = sub.createEl("button", { text: T("Caută acum", "Scan now") }); rb.title = T("Recitește seiful: cuvintele, menționările, tiparele", "Read your vault again: words, mentions, patterns");
     rb.addEventListener("click", async () => { rb.disabled = true; rb.setText("…"); await P.allLogs(); P._logsAt = 0; await P.allLogs(); await P.scan(false, true); this.render(); });
     // LAB: ce înseamnă (experimental, se îmbunătățește) și unde stau datele (adevărat: rețeaua doar la traducerea titlurilor și la lucrările citate, la cererea ta)
     if (!P.settings.labSeen) {   // o singură dată: după ✕ rămâne doar eticheta LAB din titlu
@@ -198,7 +198,7 @@ class InsightsView extends ItemView {
     const x = lab.createEl("button", { cls: "txi-lab-x clickable-icon", attr: { "aria-label": T("Am înțeles", "Got it") } }); try { setIcon(x, "x"); } catch (e) { x.setText("✕"); }
     x.addEventListener("click", async () => { P.settings.labSeen = true; await P.saveSettings(); this.render(); });
     lab.createEl("b", { text: T("Experimental, încă în lucru. ", "Experimental, still in the works. ") });
-    lab.appendText(T("Insights se îmbunătățește de la o versiune la alta, așa că unele cifre și sugestii se pot schimba. Ce numără și ce găsește rămâne la tine, în vault. Iese pe internet doar când îi ceri: ca să traducă titlul unui concept sau să caute lucrările citate de referințele tale.",
+    lab.appendText(T("Insights se îmbunătățește de la o versiune la alta, așa că unele cifre și sugestii se pot schimba. Ce numără și ce găsește rămâne la tine, în seif. Iese pe internet doar când îi ceri: ca să traducă titlul unui concept sau să caute lucrările citate de referințele tale.",
       "Insights gets better with each version, so some counts and suggestions may change. What it counts and finds stays with you, in your vault. It goes online only when you ask: to translate a concept's title or to look up the works your references cite."));
     }
     // patru file în loc de o pagină lungă: Azi · Scrisul · Linkuri · Proiecte
@@ -318,7 +318,7 @@ class InsightsView extends ItemView {
     // „În creștere” are sens doar cu istoric: dacă toate sunt noi (vault abia început), nu apare
     const rising = em.rising.some(r => r.bef >= 0.5) ? em.rising : [];
     if (!rising.length && !em.unwritten.length && !em.fading.length) return;
-    const s = this.sec(w, T("Subiecte", "Topics"), T("Ultimele două luni: ce citești fără să scrii, ce crește, ce se stinge.", "The last two months: what you read without writing, what rises, what fades."), T("Clic pe un concept: povestea lui în vault.", "Click a concept to see its story in your vault."));
+    const s = this.sec(w, T("Subiecte", "Topics"), T("Ultimele două luni: ce citești fără să scrii, ce crește, ce se stinge.", "The last two months: what you read without writing, what rises, what fades."), T("Clic pe un concept: povestea lui în seif.", "Click a concept to see its story in your vault."));
     const g = s.createDiv("txi-grid");
     const list = (title, rows, meta) => { if (!rows.length) return; const c = this.card(g, title), l = c.createDiv("txi-list"); for (const r of rows) { const row = this.row(l, r.name, meta(r), () => { this.expanded = this.expanded === r.path ? null : r.path; this.render(); }); if (this.expanded === r.path) this.timeline(l, r.path); } };
     const trend = r => r.bef < 0.5 ? T("nou", "new") : `×${(r.rec / r.bef).toFixed(1)}`;
@@ -337,7 +337,7 @@ class InsightsView extends ItemView {
   }
   patterns(w) {
     const P = this.P, T = (a, b) => P.T(a, b), pairs = P.pairs(8), br = P.bridges(4);
-    const s = this.sec(w, T("Tipare ascunse", "Hidden patterns"), T("Concepte care apar împreună, dar nu sunt legate.", "Concepts that appear together but aren't linked."), T("Perechi: concepte care apar împreună în aceleași paragrafe mai des decât la întâmplare, dar pe care nu le-ai legat — adesea, ideile pe care nu le-ai scris încă. Punți: singura notă care leagă un grup de note de restul vault-ului.", "Pairs: concepts that appear together in the same paragraphs more often than chance, but that you haven't linked — often the ideas you haven't written yet. Bridges: the only note connecting a group of notes to the rest of your vault."));
+    const s = this.sec(w, T("Tipare ascunse", "Hidden patterns"), T("Concepte care apar împreună, dar nu sunt legate.", "Concepts that appear together but aren't linked."), T("Perechi: concepte care apar împreună în aceleași paragrafe mai des decât la întâmplare, dar pe care nu le-ai legat — adesea, ideile pe care nu le-ai scris încă. Punți: singura notă care leagă un grup de note de restul seifului.", "Pairs: concepts that appear together in the same paragraphs more often than chance, but that you haven't linked — often the ideas you haven't written yet. Bridges: the only note connecting a group of notes to the rest of your vault."));
     const g = s.createDiv("txi-grid"), c1 = this.card(g, T("Perechi nelegate", "Unlinked pairs")), l1 = c1.createDiv("txi-list");   // rămâne și gol: spune cum apar
     if (!pairs.length) el(c1, "p", "txi-empty", T("Apar când ai mai multe note și adnotări cu aceleași concepte.", "These appear once you have more notes and annotations sharing concepts."));
     for (const p of pairs) {
@@ -368,7 +368,7 @@ class InsightsView extends ItemView {
       this.num(n, th.words, T("cuvinte acum", "words now")); this.num(n, th.avg, T("pe săptămână", "per week")); if (th.target) this.num(n, th.target, T("ținta", "target"));
       if (th.target) { const bar = c1.createDiv("txi-bar"); bar.createDiv().setCssStyles({ width: Math.min(100, th.words / th.target * 100) + "%" }); }
       const dl = th.deadline ? dfmt(th.deadline) : null;
-      if (!th.exists) c1.createEl("p", { text: T(`„${th.value}” nu mai e în vault. Alege-l din nou în setări.`, `“${th.value}” isn't in the vault anymore. Choose it again in the settings.`) });
+      if (!th.exists) c1.createEl("p", { text: T(`„${th.value}” nu mai e în seif. Alege-l din nou în setări.`, `“${th.value}” isn't in the vault anymore. Choose it again in the settings.`) });
       else if (!th.target) c1.createEl("p", { text: T("Pune o țintă (și un termen) ca să vezi când ajungi acolo.", "Set a target (and a deadline) to see when you'll get there.") });
       else if (th.words >= th.target) c1.createEl("p", { text: T("Ținta e atinsă.", "Target reached.") });
       else { c1.createEl("p", { text: th.eta ? T(`În ritmul ăsta ajungi la țintă pe ${dfmt(th.eta)}${dl ? ` (termenul: ${dl})` : ""}.`, `At this pace you reach the target on ${dfmt(th.eta)}${dl ? ` (deadline: ${dl})` : ""}.`) : T("N-ai scris aici în ultimele 4 săptămâni.", "You haven't written here in the last 4 weeks.") }); if (th.perWeek != null) c1.createEl("p", { text: T(`Ca să prinzi termenul: ~${fmt(th.perWeek, en)} cuvinte pe săptămână.`, `To make the deadline: ~${fmt(th.perWeek, en)} words a week.`) }); }
@@ -445,7 +445,7 @@ class ReviewModal extends Modal {
   constructor(P, tab) { super(P.app); this.P = P; this.tab = tab || "links"; this.sel = new Set(); this.inited = false; }
   async onOpen() {
     this.modalEl.addClass("txi-review"); this.titleEl.setText(this.P.T("Linkuri și aliasuri", "Links and aliases"));
-    if (!this.P.scanCache?.at) { this.contentEl.setText(this.P.T("Citesc vault-ul…", "Reading your vault…")); await this.P.scan(false, true); }
+    if (!this.P.scanCache?.at) { this.contentEl.setText(this.P.T("Citesc seiful…", "Reading your vault…")); await this.P.scan(false, true); }
     this.draw();
   }
   draw() {

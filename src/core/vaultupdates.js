@@ -220,7 +220,7 @@ class VaultUpdates {
     await this.prepare();
     const T = (a, b) => this.T(a, b), items = this.offers([...this.st.pending, ...this.st.later]);
     new Setting(el).setName(T("Din actualizări", "From updates")).setDesc(items.length
-      ? T("Ce a adus Texere la versiunile noi și n-ai adăugat încă. Nimic nu intră în vault fără clicul tău.", "What Texere brought with new versions and you haven't added yet. Nothing goes into your vault without your click.")
+      ? T("Ce a adus Texere la versiunile noi și n-ai adăugat încă. Nimic nu intră în seif fără clicul tău.", "What Texere brought with new versions and you haven't added yet. Nothing goes into your vault without your click.")
       : T("Nimic de adăugat acum. Ce aduc versiunile noi apare aici și în pagina de pornire; nimic nu intră fără clicul tău.", "Nothing to add now. What new versions bring shows up here and on the home page; nothing goes in without your click."));
     for (const o of items) {
       const s = new Setting(el).setName(o.text);

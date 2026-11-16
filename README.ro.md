@@ -39,7 +39,7 @@ Pentru ca Texere să comunice cu Zotero, activează **Allow other applications o
 ![](docs/img/zotero-setari.png)
 
 Cum funcționează:
-- **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în vault** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
+- **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în seif** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
 - **Zotero**: îți vezi biblioteca din Zotero și bifezi ce vrei să adaugi. **Importă referințele** aduce doar metadatele, iar **Importă referințele și PDF-urile** aduce și PDF-urile, cu evidențierile și adnotările făcute în Zotero.
 - **Alte variante**: poți lipi o citare, un BibTeX sau un DOI, poți completa metadatele de mână sau poți salva o referință din browser prin Zotero Connector.
 
@@ -83,7 +83,7 @@ Texere vine cu o hartă a filosofiei, cu câte o notă pentru fiecare ramură, t
 
 Cum funcționează: fiecare referință și fiecare notă primește câteva proprietăți (*discipline*, *branch*, concepte, autori) care trimit spre notele din hartă. O lectură marcată cu *branch: Epistemology* apare pe pagina Epistemologiei, alături de celelalte lecturi din aceeași ramură.
 
-În graficul Obsidian, pe care îl deschizi cu **Ctrl/Cmd + G**, fiecare punct este o notă, iar liniile sunt legăturile dintre ele. Ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lor. Culorile vin odată cu Texere, iar într-un vault mai vechi pagina de pornire ți le propune cu butonul **Adaugă**.
+În graficul Obsidian, pe care îl deschizi cu **Ctrl/Cmd + G**, fiecare punct este o notă, iar liniile sunt legăturile dintre ele. Ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lor. Culorile vin odată cu Texere, iar într-un seif mai vechi pagina de pornire ți le propune cu butonul **Adaugă**.
 
 ![](docs/img/graf.png)
 
@@ -119,7 +119,7 @@ Aspectul paginii vine din șablon, care poate fi unul general sau cel al Facult�
 
 ## 7. Insights (BETA)
 
-Insights citește notele din vault și îți arată cum se leagă ideile tale. Analiza se face local, pe calculatorul tău, prin reguli de programare și fără modele de inteligență artificială.
+Insights citește notele din seif și îți arată cum se leagă ideile tale. Analiza se face local, pe calculatorul tău, prin reguli de programare și fără modele de inteligență artificială.
 
 Pentru cercetare, partea cea mai utilă este **Harta dezbaterii**. Alegi un concept, de exemplu *Happiness*, și vezi pe o singură pagină toate pasajele pe care le-ai subliniat despre el în toate lecturile. Fiecare pasaj are citarea, pagina și notița ta, iar pasajele sunt grupate după autorul sau capitolul din care provin.
 
@@ -145,7 +145,7 @@ Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 
 - **Configurarea**: alegi limba și apeși **Înainte** până la final. Texere pregătește folderele, bibliografia și stilurile de citare, harta filosofiei, șabloanele, ghidurile de scris și PDF++, pluginul pentru adnotări. O poți rula oricând din nou, din **Settings → Texere → General**.
 - **Cataloagele**: dacă un catalog îți spune că ai atins limita pe zi, adaugi o cheie gratuită în **Settings → Texere → Referințe → Cataloage**. Un PDF pe care îl ai deja devine referință cu **Ctrl/Cmd + P** și **Texere: Adaugă acest PDF ca referință**.
-- **Zotero**: o referință care e deja în vault primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser.
+- **Zotero**: o referință care e deja în seif primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser.
 - **Adnotările**: o evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF**.
 - **Culorile din grafic**: dacă lipsesc, le adaugi cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
 - **Citările**, pe scurt:

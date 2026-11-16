@@ -108,7 +108,7 @@ class CiteSuggest extends EditorSuggest {
     el.addClass("tx-cite-sug"); el.title = "@" + it.key + (it.title ? "\n" + it.title : "");
     el.createSpan({ cls: "tx-cite-sug-who", text: `${it.who || it.key || it.title}${it.year ? " " + it.year : ""}` });
     if (it.title) el.createSpan({ cls: "tx-cite-sug-title", text: " – " + it.title });
-    if (it.z) { el.addClass("is-zotero"); el.title = (isEn() ? "From Zotero: chosen, it comes into your vault (note, bibliography, PDF)" : "Din Zotero: aleasă, intră în vault (notă, bibliografie, PDF)") + (it.title ? "\n" + it.title : ""); el.createSpan({ cls: "tx-cite-sug-z", text: "Zotero" }); }
+    if (it.z) { el.addClass("is-zotero"); el.title = (isEn() ? "From Zotero: chosen, it comes into your vault (note, bibliography, PDF)" : "Din Zotero: aleasă, intră în seif (notă, bibliografie, PDF)") + (it.title ? "\n" + it.title : ""); el.createSpan({ cls: "tx-cite-sug-z", text: "Zotero" }); }
   }
   selectSuggestion(it, evt) {
     const ctx = this.context; if (!ctx) return;

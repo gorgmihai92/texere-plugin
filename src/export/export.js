@@ -60,7 +60,7 @@ const alignIcon = v => {
   return svg;
 };
 const alignOf = s => ["left", "center", "right", "justify"].includes(s?.align) ? s.align : (s?.justify === false ? "left" : "justify");
-// folderul exportului: unul din vault („04. Export”) sau oricare de pe calculator (/Users/…/Exporturi, ~/Desktop, C:\…)
+// folderul exportului: unul din seif („04. Export”) sau oricare de pe calculator (/Users/…/Exporturi, ~/Desktop, C:\…)
 const isAbsDir = p => /^(\/|~(\/|$)|[A-Za-z]:[\\/]|\\\\)/.test(String(p || "").trim());
 const homeDir = p => { const s = String(p || "").trim(); if (!s.startsWith("~")) return s; try { return node("os").homedir() + s.slice(1); } catch (e) { return s; } };
 const strip = h => String(h || "").replace(/<[^>]+>/g, "").replace(/&#38;|&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
@@ -286,7 +286,7 @@ class Exporter {
     const ro = /^ro/i.test(fm.lang || "") || (!fm.lang && !S.en), TT = (a, b) => ro ? a : b;
     let body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "");
     // trimiterile spre locul din PDF, dacă le păstrezi: linkuri care deschid PDF-ul la locul acela în Obsidian (doar pe acest calculator)
-    const vault = this.app.vault.getName?.() || "", pdfLink = s.keepPdfLinks ? (f, sub) => { const d = mc.getFirstLinkpathDest(f, file.path); return `obsidian://open?vault=${encodeURIComponent(vault)}&file=${encodeURIComponent((d?.path || f) + "#" + sub)}`; } : null;
+    const seif = this.app.vault.getName?.() || "", pdfLink = s.keepPdfLinks ? (f, sub) => { const d = mc.getFirstLinkpathDest(f, file.path); return `obsidian://open?vault=${encodeURIComponent(vault)}&file=${encodeURIComponent((d?.path || f) + "#" + sub)}`; } : null;
     body = this.clean(await this.expand(body, file.path, 0, new Set([file.path])), { tags: !!s.showTags, marks: !!s.keepMarks, pdfLink });
     // titlul: primul titlu de nivel 1, dacă nota începe cu el și e chiar titlul (sau nota n-are title); altfel title din proprietăți sau numele notei
     const fmTitle = fm.title != null ? String(fm.title).trim() : "", norm = x => String(x).replace(/⟦T:[^⟧]*⟧/g, "").replace(/\s+/g, " ").trim().toLowerCase();
@@ -722,7 +722,7 @@ section.cover .cv-bottom { font-size: ${sz + 1}pt; line-height: 1.5; }
     const ext = (FORMATS.find(f => f[0] === format) || FORMATS[0])[2];
     const outside = isAbsDir(c.folder), fs = outside ? node("fs") : null, P = outside ? node("path") : null;
     const dir = outside ? homeDir(c.folder).replace(/[\\/]+$/, "") : normalizePath(String(c.folder || DEFAULTS.folder).replace(/\/+$/, ""));
-    const seen = typeof this.S.core?.seen === "function" ? this.S.core.seen(dir) : true;   // n-a fost niciodată aici (vault nou): îl creăm, fără întrebări
+    const seen = typeof this.S.core?.seen === "function" ? this.S.core.seen(dir) : true;   // n-a fost niciodată aici (seif nou): îl creăm, fără întrebări
     if (!outside && !opts.created && seen && !this.app.vault.getAbstractFileByPath(dir)) {   // folderul exportului a dispărut: nu-l refac fără să te întreb
       const pick = await this.askFolder(dir);
       if (!pick) throw Object.assign(new Error("cancelled"), { cancelled: true });
@@ -730,7 +730,7 @@ section.cover .cv-bottom { font-size: ${sz + 1}pt; line-height: 1.5; }
       return this.export(file, format, { ...opts, built, created: true });
     }
     if (outside) fs.mkdirSync(dir, { recursive: true }); else { await this.S.ensureFolder(dir); try { this.S.core?.markSeen?.([dir]); } catch (e) {} }
-    const put = outside   // în afara vault-ului: direct pe disc
+    const put = outside   // în afara seifului: direct pe disc
       ? async (path, data) => { fs.mkdirSync(P.dirname(path), { recursive: true }); fs.writeFileSync(path, Buffer.from(data)); }
       : async (path, data) => { const have = this.app.vault.getAbstractFileByPath(path); if (have instanceof TFile) await this.app.vault.modifyBinary(have, data); else await this.app.vault.createBinary(path, data); };
     const at = rel => outside ? P.join(dir, rel) : normalizePath(`${dir}/${rel}`);
@@ -739,8 +739,8 @@ section.cover .cv-bottom { font-size: ${sz + 1}pt; line-height: 1.5; }
     if (format === "pdf") data = await this.pdf(built, s);
     else if (format === "docx") data = await this.docx(built, s);
     else data = enc(this.mdFile(built, s));
-    // în vault, două fișiere cu același nume (ex. PDF-ul sursei, care are numele notei) încurcă linkurile: Obsidian le poate muta spre export când redenumești folderul.
-    // așa că exportul primește „(export)” dacă numele e deja luat de alt fișier din vault
+    // în seif, două fișiere cu același nume (ex. PDF-ul sursei, care are numele notei) încurcă linkurile: Obsidian le poate muta spre export când redenumești folderul.
+    // așa că exportul primește „(export)” dacă numele e deja luat de alt fișier din seif
     let base = file.basename;
     if (!outside) {
       const taken = n => (this.app.vault.getFiles?.() || []).some(f => f.name.toLowerCase() === n.toLowerCase() && f.path !== at(n));
@@ -970,7 +970,7 @@ class ExportModal extends Modal {
     const T = (a, b) => this.T(a, b), X = this.X; this.go.disabled = true; const old = this.go.getText(); this.go.setText(T("Se exportă…", "Exporting…"));
     try {
       const path = await X.export(this.file, this.format, { built: this.built || undefined, style: this.style, preset: this.preset });
-      const frag = document.createDocumentFragment(); frag.append(T("Exportat: ", "Exported: ") + path.split(/[\\/]/).pop() + (isAbsDir(path) ? T(" (în afara vault-ului)", " (outside the vault)") : "") + " · ");
+      const frag = document.createDocumentFragment(); frag.append(T("Exportat: ", "Exported: ") + path.split(/[\\/]/).pop() + (isAbsDir(path) ? T(" (în afara seifului)", " (outside the vault)") : "") + " · ");
       const a = document.createElement("a"); a.textContent = T("Deschide", "Open"); a.href = "#"; frag.append(a);
       const n = new Notice(frag, 10000); a.addEventListener("click", e => { e.preventDefault(); n.hide(); X.openFile(path); });
       this.close();
@@ -1054,9 +1054,9 @@ class FolderModal extends Modal {
     folderAlert(el, X, T, this.missing, moved, async to => { this.picked = to; this.close(); }, true);
     const folders = X.vaultFolders(), ren = moved && moved.from === this.missing && X.app.vault.getAbstractFileByPath(moved.to) ? moved.to : null;
     this.val = ren || folders.find(f => /export/i.test(f.split("/").pop())) || folders[0] || this.missing;
-    const s1 = new Setting(el).setName(T("Alt folder din vault", "Another folder in your vault"));
-    s1.addDropdown(d => { for (const f of folders) d.addOption(f, f); d.setValue(this.val).onChange(v => { this.val = v; s2.setDesc(T("Și în afara vault-ului.", "Outside the vault too.")); }); d.selectEl.addClass("tx-sel-200"); });
-    const s2 = new Setting(el).setName(T("Sau un folder de pe calculator", "Or a folder on this computer")).setDesc(T("Și în afara vault-ului.", "Outside the vault too."));
+    const s1 = new Setting(el).setName(T("Alt folder din seif", "Another folder in your vault"));
+    s1.addDropdown(d => { for (const f of folders) d.addOption(f, f); d.setValue(this.val).onChange(v => { this.val = v; s2.setDesc(T("Și în afara seifului.", "Outside the vault too.")); }); d.selectEl.addClass("tx-sel-200"); });
+    const s2 = new Setting(el).setName(T("Sau un folder de pe calculator", "Or a folder on this computer")).setDesc(T("Și în afara seifului.", "Outside the vault too."));
     s2.addButton(b => b.setButtonText(T("Alege…", "Choose…")).onClick(async () => { const dir = await X.chooseDir(this.val); if (!dir) return; this.val = dir; s2.setDesc(dir); }));
     const bc = el.createDiv("modal-button-container");
     bc.createEl("button", { text: T("Renunță", "Cancel") }).addEventListener("click", () => this.close());
@@ -1129,11 +1129,11 @@ class ExportSettingTab extends PluginSettingTab {
   folderRows(body, redraw) {
     const X = this.X, T = (a, b) => X.T(a, b), s = X.conf();
     const cur = String(s.folder || DEFAULTS.folder).replace(/\/+$/, ""), outside = isAbsDir(cur), gone = !outside && !X.app.vault.getAbstractFileByPath(cur) && (typeof (X.core || X.S?.core)?.seen === "function" ? (X.core || X.S.core).seen(cur) : true);
-    const fset = new Setting(body).setName(T("Exportul", "Export")).setDesc(outside ? T(`Pe calculator: ${cur}`, `On this computer: ${cur}`) : T("Unde ajung PDF-urile și fișierele Word exportate: în vault sau oriunde pe calculator.", "Where exported PDF and Word files go: in the vault or anywhere on this computer."));
+    const fset = new Setting(body).setName(T("Exportul", "Export")).setDesc(outside ? T(`Pe calculator: ${cur}`, `On this computer: ${cur}`) : T("Unde ajung PDF-urile și fișierele Word exportate: în seif sau oriunde pe calculator.", "Where exported PDF and Word files go: in the vault or anywhere on this computer."));
     // un singur buton: un folder din vault sau, ca prim rând, oricare folder de pe calculator
     fset.descEl.createDiv({ cls: "tx-mt6 ts-cur", text: outside ? "" : gone ? T(`${cur} (nu mai e în vault)`, `${cur} (not in the vault anymore)`) : cur });
     fset.addButton(b => b.setButtonText(T("Schimbă…", "Change…")).onClick(() => pickFolder(X.app, { placeholder: T("Unde ajung fișierele exportate?", "Where should exported files go?"), exclude: [cur],
-      extra: [{ text: T("💻 Alt folder de pe calculator, și în afara vault-ului…", "💻 Another folder on this computer, outside the vault too…"), run: async () => { const picked = await X.chooseDir(s.folder); if (!picked) return; s.folder = picked; s.folderMoved = null; await X.save(); redraw(); } }] },
+      extra: [{ text: T("💻 Alt folder de pe calculator, și în afara seifului…", "💻 Another folder on this computer, outside the vault too…"), run: async () => { const picked = await X.chooseDir(s.folder); if (!picked) return; s.folder = picked; s.folderMoved = null; await X.save(); redraw(); } }] },
       async v => { s.folder = v; s.folderMoved = null; await X.save(); redraw(); })));
     // folderul a fost redenumit sau șters: spune-o chiar sub el, cu ce poți face
     if (gone) folderAlert(body, X, T, cur, s.folderMoved, async to => { s.folder = to; s.folderMoved = null; await X.save(); redraw(); });
@@ -1148,7 +1148,7 @@ class ExportSettingTab extends PluginSettingTab {
     new Setting(body).setName(T("Import și lipire", "Import and paste")).setHeading();
     new Setting(body).setName(T("Lipirea curată", "Clean paste")).setDesc(T("Textul lipit din Word, Google Docs sau PDF devine text curat.", "Text pasted from Word, Google Docs or a PDF becomes clean text."))
       .addToggle(t => t.setValue(im.cleanPaste !== false).onChange(async v => { im.cleanPaste = v; await X.save(); }));
-    new Setting(body).setName(T("Păstrează și originalul", "Keep the original too")).setDesc(T("Lângă notă, în vault.", "Next to the note, in the vault."))
+    new Setting(body).setName(T("Păstrează și originalul", "Keep the original too")).setDesc(T("Lângă notă, în seif.", "Next to the note, in the vault."))
       .addToggle(t => t.setValue(!!im.keep).onChange(async v => { im.keep = v; await X.save(); }));
   }
 }

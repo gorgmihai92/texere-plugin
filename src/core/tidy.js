@@ -82,7 +82,7 @@ function tidyPlan(P) {
   // 3. ghidurile și ce mai e al lui Texere în Support
   add(existing(app, "Support/About"), `${HOME}/About`, T("Ghidul lui Texere", "Texere's guide"));
   add(existing(app, "Support/Guides"), `${HOME}/Guides`, T("Ghidurile (metodologie, primii pași)", "The guides (methodology, getting started)"));
-  add(existing(app, "Support/Admin/Scripts"), `${HOME}/Scripts`, T("Scripturile vechi ale vault-ului", "The vault's old scripts"));
+  add(existing(app, "Support/Admin/Scripts"), `${HOME}/Scripts`, T("Scripturile vechi ale seifului", "The vault's old scripts"));
   // 4. notele puse direct în Support (în afara subfolderelor)
   const sup = V.getAbstractFileByPath("Support");
   for (const c of (isDir(sup) ? sup.children : []) || []) if (!isDir(c) && c.name && !c.name.startsWith(".")) add(c.path, `${HOME}/${c.name}`, T("O notă pusă direct în Support", "A note sitting directly in Support"));

@@ -271,7 +271,7 @@ const ResearchMixin = {
     const box = el("div", "txr-cp" + (this.settings.cpOpen !== false ? " is-open" : ""));
     box.addEventListener("mousedown", e => e.stopPropagation());
     const head = el("div", "txr-cp-head"), ttl = el("span", "txr-cp-title");
-    ttl.append(icon(el("span", "txr-ic"), "book-open"), T(`${name} în vault-ul tău`, `${name} in your vault`)); head.appendChild(ttl);
+    ttl.append(icon(el("span", "txr-ic"), "book-open"), T(`${name} în seiful tău`, `${name} in your vault`)); head.appendChild(ttl);
     const srcPaths = new Set([...E.hls.map(r => r.path), ...E.notes.map(r => r.path)]), ownPaths = new Set(E.own.map(o => o.path));
     const langs = new Set([...[...srcPaths].map(p => this.litInfo(p).lang), ...E.own.map(o => V.langOf(o.s || ""))].filter(Boolean));
     head.appendChild(el("span", "txr-cp-meta", srcPaths.size + ownPaths.size ? [srcPaths.size ? this.plural(srcPaths.size, "referință", "referințe", "reference", "references") : "", ownPaths.size ? T(`${ownPaths.size} ${ownPaths.size === 1 ? "notă de-a ta" : "note ale tale"}`, `${ownPaths.size} of your notes`) : ""].filter(Boolean).join(" · ") + (langs.size > 1 ? " · RO + EN" : "") : T("încă nimic", "nothing yet")));
@@ -288,7 +288,7 @@ const ResearchMixin = {
     const langB = l => { const b = el("span", "txr-lang", (l || "").toUpperCase()); return b; };
     const tagB = tag => el("span", "txr-tag is-" + stanceOf(tag), "#" + tag);
     if (!E.hls.length && !E.notes.length && !E.own.length && !E.heads.length && !tidy.n) {
-      body.appendChild(el("div", "txr-empty", this.scanCache?.at ? T(`Încă nimic despre ${name}: apare aici când scrii sau adnotezi ceva despre el.`, `Nothing about ${name} yet: it shows up here once you write or annotate something about it.`) : T("Se citește vault-ul…", "Reading your vault…")));
+      body.appendChild(el("div", "txr-empty", this.scanCache?.at ? T(`Încă nimic despre ${name}: apare aici când scrii sau adnotezi ceva despre el.`, `Nothing about ${name} yet: it shows up here once you write or annotate something about it.`) : T("Se citește seiful…", "Reading your vault…")));
       return box;
     }
     // 1. termenul folosit des și nedefinit într-o notă de-a ta
@@ -650,12 +650,12 @@ class MapView extends ItemView {
       for (const it of g.items) this.card(cards, it);
     }
     // lucrările citate de mai multe surse
-    const ref = w.createDiv("txr-refs"), rh = ref.createDiv("txr-sec-h"); rh.createEl("b", { text: T("Citate de mai multe referințe de aici, dar nu în vault", "Cited by several references here, not in your vault") });
+    const ref = w.createDiv("txr-refs"), rh = ref.createDiv("txr-sec-h"); rh.createEl("b", { text: T("Citate de mai multe referințe de aici, dar nu în seif", "Cited by several references here, not in your vault") });
     const rb = ref.createDiv();
     const dois = new Set(items.map(it => it.info.doi).filter(Boolean)).size;
     if (dois < 2) { rb.createDiv({ cls: "txr-faint", text: T("Lucrările citate de amândouă apar când cel puțin două referințe au DOI.", "Works they both cite show up once at least two references have a DOI.") }); }
     else if (!this.refs) { rb.createDiv({ cls: "txr-faint", text: T("Se citesc listele de referințe…", "Reading the reference lists…") }); P.citedTogether(items).then(r => { this.refs = r; this.render(); }).catch(() => { this.refs = { works: [], withData: 0, failed: true }; this.render(); }); }
-    else if (!this.refs.works.length) rb.createDiv({ cls: "txr-faint", text: this.refs.failed ? T("N-am putut citi datele de citare acum (fără internet?).", "Couldn't read the citation data right now (offline?).") : T("Nicio lucrare citată de cel puțin două dintre ele, în afara celor din vault.", "No work cited by at least two of them that isn't already in your vault.") });
+    else if (!this.refs.works.length) rb.createDiv({ cls: "txr-faint", text: this.refs.failed ? T("N-am putut citi datele de citare acum (fără internet?).", "Couldn't read the citation data right now (offline?).") : T("Nicio lucrare citată de cel puțin două dintre ele, în afara celor din seif.", "No work cited by at least two of them that isn't already in your vault.") });
     else for (const wk of this.refs.works.slice(0, 8)) {
       const row = rb.createDiv("txr-row"), l = row.createDiv("txr-row-r");
       const t = l.createDiv(); t.createEl("b", { text: (wk.authors[0] || "").split(" ").pop() + (wk.authors.length > 1 ? " et al." : "") }); t.appendText(` · ${wk.title}${wk.year ? ` (${wk.year})` : ""}`);
@@ -699,7 +699,7 @@ class CompanionView extends ItemView {
   }
   async update(full) {
     const P = this.P, T = (a, b) => P.T(a, b), v = this.md(), c = this.contentEl;
-    if (!v || !v.file || !P.voicePathOk(v.file.path)) { c.empty(); const w = c.createDiv("txr-cmp"); w.createDiv({ cls: "txr-cmp-h", text: T("Însoțitorul scrisului", "Writing companion") }); w.createEl("p", { cls: "txr-empty", text: v?.file ? T("Nota deschisă nu e scrisul tău (o referință, un concept, un șablon). Deschide un eseu, un capitol sau o ciornă.", "The open note isn't your writing (a reference, a concept, a template). Open an essay, a chapter or a draft.") : T("Deschide o notă pe care o scrii: aici vezi scheletul argumentului și ce ai în vault pentru paragraful în care ești.", "Open a note you're writing: here you'll see the skeleton of your argument and what your vault has for the paragraph you're in.") }); this.path = null; return; }
+    if (!v || !v.file || !P.voicePathOk(v.file.path)) { c.empty(); const w = c.createDiv("txr-cmp"); w.createDiv({ cls: "txr-cmp-h", text: T("Însoțitorul scrisului", "Writing companion") }); w.createEl("p", { cls: "txr-empty", text: v?.file ? T("Nota deschisă nu e scrisul tău (o referință, un concept, un șablon). Deschide un eseu, un capitol sau o ciornă.", "The open note isn't your writing (a reference, a concept, a template). Open an essay, a chapter or a draft.") : T("Deschide o notă pe care o scrii: aici vezi scheletul argumentului și ce ai în seif pentru paragraful în care ești.", "Open a note you're writing: here you'll see the skeleton of your argument and what your vault has for the paragraph you're in.") }); this.path = null; return; }
     const text = v.editor?.getValue?.() ?? (await P.app.vault.cachedRead(v.file));
     let redraw = false;
     if (full || this.path !== v.file.path || !this.data) { this.data = P.companionData(text, v.file.path); if (this.path !== v.file.path) this.sel = null; this.path = v.file.path; this.drawAll(v, text); redraw = true; }
@@ -747,7 +747,7 @@ class CompanionView extends ItemView {
   jump(v, p) { try { v.editor.setCursor({ line: p.line, ch: 0 }); v.editor.scrollIntoView({ from: { line: p.line, ch: 0 }, to: { line: p.end, ch: 0 } }, true); v.leaf && this.P.app.workspace.setActiveLeaf?.(v.leaf, { focus: true }); } catch (e) {} }
   async drawFor(v) {
     const P = this.P, T = (a, b) => P.T(a, b), el = this.forEl; if (!el) return; el.empty();
-    const p = this.data?.paras?.[this.sel]; const h = el.createDiv("txr-sec-h"); h.createEl("b", { text: p ? T(`Pentru ¶${this.sel + 1}, din vault-ul tău`, `For ¶${this.sel + 1}, from your vault`) : T("Din vault-ul tău", "From your vault") });
+    const p = this.data?.paras?.[this.sel]; const h = el.createDiv("txr-sec-h"); h.createEl("b", { text: p ? T(`Pentru ¶${this.sel + 1}, din seiful tău`, `For ¶${this.sel + 1}, from your vault`) : T("Din seiful tău", "From your vault") });
     if (!p) return;
     const tok = (this._tok = (this._tok || 0) + 1), r = await P.forParagraph(p, v.file.path); if (tok !== this._tok) return;
     let any = false;
@@ -785,7 +785,7 @@ class CompanionView extends ItemView {
       }
     }
     if (r.search != null) {
-      any = true; const s = el.createDiv("txr-sug"); s.createDiv({ cls: "txr-sug-t", text: r.hls.length ? T("Nicio referință citată pentru cercetarea invocată", "No reference cited for the research it mentions") : T("Nicio referință în vault pentru cercetarea invocată", "No reference in your vault for the research it mentions") });
+      any = true; const s = el.createDiv("txr-sug"); s.createDiv({ cls: "txr-sug-t", text: r.hls.length ? T("Nicio referință citată pentru cercetarea invocată", "No reference cited for the research it mentions") : T("Nicio referință în seif pentru cercetarea invocată", "No reference in your vault for the research it mentions") });
       s.createDiv({ cls: "txr-why", text: T("De ce: paragraful invocă cercetări, fără nicio citare.", "Why: the paragraph mentions research but cites none.") });
       const a = s.createDiv("txr-acts"), b = a.createEl("button", { cls: "txr-btn-o", text: T("Caută în Texere · Referințe", "Search in Texere · References") });
       b.addEventListener("click", () => { const S = P.core?.mod?.("sources")?.sources; if (S?.open) S.open(r.search); else new Notice(T("Pornește Texere · Referințe ca să cauți referințe.", "Turn on Texere · References to search for references.")); });
@@ -800,7 +800,7 @@ class CompanionView extends ItemView {
         a.addEventListener("click", () => { try { const before = p.raw.slice(0, h.from), ln = p.line + (before.match(/\n/g) || []).length, ch = h.from - (before.lastIndexOf("\n") + 1); v.editor.setSelection({ line: ln, ch }, { line: ln, ch: ch + ph.length }); v.editor.scrollIntoView({ from: { line: ln, ch }, to: { line: ln, ch } }, true); P.app.workspace.setActiveLeaf?.(v.leaf, { focus: true }); } catch (e) {} });
       }
     }
-    if (!any) el.createDiv({ cls: "txr-empty", text: p.concepts.length ? T("Conceptele acestui paragraf n-au încă adnotări în referințele tale.", "This paragraph's concepts have no annotations in your references yet.") : T("Niciun concept din vault în acest paragraf încă. Un link spre o notă-concept (sau numele ei) îl leagă de lecturile tale.", "No concept from your vault in this paragraph yet. A link to a concept note (or its name) connects it to your reading.") });
+    if (!any) el.createDiv({ cls: "txr-empty", text: p.concepts.length ? T("Conceptele acestui paragraf n-au încă adnotări în referințele tale.", "This paragraph's concepts have no annotations in your references yet.") : T("Niciun concept din seif în acest paragraf încă. Un link spre o notă-concept (sau numele ei) îl leagă de lecturile tale.", "No concept from your vault in this paragraph yet. A link to a concept note (or its name) connects it to your reading.") });
   }
   // unde se pune: la cursor, dacă e în paragraf (la capătul cuvântului în care e); la începutul rândului (de ex. după un clic în schelet)
   // sau în afara paragrafului: la finalul paragrafului, înaintea punctului final

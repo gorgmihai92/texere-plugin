@@ -56,7 +56,7 @@ Pentru ca Texere să comunice cu Zotero, activează **Allow other applications o
 ![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/zotero-setari.png)
 
 Cum funcționează:
-- **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în vault** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
+- **Caută**: scrii titlul, autorul, DOI-ul sau ISBN-ul, iar Texere caută în cataloage academice deschise precum OpenAlex, Crossref, Semantic Scholar și Google Books. Pentru fiecare rezultat vezi anul, revista, numărul de citări și dacă PDF-ul e gratuit. Butonul **Adaugă în seif** aduce metadatele (autor, titlu, an, revistă, DOI) împreună cu PDF-ul, dacă există.
 - **Zotero**: îți vezi biblioteca din Zotero și bifezi ce vrei să adaugi. **Importă referințele** aduce doar metadatele, iar **Importă referințele și PDF-urile** aduce și PDF-urile, cu evidențierile și adnotările făcute în Zotero, fiecare cu eticheta culorii ei.
 - **Alte variante**: poți lipi o citare, un BibTeX sau un DOI, poți completa metadatele de mână, poți salva o referință din browser prin Zotero Connector sau poți face o referință dintr-un PDF pe care îl ai deja, cu **Ctrl/Cmd + P** și **Texere: Adaugă acest PDF ca referință**.
 
@@ -66,7 +66,7 @@ Cum funcționează:
 
 **Avantaje**: referința, PDF-ul și notițele tale stau împreună, în fișiere Markdown, pe calculatorul tău.
 
-O referință din Zotero care e deja în vault primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Zotero trebuie să fie deschis, dar cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser, prin care un articol salvat cu Zotero Connector ajunge direct în vault. Dacă un catalog îți spune că ai atins limita pe zi, adaugi o cheie gratuită în **Settings → Texere → Referințe → Cataloage**.
+O referință din Zotero care e deja în seif primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Zotero trebuie să fie deschis, dar cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser, prin care un articol salvat cu Zotero Connector ajunge direct în seif. Dacă un catalog îți spune că ai atins limita pe zi, adaugi o cheie gratuită în **Settings → Texere → Referințe → Cataloage**.
 
 ### 2.2 Lectura și adnotările
 
@@ -104,7 +104,7 @@ Texere vine cu o hartă a filosofiei, cu câte o notă pentru fiecare ramură, t
 
 Cum funcționează: fiecare referință și fiecare notă primește câteva proprietăți (*discipline*, *branch*, concepte, autori) care trimit spre notele din hartă. O lectură marcată cu *branch: Epistemology* apare pe pagina Epistemologiei, alături de celelalte lecturi din aceeași ramură.
 
-În graficul Obsidian, pe care îl deschizi cu **Ctrl/Cmd + G**, fiecare punct este o notă, iar liniile sunt legăturile dintre ele. Ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lor. Culorile vin odată cu Texere, iar într-un vault mai vechi pagina de pornire ți le propune cu butonul **Adaugă**. Le poți adăuga oricând și cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
+În graficul Obsidian, pe care îl deschizi cu **Ctrl/Cmd + G**, fiecare punct este o notă, iar liniile sunt legăturile dintre ele. Ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lor. Culorile vin odată cu Texere, iar într-un seif mai vechi pagina de pornire ți le propune cu butonul **Adaugă**. Le poți adăuga oricând și cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
 
 ![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/graf.png)
 
@@ -156,7 +156,7 @@ Un șablon al tău îl faci în **Settings → Texere → Export**, iar folderul
 
 ## 5. Insights (BETA)
 
-Insights citește notele din vault și îți arată cum se leagă ideile tale. Analiza se face local, pe calculatorul tău, prin reguli de programare și fără modele de inteligență artificială.
+Insights citește notele din seif și îți arată cum se leagă ideile tale. Analiza se face local, pe calculatorul tău, prin reguli de programare și fără modele de inteligență artificială.
 
 Pentru cercetare, partea cea mai utilă este **Harta dezbaterii**. Alegi un concept, de exemplu *Happiness*, și vezi pe o singură pagină toate pasajele pe care le-ai subliniat despre el în toate lecturile. Fiecare pasaj are citarea, pagina și notița ta, iar pasajele sunt grupate după autorul sau capitolul din care provin.
 
@@ -184,7 +184,7 @@ Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 
 ### 6.1 Ce faci întâi
 
-Deschide un tab nou sau **Settings → Texere**. Amândouă îți arată ce lipsește, cu un buton care repară. Dacă tot nu merge, rulează configurarea din nou din **Settings → Texere → General**, iar dacă problema rămâne, scrie-ne din **Settings → Texere → Despre → Semnalează o problemă**. Din când în când, copiază folderul vault-ului pe un hard disk extern, ca să ai o copie de siguranță.
+Deschide un tab nou sau **Settings → Texere**. Amândouă îți arată ce lipsește, cu un buton care repară. Dacă tot nu merge, rulează configurarea din nou din **Settings → Texere → General**, iar dacă problema rămâne, scrie-ne din **Settings → Texere → Despre → Semnalează o problemă**. Din când în când, copiază folderul seifului pe un hard disk extern, ca să ai o copie de siguranță.
 
 ### 6.2 Probleme frecvente
 
@@ -212,13 +212,14 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 
 ## 7. Ce e nou
 
-Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru vault, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
 **0.5.1** · 16 noiembrie 2026
 - **Un Ajutor mai scurt:** ghidul și întrebările frecvente urmează tutorialul de început, pe scurt și cu imagini.
+- **Seif în loc de vault:** în română, Texere spune acum peste tot „seif”.
 
 **0.5.0** · 16 noiembrie 2026
-- **Un singur drum, doar pluginul:** Texere se instalează prin BRAT în orice vault, gol sau cu notele tale, pe Windows și pe Mac. Configurarea aduce tot, inclusiv ghidul de redactare al facultății și sursele ghidurilor de scris, iar harta filosofiei vine colorată în grafic.
+- **Un singur drum, doar pluginul:** Texere se instalează prin BRAT în orice seif, gol sau cu notele tale, pe Windows și pe Mac. Configurarea aduce tot, inclusiv ghidul de redactare al facultății și sursele ghidurilor de scris, iar harta filosofiei vine colorată în grafic.
 
 **0.4.24** · 16 noiembrie 2026
 - **Harta filosofiei, colorată în grafic**, și **comentariile adnotărilor din Zotero**, care ajung acum în nota de lectură.

@@ -86,8 +86,8 @@ class Importer {
     let target = at(c.folder || "02. Notes/Imported"), keep = !!c.keep;
     m.titleEl.setText(T(`Importă ${files.length} ${files.length === 1 ? "document" : "documente"}`, `Import ${files.length} ${files.length === 1 ? "document" : "documents"}`));
     m.contentEl.createDiv({ cls: "setting-item-description", text: T("Fiecare document devine o notă cu titlurile, bold/italic, listele, tabelele și notele de subsol lui. Originalele rămân neatinse.", "Each document becomes a note with its headings, bold/italic, lists, tables and footnotes. The originals stay untouched.") });
-    new Setting(m.contentEl).setName(T("Folderul din vault", "Folder in the vault")).setDesc(folder ? T("Subfolderele se păstrează.", "Subfolders are kept.") : "").addText(t => { t.setValue(target).onChange(v => { target = v; }); try { this.S.folderSuggest?.(t.inputEl); } catch (e) {} });
-    new Setting(m.contentEl).setName(T("Păstrează și originalul în vault", "Keep the original in the vault too")).setDesc(T("Lângă notă (ex. ca să deschizi PDF-ul la pagină).", "Next to the note (e.g. to open the PDF at a page).")).addToggle(t => t.setValue(keep).onChange(v => { keep = v; }));
+    new Setting(m.contentEl).setName(T("Folderul din seif", "Folder in the vault")).setDesc(folder ? T("Subfolderele se păstrează.", "Subfolders are kept.") : "").addText(t => { t.setValue(target).onChange(v => { target = v; }); try { this.S.folderSuggest?.(t.inputEl); } catch (e) {} });
+    new Setting(m.contentEl).setName(T("Păstrează și originalul în seif", "Keep the original in the vault too")).setDesc(T("Lângă notă (ex. ca să deschizi PDF-ul la pagină).", "Next to the note (e.g. to open the PDF at a page).")).addToggle(t => t.setValue(keep).onChange(v => { keep = v; }));
     const bc = m.contentEl.createDiv("modal-button-container");
     bc.createEl("button", { text: T("Renunță", "Cancel") }).addEventListener("click", () => m.close());
     bc.createEl("button", { cls: "mod-cta", text: T("Importă", "Import") }).addEventListener("click", async () => {

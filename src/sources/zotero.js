@@ -207,7 +207,7 @@ class Zotero {
     const ready = st.zotero === "on" || st.key;
     const B = {
       off: ["", T("oprit", "off"), T("Oprit. Butonul Zotero din browser salvează doar în Zotero. Pornește-l și ce salvezi intră și în Texere, singur, cu PDF-ul.", "Off. The Zotero button in your browser saves only into Zotero. Turn it on and what you save also comes into Texere by itself, with its PDF.")],
-      zotero: ["ok", T("pornit · prin Zotero", "on · through Zotero"), T("Pornit. Salvezi cu butonul Zotero ca de obicei: referința intră în Zotero, iar după câteva secunde Texere o adaugă în vault, cu PDF-ul. La fel și ce adaugi direct în Zotero.", "On. Save with the Zotero button as usual: the reference goes into Zotero, and a few seconds later Texere adds it to your vault, with its PDF. The same for what you add in Zotero itself.")],
+      zotero: ["ok", T("pornit · prin Zotero", "on · through Zotero"), T("Pornit. Salvezi cu butonul Zotero ca de obicei: referința intră în Zotero, iar după câteva secunde Texere o adaugă în seif, cu PDF-ul. La fel și ce adaugi direct în Zotero.", "On. Save with the Zotero button as usual: the reference goes into Zotero, and a few seconds later Texere adds it to your vault, with its PDF. The same for what you add in Zotero itself.")],
       direct: ["ok", T("pornit · direct în Texere", "on · straight to Texere"), T("Pornit. Zotero e închis, așa că butonul salvează direct în Texere (scrie „Saving to Texere”), cu PDF-ul. Când deschizi Zotero, Texere îi lasă imediat locul.", "On. Zotero is closed, so the button saves straight into Texere (it shows “Saving to Texere”), with the PDF. When you open Zotero, Texere steps aside right away.")],
       "wait-api": ["warn", T("așteaptă", "waiting"), T("Așteaptă: Zotero nu-l lasă încă pe Texere să intre (vezi mai sus). Până atunci, butonul salvează doar în Zotero.", "Waiting: Zotero doesn't let Texere in yet (see above). Until then, the button saves only into Zotero.")],
       "wait-start": ["warn", T("așteaptă", "waiting"), T("Așteaptă: Zotero pornește.", "Waiting: Zotero is starting.")],
@@ -582,7 +582,7 @@ class Zotero {
     return { pdf: true, hl };
   }
   hlText(n) { return n === 1 ? this.T("1 adnotare", "1 annotation") : this.T(`${n} adnotări`, `${n} annotations`); }
-  // PDF-ul intră în vault (în folderul PDF-urilor; Texere îl redenumește și îl atașează notei)
+  // PDF-ul intră în seif (în folderul PDF-urilor; Texere îl redenumește și îl atașează notei)
   async pdfToVault(x, opts = {}) {
     const p = await this.pdf(x.zotero); if (!p) return null;
     const dir = await this.S.liveDir(this.S.docDir()); if (!dir) return null; await this.S.ensureFolder(dir);
@@ -1013,8 +1013,8 @@ function importButtons(R, T, { ready, refsN, pdfN, have, busy }, run) {
   else {
     if (refsN) refs.setText(T(`Importă referințele (${refsN})`, `Import references (${refsN})`)); else refs.disabled = true;
     if (pdfN) pdf.setText(T(`Importă referințele și PDF-urile (${pdfN})`, `Import references and PDFs (${pdfN})`));
-    else if (have) { pdf.setText(T("Adu PDF-urile și adnotările", "Bring the PDFs and annotations")); pdf.title = T("Sunt deja în vault: aduc PDF-ul celor care nu-l au și adnotările noi din Zotero.", "Already in your vault: I'll bring the PDF to those without one, and the new annotations from Zotero."); }
-    else { pdf.disabled = true; if (!refsN) { refs.setText(T("Deja în vault", "Already in your vault")); pdf.remove(); } }
+    else if (have) { pdf.setText(T("Adu PDF-urile și adnotările", "Bring the PDFs and annotations")); pdf.title = T("Sunt deja în seif: aduc PDF-ul celor care nu-l au și adnotările noi din Zotero.", "Already in your vault: I'll bring the PDF to those without one, and the new annotations from Zotero."); }
+    else { pdf.disabled = true; if (!refsN) { refs.setText(T("Deja în seif", "Already in your vault")); pdf.remove(); } }
   }
   refs.addEventListener("click", () => run(false)); pdf.addEventListener("click", () => run(true));
   return { refs, pdf };
@@ -1030,7 +1030,7 @@ class ImportModal extends Modal {
     this.titleEl.createSpan({ cls: "ts-head-t", text: T("Importă din Zotero", "Import from Zotero") });
     this.titleEl.createSpan({ cls: "ts-zmode", text: this.mode === "local" ? T("Zotero deschis pe acest calculator", "Zotero open on this computer") : T("prin cheia Zotero", "through your Zotero key") + (Z.conf().zoteroUser?.name ? ` · ${Z.conf().zoteroUser.name}` : "") });
     const pane = this.contentEl.createDiv("ts-pane");
-    pane.createDiv({ cls: "ts-hint", text: T("Alege ce imporți. Referințele care sunt deja în vault se sar; fiecare primește o notă de lectură. Jos imporți doar referințele, sau referințele și PDF-urile, cu adnotările din Zotero.", "Choose what to import. References already in your vault are skipped; each one gets a reading note. Below, import the references only, or the references and PDFs, with your Zotero annotations.") });
+    pane.createDiv({ cls: "ts-hint", text: T("Alege ce imporți. Referințele care sunt deja în seif se sar; fiecare primește o notă de lectură. Jos imporți doar referințele, sau referințele și PDF-urile, cu adnotările din Zotero.", "Choose what to import. References already in your vault are skipped; each one gets a reading note. Below, import the references only, or the references and PDFs, with your Zotero annotations.") });
     this.list = pane.createDiv("ts-zlist"); this.list.setText(T("Încarc colecțiile…", "Loading the collections…"));
     const ft = this.contentEl.createDiv("ts-foot"); this.footL = ft.createDiv("ts-foot-l"); this.footR = ft.createDiv("ts-foot-r");
     this.info = this.footL.createSpan({ cls: "ts-foot-q" });
@@ -1201,7 +1201,7 @@ class ZoteroPane {
         const meta = [who, o.x.year, o.x.venue || o.x.publisher].filter(Boolean).join(" · "); if (meta) b0.createDiv({ cls: "ts-meta", text: meta });
       }
       const b = b0.createDiv("ts-badges");
-      if (o.kind === "src") { b.createSpan({ cls: "ts-b kind", text: kinds[S.kind?.(o.x.type)] || T("Referință", "Reference") }); if (o.have) b.createSpan({ cls: "ts-b have", text: T("✓ deja în vault", "✓ already in your vault") }); }
+      if (o.kind === "src") { b.createSpan({ cls: "ts-b kind", text: kinds[S.kind?.(o.x.type)] || T("Referință", "Reference") }); if (o.have) b.createSpan({ cls: "ts-b have", text: T("✓ deja în seif", "✓ already in your vault") }); }
       else b.createSpan({ cls: "ts-b", text: T("PDF fără referință · intră în Inbox", "PDF without a reference · goes to Inbox") });
       const hn = this.counts?.get(id) || 0; if (hn) b.createSpan({ cls: "ts-b hl", text: T(`✎ ${hn} adnotări`, `✎ ${hn} highlight${hn === 1 ? "" : "s"}`) });
       const toggle = v => { if (v) this.checked.add(id); else this.checked.delete(id); cb.checked = v; row.toggleClass("sel", v); this.foot0(); };
@@ -1260,7 +1260,7 @@ class BbtModal extends Modal {
     const opt = (title, steps) => { const o = el.createDiv({ cls: "tx-bbt-opt" }); o.createDiv({ cls: "tx-bbt-h", text: title }); const ol = o.createEl("ol"); for (const s of steps) { const li = ol.createEl("li"); typeof s === "function" ? s(li) : li.setText(s); } return o; };
     const a = opt(T("Citezi cu Texere, fără Better BibTeX", "Cite with Texere, without Better BibTeX"), [
       T("Scrie @ și câteva litere din autor sau titlu.", "Type @ and a few letters of the author or title."),
-      T("Referințele din Zotero apar sub cele din vault, cu eticheta Zotero. Alegi una: intră în vault cu nota, bibliografia și PDF-ul.", "References from Zotero show under the ones in your vault, labelled Zotero. Pick one: it comes into your vault with its note, bibliography entry and PDF."),
+      T("Referințele din Zotero apar sub cele din seif, cu eticheta Zotero. Alegi una: intră în seif cu nota, bibliografia și PDF-ul.", "References from Zotero show under the ones in your vault, labelled Zotero. Pick one: it comes into your vault with its note, bibliography entry and PDF."),
       ...(local === "off" ? [T("Doar o dată, în Zotero: Setări → Avansat → bifează „Permite altor aplicații de pe acest computer să comunice cu Zotero”.", "Once, in Zotero: Settings → Advanced → tick “Allow other applications on this computer to communicate with Zotero”.")] : []),
     ]);
     if (who) { const b = a.createEl("button", { text: T(`Oprește ${who.name}`, `Turn off ${who.name}`) }); b.title = T("Mesajul nu mai apare. Îl poți porni oricând din Settings → Community plugins.", "The message stops. You can turn it back on anytime in Settings → Community plugins.");

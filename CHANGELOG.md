@@ -5,7 +5,8 @@ Version numbers: a big new feature raises the middle number (0.4 → 0.5), a cha
 ## 0.5.1 (16 November 2026)
 
 - **A short Help, written like the getting-started tutorial.** The guide (EN and RO) goes from about 7,000 to about 2,500 words per language: the same seven chapters (start, references and reading, writing, export, Insights, when something goes wrong, what's new), each in the tutorial's words, with pictures from `docs/img`. Zotero is now part of "Adding a reference" (2.1), with a picture of the Zotero setting it needs, so reading and annotating becomes 2.2. The frequent questions go from 62 to 20, two or three sentences each. The long error table, the glossary and the full version history leave the guide (the history stays in this file); the manual setup stays, in six short steps (6.3), because the setup report quotes it.
-- **README** is now the tutorial in English, with a link to the Romanian one (`README.ro.md`), in the tutorial's order (0 installing to 7 Insights); the extra details, privacy, credits and the license come after it.
+- **README** is now the tutorial in English, with a link to the Romanian one (`README.ro.md`), in the tutorial's order (0 installing to 7 Insights); the extra details, privacy, credits and the license come after it. The English README and guide have their own English screenshots and GIFs (`docs/img/en`); the Romanian ones keep the Romanian pictures.
+- **Romanian: „seif” instead of „vault”** everywhere in the interface, the guide and the README (82 strings; code and the `{{os:vault}}` placeholder unchanged).
 
 ## 0.5.0 (16 November 2026)
 

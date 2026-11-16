@@ -31,7 +31,7 @@ async function vaultItems(P) {
     desc: M("Din ea se fac citările și bibliografia de la export. Texere o ține la zi din notele de lectură tale.", "Citations and the exported bibliography come from it. Texere keeps it up to date from your reading notes."), run: () => S.bibliography.run(P) });
   const exDir = require("../shared/paths").existing(P.app, "04. Export") || require("../shared/paths").placeFor(P.app, "04. Export");
   if (P.mod("export") && !S.exportFolder.check(P)) out.push({ key: "export", label: M(`Folderul exportului: ${exDir}`, `Export folder: ${exDir}`),
-    desc: M("Aici ajung fișierele exportate (PDF, Word, Markdown). Poți alege alt folder, chiar și în afara vault-ului.", "Your exported files (PDF, Word, Markdown) are saved here. You can choose another folder, even outside the vault."), run: () => S.exportFolder.run(P, "export") });
+    desc: M("Aici ajung fișierele exportate (PDF, Word, Markdown). Poți alege alt folder, chiar și în afara seifului.", "Your exported files (PDF, Word, Markdown) are saved here. You can choose another folder, even outside the vault."), run: () => S.exportFolder.run(P, "export") });
   return out;
 }
 
@@ -146,7 +146,7 @@ const AUTO = {
     out.ok.push({ label: M(`${tpl.length} șabloane`, `${tpl.length} templates`), state: M(`în ${tdir}`, `in ${tdir}`) });
     out.ok.push({ label: M(`${gd.length} ghiduri de scris`, `${gd.length} writing guides`), state: M("în Support/Texere/Guides", "in Support/Texere/Guides") });
     if (src.length) out.ok.push({ label: M(`${src.length} surse ale ghidurilor`, `${src.length} guide sources`), state: M("note de literatură, citate în ghiduri", "literature notes cited in the guides") });
-    if (!made && before) out.info.push(M("Erau deja în vault; nu le-am atins.", "They were already in your vault; I didn't touch them."));
+    if (!made && before) out.info.push(M("Erau deja în seif; nu le-am atins.", "They were already in your vault; I didn't touch them."));
     return out;
   },
   // 4. PDF++: instalat prin Obsidian (ca din Community plugins) și pornit
@@ -172,7 +172,7 @@ function buildSteps(P, first) {
     check: () => S.language.check(P), lang: true });
   // unde ține Texere lucrurile: structura recomandată sau folderele tale (doar la prima configurare; apoi din Setări → Foldere)
   if (first && !P.settings.structure) steps.push({ id: "places", icon: "folder-tree", title: M("Unde ține Texere lucrurile", "Where Texere keeps things"),
-    explain: M("Alege cum pregătesc vault-ul. Nu mut și nu șterg nimic din ce ai.", "Choose how I set up your vault. Nothing of yours is moved or deleted."), places: true, check: () => !!P.settings.structure });
+    explain: M("Alege cum pregătesc seiful. Nu mut și nu șterg nimic din ce ai.", "Choose how I set up your vault. Nothing of yours is moved or deleted."), places: true, check: () => !!P.settings.structure });
   // prima configurare: fiecare lucru într-un pas al lui, care îți arată ce face și ce a făcut
   if (first) {
     steps.push({ id: "folders", icon: "folder-tree", title: M("Folderele", "Your folders"), auto: AUTO.folders,
@@ -205,7 +205,7 @@ function buildSteps(P, first) {
       b.addEventListener("click", async () => { b.disabled = true; const k = await src.patchPdfPage(); new Notice(W.T(M(`Am schimbat ${k} șablon(e) PDF++.`, `Changed ${k} PDF++ template(s).`))); W.render(); });
     } });
   // la o configurare din nou: ce mai lipsește, bifat (la prima, pașii de mai sus au făcut deja totul)
-  if (!first) steps.push({ id: "vault", icon: "folder-tree", title: M("Vault-ul tău", "Your vault"),
+  if (!first) steps.push({ id: "vault", icon: "folder-tree", title: M("Seiful tău", "Your vault"),
     explain: M("Adaug doar ce lipsește; ce ai deja rămâne neatins.", "I add only what's missing; what you already have stays untouched."), vault: true });
   steps.push({ id: "done", icon: "check-circle", title: M("Gata", "You're all set"), explain: M("Texere e pregătit. La „Termină” se deschide pagina de pornire.", "Texere is ready. Finish opens the home page."), info: true, last: true,
     body: (el, W) => {
@@ -223,7 +223,7 @@ function buildSteps(P, first) {
 function completeSteps(P, miss) {
   const steps = [], v = P.manifest?.version || "";
   steps.push({ id: "intro", icon: "sparkles", title: M("Completez configurarea", "Completing your setup"), info: true,
-    explain: M(`Texere ${v} a verificat vault-ul tău: lipsesc câteva lucruri de care Texere are nevoie. Le adaug pe rând, cu „Înainte”. Nu mut și nu schimb nimic din ce ai.`, `Texere ${v} checked your vault: a few things Texere needs are missing. I'll add them one at a time, with Next. Nothing of yours is moved or changed.`),
+    explain: M(`Texere ${v} a verificat seiful tău: lipsesc câteva lucruri de care Texere are nevoie. Le adaug pe rând, cu „Înainte”. Nu mut și nu schimb nimic din ce ai.`, `Texere ${v} checked your vault: a few things Texere needs are missing. I'll add them one at a time, with Next. Nothing of yours is moved or changed.`),
     body: (el, W) => { const ul = el.createEl("ul", { cls: "txw-where" }), add = (ic, a, b) => { const li = ul.createEl("li"), i = li.createSpan("txw-ic"); icon(i, ic); const t = li.createSpan(); t.createEl("b", { text: W.T(a) }); if (b) t.appendText(" — " + b); };
       if (miss.folders.length) add("folder-tree", M("Folderele lui Texere", "Texere's folders"), miss.folders.map(x => x.path).join(" · "));
       if (miss.bib) add("book-open", M("Bibliografia și stilurile de citare", "Bibliography and citation styles"), "");

@@ -327,7 +327,7 @@ class Sources {
     const tail = `${m.folder}/${m.folder}.md`;
     return (this.app.vault.getMarkdownFiles?.() || []).some(x => x.path === tail || x.path.endsWith("/" + tail));
   }
-  // harta a intrat în vault: câmpurile ei intră în șablon (o singură dată; dacă le-ai șters după, nu le mai punem la loc)
+  // harta a intrat în seif: câmpurile ei intră în șablon (o singură dată; dacă le-ai șters după, nu le mai punem la loc)
   async addMapFields(id) {
     const names = this.T_.MAP_FIELDS[id]; if (!names) return 0;
     const t = this.template(); if (t.maps.includes(id)) return 0;
@@ -364,7 +364,7 @@ class Sources {
     return { values: [...vals.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(e => e[0]), links: links >= plain };
   }
   // de unde vin valorile câmpurilor de completat: notele dintr-un folder cu același nume (ex. Disciplines/Philosophy/Branches pentru branch,
-  // Periods pentru period) și valorile folosite deja în orice notă din vault. Se poate alege alt folder în Setări → Șablonul notei.
+  // Periods pentru period) și valorile folosite deja în orice notă din seif. Se poate alege alt folder în Setări → Șablonul notei.
   fieldIndex(names) {
     const norm = x => fold(x).replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/ies$/, "y").replace(/(ch|sh|x|ss)es$/, "$1").replace(/s$/, "");
     const link = x => { const m = /^\[\[([^\]|#]+)(?:[#|][^\]]*)?\]\]$/.exec(String(x).trim()); return (m ? m[1].split("/").pop() : String(x)).trim(); };
@@ -946,7 +946,7 @@ class Sources {
   }
   kind(t) { return /^(book)$/.test(t) ? "book" : /^(chapter|entry|entry-encyclopedia|entry-dictionary)$/.test(t) ? "chapter" : "article"; }
 
-  // sursele deja în vault (după DOI, ISBN sau titlu)
+  // sursele deja în seif (după DOI, ISBN sau titlu)
   library() {
     const dois = new Map(), isbns = new Map(), titles = new Map(), keys = new Set();
     for (const f of this.app.vault.getMarkdownFiles()) {
@@ -1720,7 +1720,7 @@ class SourceFoldersModal extends Modal {
       sourceFolderAlert(el, S, T, cur, S.movedFor(k, cur), async to => { await S.setFolderRoot(k, to); delete this.gone[k]; if (!Object.keys(this.gone).length) { this.ok = true; this.close(); } else { this.contentEl.empty(); this.onOpen(); } }, k, true);
       const mk = S.movedFor(k, cur), ren = mk ? mk.to : null;
       pick[k] = ren || folders.find(f => f.split("/").pop().toLowerCase() === cur.split("/").pop().toLowerCase()) || folders[0];
-      new Setting(el).setName(T("Alt folder din vault", "Another folder in your vault")).addDropdown(d => { for (const f of folders) d.addOption(f, f); d.setValue(pick[k]).onChange(v => { pick[k] = v; }); d.selectEl.addClass("tx-sel-200"); });
+      new Setting(el).setName(T("Alt folder din seif", "Another folder in your vault")).addDropdown(d => { for (const f of folders) d.addOption(f, f); d.setValue(pick[k]).onChange(v => { pick[k] = v; }); d.selectEl.addClass("tx-sel-200"); });
     }
     const bc = el.createDiv("modal-button-container");
     bc.createEl("button", { text: T("Renunță", "Cancel") }).addEventListener("click", () => this.close());
@@ -1899,7 +1899,7 @@ class SearchModal extends Modal {
       Rr.createSpan({ cls: "ts-keys", text: T("↑↓ alegi · Enter vezi datele · ⌘/Ctrl+Enter adaugi direct", "↑↓ choose · Enter review · ⌘/Ctrl+Enter add directly") });
     } else if (m === "manual") {
       note(T("Doar titlul e obligatoriu.", "Only the title is required."));
-      btn(T("Adaugă în vault", "Add to vault"), () => this.manualSubmit?.());
+      btn(T("Adaugă în seif", "Add to vault"), () => this.manualSubmit?.());
     } else if (m === "bibtex") {
       if (this.bib?.state?.() === "list") {
         link(T("← Editează textul", "← Edit the text"), () => this.bib.back());
@@ -1913,7 +1913,7 @@ class SearchModal extends Modal {
       this.zpane?.foot(L, Rr);
     } else if (m === "review") {
       link(T("← Înapoi", "← Back"), () => this.setMode(this.reviewFrom || "search"));
-      btn(T("Adaugă în vault", "Add to vault"), () => this.reviewSubmit?.());
+      btn(T("Adaugă în seif", "Add to vault"), () => this.reviewSubmit?.());
     }
   }
   // citările care susțin / contrazic (scite) pentru primele 15 rezultate cu DOI, câte 4 deodată
@@ -2027,7 +2027,7 @@ class SearchModal extends Modal {
       const b = row.createDiv("ts-badges");
       const have = this.lib.find(x);
       b.createSpan({ cls: "ts-b kind", text: kindLabel[S.kind(x.type)] });
-      if (have) b.createSpan({ cls: "ts-b have", text: T("✓ deja în vault", "✓ already in your vault") });
+      if (have) b.createSpan({ cls: "ts-b have", text: T("✓ deja în seif", "✓ already in your vault") });
       if (x.retracted) { const r = b.createSpan({ cls: "ts-b retracted", text: T("Retrasă", "Retracted") }); r.title = T("Lucrarea a fost retrasă de editor", "The publisher retracted this work"); }
       if (x.cited != null) b.createSpan({ cls: "ts-b", text: T(`${x.cited.toLocaleString("ro-RO")} citări`, `${x.cited.toLocaleString("en-US")} citations`) });
       if (x.scite && (x.scite.s || x.scite.c)) {
@@ -2086,7 +2086,7 @@ function actions(c, label, fn) {
 
 class BibtexModal extends Modal {
   constructor(src, opts) { super(src.app); this.src = src; this.opts = opts || {}; }
-  onOpen() { this.modalEl.addClass("texere-src"); this.titleEl.setText(this.src.T("Lipește o referință", "Paste a reference")); const p = this.contentEl.createDiv("ts-pane"); const api = this.build(p, () => this.close()); actions(p, this.src.T("Adaugă în vault", "Add to vault"), api.submit); }
+  onOpen() { this.modalEl.addClass("texere-src"); this.titleEl.setText(this.src.T("Lipește o referință", "Paste a reference")); const p = this.contentEl.createDiv("ts-pane"); const api = this.build(p, () => this.close()); actions(p, this.src.T("Adaugă în seif", "Add to vault"), api.submit); }
   build(c, done) {
     const S = this.src, T = (a, b) => S.T(a, b);
     const hint = c.createDiv({ cls: "ts-hint", text: T("Lipește o referință în orice formă: o citare (APA, Chicago, Frontiers…), BibTeX, RIS, un DOI, un ISBN sau un link. Mai multe deodată: câte una pe paragraf (sau pe rând).",
@@ -2277,7 +2277,7 @@ class ManualModal extends Modal {
       done();
       await S.add({ title: csl.title, authors: csl.author || [], year: +num(v.year) || null, isbn: isbn13(v.isbn), doi: csl.DOI || null, type: v.type, sources: [] }, { csl, custom, ...(this.opts.extra || {}) });
     };
-    if (!this.opts.noBar) actions(c, this.opts.label || T("Adaugă în vault", "Add to vault"), submit);
+    if (!this.opts.noBar) actions(c, this.opts.label || T("Adaugă în seif", "Add to vault"), submit);
     // Enter într-un câmp = adaugă
     grid.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT" && !e.defaultPrevented) { e.preventDefault(); submit(); } });
     return submit;
@@ -2407,7 +2407,7 @@ class SourcesSettingTab extends PluginSettingTab {
     host._citeHooks = [...(host._citeHooks || []).filter(f => f !== this._hook), this._hook];
     // antetul, ca în fereastra „Adaugă o sursă”: titlul și filele subliniate, pe același rând
     const head = c.createDiv("ts-head");
-    head.createSpan({ cls: "ts-head-t", text: T("Referințe", "References") }).title = T("Cauți referințe în mai multe cataloage, le adaugi în vault cu PDF-ul gratuit și le citezi în stilul ales.", "Search several catalogs for references, add them to your vault with the free PDF, and cite them in the style you choose.");
+    head.createSpan({ cls: "ts-head-t", text: T("Referințe", "References") }).title = T("Cauți referințe în mai multe cataloage, le adaugi în seif cu PDF-ul gratuit și le citezi în stilul ales.", "Search several catalogs for references, add them to your vault with the free PDF, and cite them in the style you choose.");
     const nav = head.createDiv("ts-nav");
     // fiecare filă spune ce reglezi acolo
     const tabs = [["search", T("Cataloage", "Catalogs"), T("Unde caută „Adaugă o referință”", "Where “Add a reference” searches")],

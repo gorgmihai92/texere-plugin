@@ -354,7 +354,7 @@ const LinksMixin = {
     return out.sort((a, b) => b.score - a.score).slice(0, n);
   },
   // pe cine discută o sursă: un nume scris cu majusculă în mijlocul propoziției în cel puțin două evidențieri,
-  // care nu apare și cu literă mică (cuvânt obișnuit), nu e un concept din vault și nu e autorul sursei
+  // care nu apare și cu literă mică (cuvânt obișnuit), nu e un concept din seif și nu e autorul sursei
   thinkersOf(path, e) {
     const m = (this._thk = this._thk || new Map()), at = this.scanCache?.at || 0, c = m.get(path);
     if (c && c.at === at) return c.map;

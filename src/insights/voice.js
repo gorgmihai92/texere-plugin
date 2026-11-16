@@ -633,7 +633,7 @@ const VoiceMixin = {
     }
     head.appendChild(el("span", "txi-ws-meta", phil ? T("eseu filosofic", "philosophical essay") : T("text general", "general text")));
     const cb = el("span", "txi-ws-btn"); try { require("obsidian").setIcon(cb, "pen-line"); } catch (e) {}
-    cb.title = T("Însoțitorul scrisului: scheletul, ce lipsește și ce ai în vault pentru fiecare paragraf", "Writing companion: the skeleton, what's missing and what your vault has for each paragraph");
+    cb.title = T("Însoțitorul scrisului: scheletul, ce lipsește și ce ai în seif pentru fiecare paragraf", "Writing companion: the skeleton, what's missing and what your vault has for each paragraph");
     cb.addEventListener("click", e => { e.stopPropagation(); if (this.openCompanion) this.openCompanion(); else this.draftCheck(f); });
     const ch = el("span", "txi-ws-btn txi-ws-chev"); try { require("obsidian").setIcon(ch, "chevron-down"); } catch (e) {}
     head.append(cb, ch);
