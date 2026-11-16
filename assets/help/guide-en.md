@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.2"
-date: "Version 0.5.2 · 16 November 2026"
+version: "0.5.3"
+date: "Version 0.5.3 · 16 November 2026"
 ---
 
 ## 1. Start
@@ -195,6 +195,7 @@ Open a new tab or **Settings → Texere**. Both show what is missing, with a but
 | Zotero references don't show up after `@` | open Zotero and tick in its settings, under **Advanced**, **Allow other applications on this computer to communicate with Zotero** |
 | a message about Better BibTeX | it comes from another plugin, such as Zotero Integration. Texere doesn't need it, and **How to fix it** in the message shows you the steps |
 | a highlight doesn't reach the note | the pointer is on: press **H** or choose a colour |
+| “PDF++: An error occurred while attempting to add an annotation” | the PDF is locked by its publisher. Texere unlocks it by itself when you open it, and if it has a password, it tells you what to do |
 | annotations are missing from the note | right-click on the PDF, **Texere** and **Import annotations from PDF** |
 | “limit reached” when searching | add a free key in **Settings → Texere → References → Catalogs** |
 | you can't find the exported file | check the export folder in **Settings → Texere → General → Folders** |
@@ -213,6 +214,9 @@ If the setup couldn't do a step, you do it yourself, by hand:
 ## 7. What's new
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.3** · 16 November 2026
+- **Locked PDFs can be highlighted:** a PDF locked by its publisher (no password) is unlocked when you open it, without damaging its bookmarks. When a highlight can't be written, the message tells you why and what to do.
 
 **0.5.2** · 16 November 2026
 - **In Romanian, “seif” instead of “vault”** throughout Texere, and the English guide has its own English pictures.

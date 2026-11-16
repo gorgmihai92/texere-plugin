@@ -420,6 +420,7 @@ class Highlights {
       let t = null;
       this.S.host.registerEvent(this.app.workspace.on("file-open", f => {
         clearTimeout(t); if (!(f instanceof TFile)) return;
+        if (f.extension === "pdf") this.unlockOnOpen(f).catch(e => console.warn("Texere: descuierea PDF-ului", f.path, e));
         t = setTimeout(() => {
           this.autoFor(f).catch(e => console.warn("Texere: importul adnotărilor", e));
           // evidențieri făcute sub alt nume, găsite la pornire: întrebarea vine acum, când deschizi nota sau PDF-ul lor
@@ -429,6 +430,20 @@ class Highlights {
       }));
     }
     this.app.workspace.onLayoutReady?.(() => setTimeout(() => this.sweep().catch(e => console.warn("Texere: importul adnotărilor", e)).then(() => this.retagSweep()).catch(e => console.warn("Texere: etichetele după culoare", e)), 6000));
+  }
+  // un PDF încuiat de editor (criptat fără parolă, doar cu interdicție de modificare): PDF++ nu poate scrie evidențieri în el
+  // („An error occurred while attempting to add an annotation”). Când îl deschizi, Texere îl descuie pe loc, cu pdf-lib din PDF++
+  // (aceeași rescriere pe care o face PDF++ la fiecare evidențiere). Unul cu parolă adevărată rămâne cum e, cu un mesaj.
+  async unlockOnOpen(f) {
+    this._unlockSeen = this._unlockSeen || new Map();
+    const stamp = `${f.stat?.mtime || 0}:${f.stat?.size || 0}`; if (this._unlockSeen.get(f.path) === stamp) return;
+    this._unlockSeen.set(f.path, stamp);
+    const Z = this.S.zotero, io = this.app.plugins.plugins["pdf-plus"]?.lib?.highlight?.writeFile?.getPdfIo?.();
+    if (!Z?.isLocked || !Z.unlock || !io) return;
+    if (!Z.isLocked(await this.app.vault.readBinary(f))) return;
+    const r = await Z.unlock(f, io);
+    if (r === "unlocked") { this._unlockSeen.set(f.path, `${f.stat?.mtime || 0}:${f.stat?.size || 0}`); new Notice(this.T(`„${f.basename}” era încuiat de editor (fără parolă). Texere l-a descuiat, ca să poți scrie evidențieri în el.`, `“${f.basename}” was locked by its publisher (no password). Texere unlocked it so you can highlight in it.`), 8000); }
+    else if (r === "password") new Notice(this.T(`„${f.basename}” e protejat cu parolă, așa că evidențierile nu se pot scrie în el. Deschide-l cu parola într-un alt program și salvează-l fără parolă.`, `“${f.basename}” is password-protected, so highlights can't be written into it. Open it with its password in another app and save it without one.`), 12000);
   }
   // în meniul „Texere” al notei sau al PDF-ului (Sources → menuItems)
   menuItems(f) {
@@ -448,6 +463,48 @@ class Highlights {
       wrapped.__texere = true; wrapped.__orig = orig; lib.autoPaste = wrapped;
       this.S.host.register(() => { if (lib.autoPaste === wrapped) lib.autoPaste = orig; });
     }
+    this.patchWriter(pp);
+  }
+  // scrierea evidențierii în PDF: dacă PDF++ nu reușește („An error occurred while attempting to add an annotation”), Texere spune de ce.
+  // Un PDF încuiat fără parolă e descuiat pe loc și evidențierea se scrie din nou, fără nicio eroare.
+  patchWriter(pp) {
+    const io = pp?.lib?.highlight?.writeFile?.getPdfIo?.(); if (!io) return;
+    for (const name of ["addTextMarkupAnnotation", "addLinkAnnotation"]) {
+      const orig = io[name]; if (typeof orig !== "function" || orig.__texere) continue;
+      const H = this;
+      const wrapped = async function (file, ...rest) {
+        try { return await orig.call(this, file, ...rest); }
+        catch (e) {
+          let why = null, open = false;
+          try {
+            if (file instanceof TFile && H.S.zotero?.isLocked?.(await H.app.vault.readBinary(file))) {
+              const r = await H.S.zotero.unlock(file, io);
+              if (r === "unlocked") open = true; else why = r === "password" ? "password" : "locked";
+            }
+          } catch (e2) { console.warn("Texere: descuierea PDF-ului", e2); why = "locked"; }
+          if (open) {   // descuiat: evidențierea se scrie din nou
+            try { const res = await orig.call(this, file, ...rest); new Notice(H.T(`„${file.basename}” era încuiat de editor (fără parolă). Texere l-a descuiat și a pus evidențierea.`, `“${file.basename}” was locked by its publisher (no password). Texere unlocked it and added the highlight.`), 8000); return res; }
+            catch (e3) { H.writeError(file, e3, null); throw e3; }
+          }
+          H.writeError(file, e, why); throw e;
+        }
+      };
+      wrapped.__texere = true; io[name] = wrapped;
+      this.S.host.register(() => { if (io[name] === wrapped) io[name] = orig; });
+    }
+  }
+  // un mesaj pe care îl înțelegi, în locul celui din PDF++
+  writeError(file, e, why) {
+    const n = file?.basename ? `„${file.basename}”` : this.T("PDF-ul", "The PDF"), ne = file?.basename ? `“${file.basename}”` : "The PDF";
+    const m = String(e?.message || e || ""), code = e?.code || (/EACCES|EPERM|EROFS|EBUSY/.exec(m) || [])[0];
+    let ro, en;
+    if (why === "password") { ro = `${n} e protejat cu parolă, așa că evidențierile nu se pot scrie în el. Deschide-l cu parola într-un alt program, salvează-l fără parolă și pune-l în locul lui.`; en = `${ne} is password-protected, so highlights can't be written into it. Open it with its password in another app, save it without one and put it back in its place.`; }
+    else if (why === "locked") { ro = `${n} e încuiat de editor și Texere nu l-a putut descuia. Salvează-l din nou ca PDF dintr-un alt program (de exemplu Print → Save as PDF) și pune-l în locul lui.`; en = `${ne} is locked by its publisher and Texere couldn't unlock it. Save it again as a PDF from another app (for example Print → Save as PDF) and put it back in its place.`; }
+    else if (/author name is not set/i.test(m)) { ro = `Evidențierile au nevoie de numele tău, ca autor al lor. Scrie-l în Settings → PDF++ → Annotation author, apoi încearcă din nou.`; en = `Highlights need your name, as their author. Type it in Settings → PDF++ → Annotation author, then try again.`; }
+    else if (code) { ro = `${n} nu poate fi modificat: fișierul e doar pentru citire sau e deschis în alt program. Închide celălalt program sau verifică permisiunile fișierului, apoi încearcă din nou.`; en = `${ne} can't be changed: the file is read-only or open in another app. Close the other app or check the file's permissions, then try again.`; }
+    else if (/parse|invalid|xref|trailer|header|unexpected|corrupt/i.test(m)) { ro = `${n} pare deteriorat, așa că evidențierile nu se pot scrie în el. Descarcă-l din nou sau salvează-l din nou ca PDF dintr-un alt program.`; en = `${ne} seems damaged, so highlights can't be written into it. Download it again or save it again as a PDF from another app.`; }
+    else { ro = `Evidențierea nu a putut fi scrisă în ${n}${m ? ` (${m.slice(0, 120)})` : ""}. Încearcă din nou, iar dacă se repetă, scrie-ne din Ajutor (?).`; en = `The highlight couldn't be written into ${ne}${m ? ` (${m.slice(0, 120)})` : ""}. Try again, and if it happens again, write to us from Help (?).`; }
+    new Notice(this.T("Texere: " + ro, "Texere: " + en), 15000);
   }
 
   async route(text) {

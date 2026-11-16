@@ -503,14 +503,23 @@ class Zotero {
   isLocked(buf) { return /\/Encrypt\s+\d+\s+\d+\s+R|\/Encrypt\s*<</.test(Buffer.from(buf).toString("latin1")); }
   async pdfLibClass(io) {
     if (this._PD) return this._PD;
-    try { const tiny = Uint8Array.from(atob(TINY_PDF), c => c.charCodeAt(0)); const d = await io?.lib?.loadPdfLibDocumentFromArrayBuffer?.(tiny.buffer); this._PD = d?.constructor || null; } catch (e) { this._PD = null; }
+    try {
+      const tiny = Uint8Array.from(atob(TINY_PDF), c => c.charCodeAt(0)); const d = await io?.lib?.loadPdfLibDocumentFromArrayBuffer?.(tiny.buffer); this._PD = d?.constructor || null;
+      // și clasa PDFString (din /ModDate al documentului mic), pentru descuiere
+      const info = d?.context?.lookup(d.context.trailerInfo.Info); for (const [k, v] of info?.dict || []) if (String(k) === "/ModDate" && typeof v?.constructor?.of === "function") this._PStr = v.constructor;
+    } catch (e) { this._PD = null; }
     return this._PD;
   }
+  // descuie un PDF încuiat de editor (parolă de utilizator goală). Fluxurile le descifrează pdf-lib din PDF++, șirurile le refacem noi
+  // (pdfunlock.js), fiindcă pdf-lib le strică. "open": nu era încuiat · "password": cere o parolă · "locked": nu s-a putut descuia fără să-l strice
   async unlock(file, io) {
     const buf = await this.app.vault.readBinary(file); if (!this.isLocked(buf)) return "open";
     const D = await this.pdfLibClass(io); if (!D?.load) return "no";
-    const d = await D.load(buf, { password: "", updateMetadata: false });
+    let d; try { d = await D.load(buf, { password: "", updateMetadata: false }); } catch (e) { if (/password/i.test(e?.message || "")) return "password"; throw e; }
     if (d.isEncrypted) return "password";   // cere o parolă adevărată: nu se poate
+    if (!this._PStr) return "locked";
+    try { const raw = await D.load(buf, { ignoreEncryption: true, updateMetadata: false }); require("./pdfunlock").fixStrings(raw, d, this.node("crypto"), this._PStr); }
+    catch (e) { console.warn("Texere: descuierea PDF-ului", file.path, e); return /parola goală/.test(e?.message) ? "password" : "locked"; }
     await this.app.vault.modifyBinary(file, await d.save()); return "unlocked";
   }
   md5(buf) { try { return this.node("crypto").createHash("md5").update(Buffer.from(buf)).digest("hex"); } catch (e) { return null; } }
@@ -672,7 +681,7 @@ class Zotero {
   async importItems(cat, mode, { pdfs, highlights, onStep, cancelled }) {
     const S = this.S, res = { added: 0, skipped: 0, failed: 0, zpdfs: 0, free: 0, hl: 0, hlOld: 0, inbox: 0, had: 0, different: 0, diff: [], errors: [], notes: [], loose: [] };
     const err = (title, e) => { const m = typeof e === "string" ? e : e?.message || String(e); res.errors.push({ title, msg: m }); };
-    const hlErr = (title, r) => { if (r?.unlocked) res.unlocked = (res.unlocked || 0) + 1; if (r?.locked) err(title, this.T("PDF-ul e protejat cu parolă, așa că nu se pot scrie adnotări în el", "the PDF is password-protected, so annotations can't be written into it")); else if (r?.noWriter) err(title, this.T("PDF++ nu e pornit (el scrie adnotările în PDF)", "PDF++ isn't enabled (it writes the annotations into the PDF)")); else if (r?.error) err(title, r.error); };
+    const hlErr = (title, r) => { if (r?.unlocked) res.unlocked = (res.unlocked || 0) + 1; if (r?.locked) err(title, r.locked === "password" ? this.T("PDF-ul e protejat cu parolă, așa că nu se pot scrie adnotări în el", "the PDF is password-protected, so annotations can't be written into it") : this.T("PDF-ul e încuiat de editor și Texere nu l-a putut descuia. Salvează-l din nou ca PDF dintr-un alt program și importă-l din nou", "the PDF is locked by its publisher and Texere couldn't unlock it. Save it again as a PDF from another app and import it again")); else if (r?.noWriter) err(title, this.T("PDF++ nu e pornit (el scrie adnotările în PDF)", "PDF++ isn't enabled (it writes the annotations into the PDF)")); else if (r?.error) err(title, r.error); };
     const n = cat.sources.length + (pdfs ? cat.pdfs.length : 0); let i = 0;
     if (mode === "local") { const st = await this.refresh(); if (st.zotero !== "on") { res.closed = true; res.notStarted = true; return res; } }
     if (S.checkFolders && !(await S.checkFolders())) { res.cancelled = true; return res; }   // un folder al surselor a dispărut și ai renunțat

@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.2"
-date: "Versiunea 0.5.2 · 16 noiembrie 2026"
+version: "0.5.3"
+date: "Versiunea 0.5.3 · 16 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -195,6 +195,7 @@ Deschide un tab nou sau **Settings → Texere**. Amândouă îți arată ce lips
 | la `@` nu apar referințele din Zotero | deschide Zotero și bifează în setările lui, la **Advanced**, **Allow other applications on this computer to communicate with Zotero** |
 | un mesaj despre Better BibTeX | vine de la alt plugin, de exemplu Zotero Integration. Texere nu are nevoie de el, iar **Cum rezolv** din mesaj îți arată pașii |
 | evidențierea nu intră în notă | pointerul e pornit: apasă **H** sau alege o culoare |
+| „PDF++: An error occurred while attempting to add an annotation” | PDF-ul e încuiat de editor. Texere îl descuie singur când îl deschizi, iar dacă are parolă, îți spune ce să faci |
 | lipsesc adnotări în notă | clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF** |
 | „limită atinsă” la căutare | adaugă o cheie gratuită în **Settings → Texere → Referințe → Cataloage** |
 | nu găsești fișierul exportat | verifică folderul exportului în **Settings → Texere → General → Foldere** |
@@ -213,6 +214,9 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 ## 7. Ce e nou
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.3** · 16 noiembrie 2026
+- **PDF-urile încuiate se pot sublinia:** un PDF încuiat de editor (fără parolă) e descuiat când îl deschizi, fără să i se strice cuprinsul. Când o evidențiere nu se poate scrie, mesajul îți spune de ce și ce poți face.
 
 **0.5.2** · 16 noiembrie 2026
 - **Seif în loc de vault:** în română, Texere spune acum peste tot „seif”.

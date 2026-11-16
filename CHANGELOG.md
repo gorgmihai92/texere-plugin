@@ -2,6 +2,12 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.3 (16 November 2026)
+
+- **Locked PDFs can be highlighted.** Many PDFs from publishers and libraries are encrypted with an empty password: they open, but PDF++ can't write into them and only says "An error occurred while attempting to add an annotation". Texere now unlocks such a PDF when you open it (and, if a highlight still meets a locked file, unlocks it and writes the highlight again), with a short notice.
+- **The unlocking no longer damages the PDF.** The pdf-lib inside PDF++ decrypts the streams correctly but garbles every string (bookmark titles, document info, annotation texts) and drops /Info when it sits in an object stream. Texere now redoes the strings itself from the original file (`src/sources/pdfunlock.js`: RC4 40/128, AES-128, AES-256, R2–R6), so the unlocked copy matches what qpdf produces. This also fixes the Zotero import, which used the same unlocking.
+- **Clear messages when a highlight can't be written**: a password-protected PDF, a file that is read-only or open elsewhere, a damaged PDF, a missing PDF++ author name, each with what to do, instead of PDF++'s generic error. The guide's problem table has the new row.
+
 ## 0.5.2 (16 November 2026)
 
 - **Romanian: „seif” instead of „vault”** everywhere in the interface, the guide and the README (82 strings; code and the `{{os:vault}}` placeholder unchanged).
