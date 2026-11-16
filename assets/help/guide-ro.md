@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.1"
-date: "Versiunea 0.5.1 · 16 noiembrie 2026"
+version: "0.5.2"
+date: "Versiunea 0.5.2 · 16 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -214,9 +214,11 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
+**0.5.2** · 16 noiembrie 2026
+- **Seif în loc de vault:** în română, Texere spune acum peste tot „seif”.
+
 **0.5.1** · 16 noiembrie 2026
 - **Un Ajutor mai scurt:** ghidul și întrebările frecvente urmează tutorialul de început, pe scurt și cu imagini.
-- **Seif în loc de vault:** în română, Texere spune acum peste tot „seif”.
 
 **0.5.0** · 16 noiembrie 2026
 - **Un singur drum, doar pluginul:** Texere se instalează prin BRAT în orice seif, gol sau cu notele tale, pe Windows și pe Mac. Configurarea aduce tot, inclusiv ghidul de redactare al facultății și sursele ghidurilor de scris, iar harta filosofiei vine colorată în grafic.

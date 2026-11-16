@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.1"
-date: "Version 0.5.1 · 16 November 2026"
+version: "0.5.2"
+date: "Version 0.5.2 · 16 November 2026"
 ---
 
 ## 1. Start
@@ -214,9 +214,11 @@ If the setup couldn't do a step, you do it yourself, by hand:
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
+**0.5.2** · 16 November 2026
+- **In Romanian, “seif” instead of “vault”** throughout Texere, and the English guide has its own English pictures.
+
 **0.5.1** · 16 November 2026
 - **A shorter Help:** the guide and the frequent questions follow the getting-started tutorial, briefly and with pictures.
-- **In Romanian, “seif” instead of “vault”** throughout Texere.
 
 **0.5.0** · 16 November 2026
 - **One way in, just the plugin:** Texere installs through BRAT in any vault, empty or with your notes, on Windows and Mac. The setup brings everything, including the faculty's writing guide and the sources of the writing guides, and the map of philosophy comes coloured in the graph.
