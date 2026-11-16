@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.21"
-date: "Versiunea 0.4.21 · 13 noiembrie 2026"
+version: "0.4.22"
+date: "Versiunea 0.4.22 · 16 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -112,6 +112,7 @@ Obsidian e gratuit și lucrează cu fișiere text de pe calculatorul tău: făr�
 - **Bara din dreapta:** despre nota deschisă: **Outline**, **Backlinks**, însoțitorul scrisului.
 - **Dreapta-jos:** bara de stare, cu **Texere** (exportul, stilul citărilor…).
 - **Settings:** rotița din stânga-jos.
+- **Modul concentrare:** **Cmd/Ctrl + Shift + D** ascunde tot în afară de notele și PDF-urile deschise (și două puse una lângă alta); aceeași scurtătură le readuce.
 
 **Scrisul.** Markdown, văzut pe loc: `**îngroșat**`, `# Titlu`, `- listă`. Meniul ⋯ din capul notei comută la **Reading view**.
 
@@ -173,7 +174,7 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 
 1. Deschide nota de lectură și apasă pe PDF-ul din **attachment**.
 2. Selectează un pasaj și alege o culoare din paleta **PDF++**.
-3. Lipește-l în notă (**Ctrl/Cmd + V**). Începe cu eticheta culorii și se termină cu citarea și **· PDF**, un link înapoi la locul exact.
+3. Pasajul intră singur în notă (auto-copy și auto-paste, pornite de Texere în PDF++), la locul lui după pagină, iar nota se derulează acolo, chiar dacă e închisă sau în Reading view. Dacă ai oprit auto-paste-ul, îl lipești cu **Ctrl/Cmd + V**. Începe cu eticheta culorii și se termină cu citarea și **· PDF**, un link înapoi la locul exact.
 
 | Culoare | Etichetă | Ce marchezi |
 | --- | --- | --- |
@@ -187,6 +188,8 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 | gri | `#word` | termeni de reținut |
 
 **Doar citești?** Apasă pointerul din bara PDF-ului, înaintea culorilor (sau **H**): selectezi text ca să urmărești pe unde citești, iar nimic nu se copiază în notă. Apeși iar **H** și revii la culoarea de dinainte; sau alegi alta.
+
+**Ștergi o evidențiere:** ștergi rândul ei din notă și dispare și din PDF; o ștergi din PDF (meniul ei → **Delete**) și dispare și rândul din notă. PDF-ul nu se reîncarcă: se redesenează doar pagina.
 
 **Adnotările făcute în altă parte** (Zotero, Preview, Acrobat) intră singure în notă, cu eticheta celei mai apropiate culori. Făcute după ce ai adăugat referința: clic dreapta pe PDF sau pe notă → **Texere** → **Importă adnotările din PDF**. Făcute sub alt nume: Texere te întreabă dacă sunt ale tale.
 
@@ -381,17 +384,24 @@ Configurarea face cu tine pașii 3, 4, 5 și 7. De mână:
 | alt font în export | fontul nu e instalat | pasul 6 |
 | lipsește un șablon sau un ghid de scris | a fost mutat sau șters | pasul 7 |
 | „Zotero e închis” | Zotero nu e pornit | deschide-l sau adaugă o cheie Zotero |
+| la `@` nu apar referințele din Zotero | Zotero închis și nicio cheie Zotero, sau Zotero nu lasă alte aplicații | deschide Zotero (**Setări → Avansat** → permite altor aplicații) sau adaugă o cheie Zotero |
 | „…Better BibTeX plugin is installed” | mesajul altui plugin (Zotero Integration) | Texere nu are nevoie de Better BibTeX: apasă **Cum rezolv** în mesaj |
 | Zotero „nu-l lasă pe Texere să intre” | Zotero blochează alte aplicații | în Zotero: **Setări → Avansat** → permite altor aplicații |
 | butonul Zotero salvează doar în Zotero | butonul din browser e oprit | [[#2.3 Din browser, cu butonul Zotero]] |
 | lipsesc adnotări din notă | au fost făcute după ce ai adăugat referința | clic dreapta pe PDF → **Texere** → **Importă adnotările din PDF** |
+| evidențierea nu intră în notă | pointerul e pornit sau auto-paste e oprit în PDF++ | apasă **H** (sau alege o culoare); auto-paste: iconița lui din bara PDF-ului |
+| PDF-ul se albește și se reîncarcă la evidențiere | — | Texere scrie motivul în `.obsidian/plugins/texere/pdf-reload.log`: trimite-l din **Ajutor → Cum cer ajutor** |
+| nota nu se derulează la evidențierea nouă | — | la fel, cu `.obsidian/plugins/texere/highlights.log` |
 | „limită atinsă” la căutare | limita pe zi a unui catalog | adaugă o cheie gratuită la **Cataloage** |
 
 Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 
 ## 7. Ce e nou
 
-Când apare o versiune nouă, pagina de pornire ți-o arată cu butonul **Actualizează**; nimic nu se instalează fără clicul tău (cu BRAT, Texere se actualizează singur la pornire). Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+Texere caută o versiune nouă la pornire, la 20 de minute și când revii în Obsidian. Când apare una, pagina de pornire ți-o arată cu butonul **Actualizează**, apoi **Reîncarcă**; nimic nu se instalează fără clicul tău. Excepție: BRAT, dacă la el e pornit **Auto-update plugins at startup**, instalează versiunea nouă la pornire; dacă vrei să alegi tu, oprește-l din **Settings → BRAT**. Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.22** · 16 noiembrie 2026
+- **Ajutorul, la zi:** ghidul și întrebările frecvente spun acum cum citezi din Zotero cu `@` (cu sau fără PDF), ce faci cu mesajul despre Better BibTeX, cum citești cu pointerul, cum ștergi o evidențiere, modul concentrare și cum vin actualizările; plus rânduri noi în tabelul cu erori.
 
 **0.4.21** · 13 noiembrie 2026
 - **Citarea din Zotero merge din nou cu mouse-ul:** un clic pe **Doar referința** sau pe **Referința și PDF-ul** o adaugă; un clic în afară lasă textul cum l-ai scris (în 0.4.17–0.4.20, clicul pe o variantă era luat drept renunțare).

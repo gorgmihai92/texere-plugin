@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.21"
-date: "Version 0.4.21 · 13 November 2026"
+version: "0.4.22"
+date: "Version 0.4.22 · 16 November 2026"
 ---
 ## 1. Start
 
@@ -112,6 +112,7 @@ Obsidian is free and works with plain text files on your computer: no account, n
 - **Right sidebar:** about the open note: **Outline**, **Backlinks**, the writing companion.
 - **Bottom right:** the status bar, with the **Texere** item (export, citation style…).
 - **Settings:** the gear at the bottom left.
+- **Focus mode:** **Cmd/Ctrl + Shift + D** hides everything except the notes and PDFs you have open (two side by side too); the same shortcut brings it all back.
 
 **Writing.** Markdown, shown as you type: `**bold**`, `# Heading`, `- list`. The ⋯ menu at the top of a note switches to **Reading view**.
 
@@ -173,7 +174,7 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 
 1. Open the reading note and click the PDF in **attachment**.
 2. Select a passage and pick a color from the **PDF++** palette.
-3. Paste it in the note (**Ctrl/Cmd + V**). It starts with the color's tag and ends with the citation and **· PDF**, a link back to the exact place.
+3. The passage goes into the note by itself (auto-copy and auto-paste, turned on in PDF++ by Texere), in its place by page, and the note scrolls there, even if it was closed or in Reading view. If you turned auto-paste off, paste it with **Ctrl/Cmd + V**. It starts with the color's tag and ends with the citation and **· PDF**, a link back to the exact place.
 
 | Color | Tag | You mark |
 | --- | --- | --- |
@@ -187,6 +188,8 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 | gray | `#word` | terms to remember |
 
 **Just reading?** Click the pointer in the PDF toolbar, before the colours (or press **H**): select text to follow where you're reading, and nothing is copied into the note. Press **H** again to go back to the colour you had, or pick another.
+
+**Deleting a highlight:** delete its line in the note and it goes from the PDF too; delete it in the PDF (its menu → **Delete**) and its line goes from the note. The PDF doesn't reload: only the page is redrawn.
 
 **Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
 
@@ -381,9 +384,13 @@ The setup does steps 3, 4, 5 and 7 with you. By hand:
 | another font in the export | the font isn't installed | step 6 |
 | a template or writing guide is missing | it was moved or deleted | step 7 |
 | "Zotero is closed" | Zotero isn't running | open it, or add a Zotero key |
+| `@` doesn't show your Zotero references | Zotero closed and no Zotero key, or Zotero doesn't let other apps in | open Zotero (**Settings → Advanced** → allow other applications) or add a Zotero key |
 | "…Better BibTeX plugin is installed" | another plugin's message (Zotero Integration) | Texere doesn't need Better BibTeX: click **How to fix it** in the message |
 | Zotero "doesn't let Texere in" | Zotero blocks other apps | Zotero **Settings → Advanced** → allow other applications |
 | the Zotero button saves only to Zotero | the browser button is off | [[#2.3 From the browser, with the Zotero button]] |
+| a highlight doesn't go into the note | the pointer is on, or auto-paste is off in PDF++ | press **H** (or pick a colour); auto-paste: its icon in the PDF toolbar |
+| the PDF goes white and reloads when you highlight | — | Texere writes why in `.obsidian/plugins/texere/pdf-reload.log`: send it from **Help → How do I ask for help** |
+| the note doesn't scroll to the new highlight | — | the same, with `.obsidian/plugins/texere/highlights.log` |
 | annotations missing from the note | made after the reference was added | right-click the PDF → **Texere** → **Import annotations from PDF** |
 | "limit reached" in search | a catalog's daily limit | add a free key in **Catalogs** |
 
@@ -391,7 +398,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 
 ## 7. What's new
 
-When there's a new version, the home page shows it with an **Update** button; nothing installs without your click (with BRAT, Texere updates itself at startup). What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+Texere looks for a new version at startup, every 20 minutes and when you come back to Obsidian. When there is one, the home page shows it with **Update**, then **Reload**; nothing installs without your click. One exception: BRAT, if its **Auto-update plugins at startup** is on, installs the new version at startup; to choose yourself, turn it off in **Settings → BRAT**. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.22** · 16 November 2026
+- **Help, up to date:** the guide and the frequent questions now explain citing from Zotero with `@` (with or without the PDF), what to do about the Better BibTeX message, reading with the pointer, deleting a highlight, focus mode and how updates arrive; plus new rows in the error table.
 
 **0.4.21** · 13 November 2026
 - **Citing from Zotero works with the mouse again:** clicking **Reference only** or **Reference and PDF** adds it; clicking elsewhere leaves your text as you typed it (in 0.4.17–0.4.20, clicking a choice counted as cancelling).

@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.22 (16 November 2026)
+
+- **Help brought up to date** with 0.4.14–0.4.21. Guide: focus mode in 1.4; 2.5 now describes auto-paste (the passage goes in by itself, in page order, and the note scrolls to it) and deleting a highlight in either direction; 6.4 has rows for `@` without Zotero results, a highlight that doesn't reach the note, a PDF that reloads (`pdf-reload.log`) and a note that doesn't scroll (`highlights.log`); chapter 7 says how often Texere checks and that BRAT's own auto-update is the one exception. Frequent questions: new ones on citing from Zotero, the Better BibTeX message, reading with the pointer, deleting a highlight and focus mode; updated answers on annotating, citing, updates and whether you need Zotero.
+
 ## 0.4.21 (13 November 2026)
 
 - Fixed 0.4.17's cancel: Obsidian hides a menu before it runs the clicked item's action, so the `onHide` cancel (after 0 ms) won over a mouse click on "Reference only" / "Reference and PDF"; it now waits 400 ms and only cancels if no choice was made. Enter, Esc and click-outside were already right.
