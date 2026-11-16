@@ -46,6 +46,22 @@ const NOTES = [
   { path: "Support/Templates/New author.md", text: () => require("../assets/notes/New author.md") },
   { path: "Support/Templates/Licență – Facultatea de Filosofie UB.md", text: () => require("../assets/notes/Licență – Facultatea de Filosofie UB.md") },
   { path: "Support/Templates/Disertație – Facultatea de Filosofie UB.md", text: () => require("../assets/notes/Disertație – Facultatea de Filosofie UB.md") },
+  // ghidul de redactare al facultății și sursele ghidurilor de scris (note de literatură, citate în ghiduri): vin cu pluginul, nu cu un vault de descărcat
+  { path: "Support/Texere/Guides/Ghid de redactare – Licență și disertație (Facultatea de Filosofie, Universitatea din București).md", text: () => require("../assets/notes/guides/Ghid de redactare – Licență și disertație (Facultatea de Filosofie, Universitatea din București).md") },
+  { path: "Support/Texere/Guides/Writing guide references/American University, Academic Support Center, Writing Lab 2009 – Thesis statements.md", text: () => require("../assets/notes/guides/Writing guide references/American University, Academic Support Center, Writing Lab 2009 – Thesis statements.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Blattner – Tips on writing philosophy papers.md", text: () => require("../assets/notes/guides/Writing guide references/Blattner – Tips on writing philosophy papers.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Cartaya – How to write a philosophy paper. A 25-rule guide for undergraduate students.md", text: () => require("../assets/notes/guides/Writing guide references/Cartaya – How to write a philosophy paper. A 25-rule guide for undergraduate students.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Horban 1993 – Writing a philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Horban 1993 – Writing a philosophy paper.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/How to write philosophy.md", text: () => require("../assets/notes/guides/Writing guide references/How to write philosophy.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Huemer – A guide to writing.md", text: () => require("../assets/notes/guides/Writing guide references/Huemer – A guide to writing.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Jones et al. – How to write a philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Jones et al. – How to write a philosophy paper.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Mendelovici 2010 – A sample philosophy paper (annotated).md", text: () => require("../assets/notes/guides/Writing guide references/Mendelovici 2010 – A sample philosophy paper (annotated).md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Millgram 2024 – Writing your philosophy paper. Common problems to avoid.md", text: () => require("../assets/notes/guides/Writing guide references/Millgram 2024 – Writing your philosophy paper. Common problems to avoid.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Pryor 2012 – Guidelines on writing a philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Pryor 2012 – Guidelines on writing a philosophy paper.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Rippon 2008 – A brief guide to writing the philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Rippon 2008 – A brief guide to writing the philosophy paper.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Roberts – 7 steps to a better philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Roberts – 7 steps to a better philosophy paper.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Tooley – Writing philosophy essays.md", text: () => require("../assets/notes/guides/Writing guide references/Tooley – Writing philosophy essays.md"), source: true },
+  { path: "Support/Texere/Guides/Writing guide references/Yablo – Guidelines on writing a philosophy paper.md", text: () => require("../assets/notes/guides/Writing guide references/Yablo – Guidelines on writing a philosophy paper.md"), source: true },
 ];
 const { Updater } = require("./core/updater");
 const { VaultUpdates } = require("./core/vaultupdates");
@@ -357,6 +373,8 @@ module.exports = class Texere extends Plugin {
       try { await this.app.vault.create(path, text); made++; } catch (e) { console.warn("Texere: harta", path, e); }
     }
     if (this.settings.fields?.asked) await this.chooseField(m.id);   // ai creat-o: e harta ta
+    // culorile hărții în graficul Obsidian: le pune odată cu harta (doar grupurile care lipsesc; ale tale rămân)
+    try { await require("./core/graphcolors").apply(this); } catch (e) { console.warn("Texere: culorile hărții în grafic", e); }
     return made;
   }
   // ce mai e de făcut: pluginurile lipsă sau oprite, harta

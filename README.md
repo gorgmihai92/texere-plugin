@@ -2,13 +2,11 @@
 
 **Research in one place**, inside [Obsidian](https://obsidian.md).
 
-> **This repository is the Texere plugin**, the base of [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere). The vault is the easiest start: the plugin, the Philosophy map, templates and guides, ready to open. Install the plugin from here to use Texere in a new or existing vault of your own.
-
 Research is usually scattered across many applications and places: Zotero, Mendeley or EndNote, Word or Google Docs, a laptop, the cloud, a phone, USB sticks and external drives. Moving between them costs time and loses things along the way.
 
 Texere is a plugin for [Obsidian](https://obsidian.md), a free note-taking app, for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, but you can reshape it for any discipline.
 
-- **Anyone, without technical knowledge.** Install it (or download the ready-made vault), and a short setup does the rest. No code, no command line, no LaTeX.
+- **Anyone, without technical knowledge.** Install it in any vault, new or with your notes, and a short setup does the rest. No code, no command line, no LaTeX.
 - **English and Romanian writers.** The interface, the setup, Help and the guide work in both languages. Notes have English names and Romanian aliases: type `[[Etică` and you get **Ethics**.
 - **University of Bucharest students.** Export templates for BA and MA theses at the Faculty of Philosophy, following the faculty's writing guide.
 
@@ -27,19 +25,13 @@ No AI, no account, no subscription. Your notes stay plain files on your computer
 
 You need [Obsidian](https://obsidian.md) on a computer (Mac, Windows or Linux). It's free: [download it here](https://obsidian.md/download).
 
-### The easy way: the ready-made vault
+One way, on Windows and Mac alike, in a new vault or one you already have:
 
-1. Download [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) and unzip it.
-2. Open [Obsidian](https://obsidian.md), choose **Open folder as vault** and pick the unzipped folder.
-3. Click **Trust author and enable plugins**. The setup starts by itself.
-
-### Your own vault, even an empty one
-
-1. **Make a vault.** Open [Obsidian](https://obsidian.md) and choose **Create new vault**, give it a name, pick where to keep it and click **Create**. (Already have a vault? Open it and skip this step.)
+1. **Open a vault.** In [Obsidian](https://obsidian.md) choose **Create new vault** (a name, a place, **Create**), or open one you already have.
 2. **Turn on community plugins.** **Settings** (the gear, bottom left) → **Community plugins** → **Turn on community plugins**.
-3. **Install BRAT**, a free helper that installs plugins from GitHub and keeps them up to date: in **Community plugins** click **Browse**, search for **BRAT**, then **Install** and **Enable**.
+3. **Install BRAT**, a free helper that installs plugins from GitHub: in **Community plugins** click **Browse**, search for **BRAT**, then **Install** and **Enable**.
 4. **Add Texere.** Press **Ctrl/Cmd + P**, type `BRAT plugin` and choose **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, leave **Latest version**, tick **Enable after installing the plugin** and click **Add plugin**.
-5. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, your discipline (the Philosophy map), PDF++ for annotations (you click **Install** and **Enable**), and what's missing in your vault. In an empty vault, leave everything ticked and click **Next** at each step: Texere makes the folders, the templates, the bibliography and the Philosophy map.
+5. **Follow the setup.** It opens by itself and takes a minute: your language, where Texere keeps things, the Philosophy map (coloured in the graph), the templates and writing guides, and PDF++ for annotations. In an empty vault, leave everything as it is and click **Next** at each step. In a vault with your notes, Texere creates only what it needs, with the folder names you choose, and moves nothing of yours.
 
 Done. Every new tab now opens Texere's home page. Start with **Add a reference**.
 
@@ -149,4 +141,4 @@ Texere bundles these libraries and data in its `main.js`; each keeps its own lic
 
 ---
 
-Version 0.4.24 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
+Version 0.5.0 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))

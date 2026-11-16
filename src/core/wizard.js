@@ -142,9 +142,10 @@ const AUTO = {
     const P = W.P, out = none(), before = P.noteStatus().filter(n => n.file).length;
     let made = 0; try { made = await P.addNotes(); } catch (e) { console.error("Texere: notele", e); }
     const tdir = String(P.settings.dirs?.templates || "Support/Templates");
-    const all = P.noteStatus(), tpl = all.filter(n => n.path.startsWith("Support/Templates/")), gd = all.filter(n => !n.path.startsWith("Support/Templates/"));
+    const all = P.noteStatus(), tpl = all.filter(n => n.path.startsWith("Support/Templates/")), gd = all.filter(n => !n.path.startsWith("Support/Templates/") && !n.source), src = all.filter(n => n.source);
     out.ok.push({ label: M(`${tpl.length} șabloane`, `${tpl.length} templates`), state: M(`în ${tdir}`, `in ${tdir}`) });
     out.ok.push({ label: M(`${gd.length} ghiduri de scris`, `${gd.length} writing guides`), state: M("în Support/Texere/Guides", "in Support/Texere/Guides") });
+    if (src.length) out.ok.push({ label: M(`${src.length} surse ale ghidurilor`, `${src.length} guide sources`), state: M("note de literatură, citate în ghiduri", "literature notes cited in the guides") });
     if (!made && before) out.info.push(M("Erau deja în vault; nu le-am atins.", "They were already in your vault; I didn't touch them."));
     return out;
   },
@@ -482,7 +483,7 @@ class WizardModal extends Modal {
     this.stepRun = async () => {
       const ok = []; let bad = false;
       for (const { m } of list || []) if (picked.has(m.id)) {
-        try { await P.chooseField(m.id); const n = await P.createMap(m); ok.push(M(`Am importat harta ${m.of?.ro || m.ro}: ${n} de note în ${(await P.mapStatus(m).catch(() => null))?.folder || "vault"}.`, `Imported the map of ${m.of?.en || m.en}: ${n} notes in ${(await P.mapStatus(m).catch(() => null))?.folder || "your vault"}.`)); }
+        try { await P.chooseField(m.id); const n = await P.createMap(m); ok.push(M(`Am importat harta ${m.of?.ro || m.ro}: ${n} de note în ${(await P.mapStatus(m).catch(() => null))?.folder || "vault"}, colorate în grafic.`, `Imported the map of ${m.of?.en || m.en}: ${n} notes in ${(await P.mapStatus(m).catch(() => null))?.folder || "your vault"}, coloured in the graph.`)); }
         catch (e) { console.error("Texere: harta", m.id, e); bad = true; this.results.map = { ...none(), todo: [{ msg: M(`N-a mers: ${e.message}`, `Didn't work: ${e.message}`) }] }; }
       }
       // hărțile debifate (și care nu sunt deja în vault): nu le vrei, deci nici câmpurile lor în nota de lectură

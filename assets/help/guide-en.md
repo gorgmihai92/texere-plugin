@@ -3,38 +3,29 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.24"
-date: "Version 0.4.24 · 16 November 2026"
+version: "0.5.0"
+date: "Version 0.5.0 · 16 November 2026"
 ---
 ## 1. Start
 
 Research is usually scattered across many applications and places: Zotero, Mendeley or EndNote, Word or Google Docs, a laptop, the cloud, a phone, USB sticks and external drives. Moving between them costs time and loses things along the way.
 
-Texere is a ready-made Obsidian vault for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. This version comes with a map of philosophy, but you can reshape it for any discipline.
+Texere is an Obsidian plugin for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, which you can reshape for any discipline.
 
 #### Who it's for
 
-- **Anyone, without technical knowledge.** Download the vault, open it in Obsidian, and a short setup does the rest. No code, no command line, no LaTeX.
+- **Anyone, without technical knowledge.** Install the plugin in Obsidian, and a short setup does the rest. No code, no command line, no LaTeX.
 - **English and Romanian writers.** The interface, the setup, Help and the guide work in both languages. Notes have English names and Romanian aliases: type `[[Etică` and you get **Ethics**.
 - **University of Bucharest students.** Export templates for BA and MA theses at the Faculty of Philosophy, following the faculty's writing guide.
 
-![[Without and with Obsidian.png]]
+**Step 1. Install Texere (once, on Windows or Mac)**
 
-**Step 1. Set up the vault (once)**
-
-1. Install [Obsidian](https://obsidian.md/download) (free).
-2. [Download the vault](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) and unzip it; in Obsidian, choose **Open folder as vault**.
-3. Click **Trust author and enable plugins**.
-4. The setup opens by itself. Choose **The Texere structure** (recommended): Texere sets up everything, one step at a time (folders, bibliography and citation styles, templates and guides, PDF++), shows you what it did, and you click **Next**. At the end, the home page opens in a new tab.
-5. At the end, **See what was done** shows a summary (later: **Help → Your last setup**).
-
-> [!tip] In a vault of your own, even an empty one
-> 1. **Settings → Community plugins → Turn on community plugins**.
-> 2. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub and keeps them up to date.
-> 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin**, click **Add plugin**.
-> 4. The setup opens by itself. In an empty vault, leave everything as it is and click **Next** at each step: you get the Texere structure, with everything set up. In a vault that already has your notes, **My own folders** is selected: Texere's folders (reading notes, PDFs, export, bibliography) are created with the names you choose; the other folders (notes, work) are yours, only if you tick them. Texere moves nothing of yours.
->
-> Citations work from the start: Texere adds an empty bibliography and six citation styles (APA, Chicago, MLA, Harvard, IEEE) in **Support/Texere/Bibliography**.
+1. Install [Obsidian](https://obsidian.md/download) (free) and open a vault: a new one (**Create new vault**) or one you already have.
+2. **Settings → Community plugins → Turn on community plugins**.
+3. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub.
+4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin** and click **Add plugin**.
+5. The setup opens by itself. In an empty vault, leave **The Texere structure** and click **Next** at each step: Texere makes the folders, the bibliography and citation styles, the map of philosophy (coloured in the graph), the templates and writing guides, then installs PDF++. In a vault with your notes, **My own folders** is selected: Texere's folders (reading notes, PDFs, export, bibliography) are created with the names you choose, and Texere moves nothing of yours.
+6. At the end, **See what was done** shows a summary (later: **Help → Your last setup**).
 
 > [!warning] Clicked "Restricted mode" by mistake?
 > The plugins are off. Turn them on in **Settings → Community plugins**.
@@ -101,7 +92,7 @@ Texere stays quiet in your notes: while you write you see only your text, marks 
 
 In the Obsidian graph (**Ctrl/Cmd + G**), each kind of note in the map has its own colour: branches, subfields, concepts, theories, movements, periods, authors. No colours? **Ctrl/Cmd + P** → **Texere: Colours in the graph for the discipline map**.
 
-Use them in your references' metadata. [[Descartes 1641 (2022) – Meditations on First Philosophy]] has [[Epistemology]] as **branch**: open [[Epistemology]] and **Backlinks** lists every reference in that branch.
+Use them in your references' metadata. A reference with [[Epistemology]] as **branch** shows up on the Epistemology page: open it and **Backlinks** lists every reference in that branch.
 
 No **Disciplines** folder? **Settings → Texere → General → Folders → Discipline map → Create the map**. A map for another discipline? Write to [hi@georgemihai.com](mailto:hi@georgemihai.com).
 
@@ -128,7 +119,7 @@ Obsidian is free and works with plain text files on your computer: no account, n
 
 ## 2. References and reading
 
-Each reference has a note in **Reading Notes**, named *Author Year – Title*, and its PDF in **PDFs**. The ones already there are examples: delete them whenever you like. References with other names (from an older vault): the home page offers to rename them.
+Each reference has a note in **Reading Notes**, named *Author Year – Title*, and its PDF in **PDFs**. References with other names (from an older vault): the home page offers to rename them.
 
 ### 2.1 Search and add
 
@@ -195,8 +186,8 @@ PDFs still without a reference: **PDFs without a reference**, in **References** 
 
 **Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
 
-> [!example] From an example note
-> In [[Descartes 1641 (2022) – Meditations on First Philosophy]]:
+> [!example] What it looks like
+> In a reading note (Descartes, *Meditations*):
 > ```
 > #claim I am, I exist, is necessarily true each time it is expressed by me, or conceived in my mind [@descartes_meditations_2022, p. 29] · PDF
 >
@@ -254,7 +245,6 @@ In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click 
 - [[Getting started in philosophy – reading, arguing, writing]]: from a seminar essay to a PhD: the shape of a good text, the words for each move, red flags and a checklist. Its fourteen references are in **Writing guide references**.
 - [Guidelines on Writing a Philosophy Paper](https://www.jimpryor.net/teaching/guidelines/writing.html), by Jim Pryor
 - [LEADERSHIP LAB: The Craft of Writing Effectively](https://www.youtube.com/watch?v=vtIzMaLkCaM) (video)
-- [[Metodologia cercetării - Literature Review]] and [[Metodologia cercetării - Structura unei lucrări științifice]] (in Romanian)
 
 ### 3.4 Edit mode: try versions
 
@@ -401,6 +391,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 Texere looks for a new version at startup, every 20 minutes and when you come back to Obsidian. When there is one, the home page shows it with **Update**, then **Reload**; nothing installs without your click. One exception: BRAT, if its **Auto-update plugins at startup** is on, installs the new version at startup; to choose yourself, turn it off in **Settings → BRAT**. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.5.0** · 16 November 2026
+- **One way in, just the plugin:** install Texere through BRAT in any vault, empty or with your notes, on Windows and Mac. No more vault to download: the setup brings everything, including the faculty's writing guide and the sources of the writing guides.
+- **The map comes coloured:** when the setup creates the map of philosophy, it also puts its colours in the graph.
 
 **0.4.24** · 16 November 2026
 - **The map of philosophy, coloured in the graph:** in the Obsidian graph, branches, subfields, concepts, theories, movements, periods and authors each get their own colour. The home page offers them (**Add**); your own colour groups stay as they are. Any time: **Texere: Colours in the graph for the discipline map**.

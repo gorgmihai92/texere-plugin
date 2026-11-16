@@ -2,6 +2,12 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.0 (16 November 2026)
+
+- **Texere installs as a plugin only.** The ready-made vault is no longer the recommended start: README and guide describe one way in (BRAT, in any vault, Windows and Mac). The plugin now ships what the vault used to bring: the faculty's writing guide and the 14 writing-guide sources (`assets/notes/guides`, added by the setup's notes step as `source` notes, counted apart in its summary).
+- `createMap` also applies the map's graph colours (missing groups only); the setup's map line says so.
+- The guides no longer link to the research-methodology course notes, and the guide no longer relies on the Descartes/Mill example notes.
+
 ## 0.4.24 (16 November 2026)
 
 - **Graph colours for the discipline map.** `core/graphcolors.js` adds one colour group per kind of map note (Branches, Subfields, Concepts, Theories, Movements, Periods, Authors) to `.obsidian/graph.json`, after your own groups, only the missing ones; an open graph is recoloured at once. Offered once on the home page (vault update `graph-colors-1`, a new `fn` kind that waits until the map is in the vault) and available as the command **Colours in the graph for the discipline map**.

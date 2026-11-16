@@ -3,38 +3,29 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.24"
-date: "Versiunea 0.4.24 · 16 noiembrie 2026"
+version: "0.5.0"
+date: "Versiunea 0.5.0 · 16 noiembrie 2026"
 ---
 ## 1. Început
 
 Cercetarea e de obicei împrăștiată în multe aplicații și locuri: Zotero, Mendeley sau EndNote, Word sau Google Docs, laptopul, cloudul, telefonul, stickuri și hard diskuri externe. Drumul dintre ele costă timp și pierde lucruri pe parcurs.
 
-Texere e un vault Obsidian gata făcut pentru cercetătorii care vor un singur loc pentru tot procesul: găsești referințe, citești PDF-uri, iei notițe, scrii, citezi și exporți. Versiunea asta vine cu o hartă a filosofiei, dar o poți adapta pentru orice disciplină.
+Texere e un plugin pentru Obsidian, făcut pentru cercetătorii care vor un singur loc pentru tot procesul: găsești referințe, citești PDF-uri, iei notițe, scrii, citezi și exporți. Vine cu o hartă a filosofiei, pe care o poți adapta pentru orice disciplină.
 
 #### Pentru cine e
 
-- **Oricine, fără cunoștințe tehnice.** Descarci vault-ul, îl deschizi în Obsidian, iar o configurare scurtă face restul. Fără cod, fără linie de comandă, fără LaTeX.
+- **Oricine, fără cunoștințe tehnice.** Instalezi pluginul în Obsidian, iar o configurare scurtă face restul. Fără cod, fără linie de comandă, fără LaTeX.
 - **Cei care scriu în engleză și în română.** Interfața, configurarea, Ajutorul și ghidul merg în ambele limbi. Notele au nume în engleză și aliasuri în română: scrii `[[Etică` și primești **Ethics**.
 - **Studenții Universității din București.** Șabloane de export pentru lucrările de licență și disertație de la Facultatea de Filosofie, după ghidul de redactare al facultății.
 
-![[Fara si cu Obsidian (varianta 4).png]]
+**Pasul 1. Instalează Texere (o singură dată, pe Windows sau pe Mac)**
 
-**Pasul 1. Configurează vault-ul (o singură dată)**
-
-1. Instalează [Obsidian](https://obsidian.md/download) (gratuit).
-2. [Descarcă vault-ul](https://github.com/gorgmihai92/texere/archive/refs/heads/main.zip) și dezarhivează-l; în Obsidian, alege **Open folder as vault**.
-3. Apasă **Trust author and enable plugins**.
-4. Configurarea se deschide singură. Alege **Structura Texere** (recomandat): Texere face tot, pas cu pas (folderele, bibliografia și stilurile de citare, șabloanele și ghidurile, PDF++), îți arată ce a făcut, iar tu apeși **Înainte**. La final, pagina de pornire se deschide într-un tab nou.
-5. La final, **Vezi ce s-a făcut** îți arată un rezumat (mai târziu: **Ajutor → Ultima configurare**).
-
-> [!tip] Într-un vault al tău, chiar gol
-> 1. **Settings → Community plugins → Turn on community plugins**.
-> 2. **Browse**, caută **BRAT**, apoi **Install** și **Enable**. BRAT instalează pluginuri de pe GitHub și le ține la zi.
-> 3. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, bifezi **Enable after installing the plugin**, apeși **Add plugin**.
-> 4. Configurarea se deschide singură. Într-un vault gol, lași totul cum e și apeși **Înainte** la fiecare pas: primești structura Texere, cu totul pregătit. Într-un vault care are deja notele tale, e aleasă varianta **Folderele mele**: folderele lui Texere (notele de lectură, PDF-urile, exportul, bibliografia) se creează cu numele alese de tine; celelalte (notițe, lucrări) sunt ale tale, doar dacă le bifezi. Texere nu mută nimic din ce ai.
->
-> Citările merg din prima: Texere adaugă o bibliografie goală și șase stiluri de citare (APA, Chicago, MLA, Harvard, IEEE) în **Support/Texere/Bibliography**.
+1. Instalează [Obsidian](https://obsidian.md/download) (gratuit) și deschide un vault: unul nou (**Create new vault**) sau unul pe care îl ai deja.
+2. **Settings → Community plugins → Turn on community plugins**.
+3. **Browse**, caută **BRAT**, apoi **Install** și **Enable**. BRAT instalează pluginuri de pe GitHub.
+4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, bifezi **Enable after installing the plugin** și apeși **Add plugin**.
+5. Configurarea se deschide singură. Într-un vault gol, lași **Structura Texere** și apeși **Înainte** la fiecare pas: Texere face folderele, bibliografia și stilurile de citare, harta filosofiei (colorată în grafic), șabloanele și ghidurile de scris, apoi instalează PDF++. Într-un vault cu notele tale e aleasă **Folderele mele**: folderele lui Texere (notele de lectură, PDF-urile, exportul, bibliografia) se creează cu numele alese de tine, iar Texere nu mută nimic din ce ai.
+6. La final, **Vezi ce s-a făcut** îți arată un rezumat (mai târziu: **Ajutor → Ultima configurare**).
 
 > [!warning] Ai ales din greșeală „Restricted mode”?
 > Pluginurile sunt oprite. Le pornești din **Settings → Community plugins**.
@@ -101,7 +92,7 @@ Texere stă liniștit în notele tale: cât scrii vezi doar textul tău, semnele
 
 În graficul Obsidian (**Ctrl/Cmd + G**), fiecare tip de notă din hartă are culoarea lui: ramuri, subdomenii, concepte, teorii, curente, perioade, autori. Lipsesc culorile? **Ctrl/Cmd + P** → **Texere: Culori în grafic pentru harta disciplinei**.
 
-Folosește-le în metadatele referințelor. [[Descartes 1641 (2022) – Meditations on First Philosophy]] are la **branch** valoarea [[Epistemology|Epistemologie]]: deschide [[Epistemology|Epistemologie]], iar **Backlinks** arată toate referințele din ramura asta.
+Folosește-le în metadatele referințelor. O referință cu **branch** [[Epistemology|Epistemologie]] apare pe pagina Epistemologiei: deschide-o, iar **Backlinks** arată toate referințele din ramura asta.
 
 Nu ai folderul **Disciplines**? **Settings → Texere → General → Foldere → Harta disciplinei → Creează harta**. Harta altei discipline? Scrie la [hi@georgemihai.com](mailto:hi@georgemihai.com).
 
@@ -128,7 +119,7 @@ Obsidian e gratuit și lucrează cu fișiere text de pe calculatorul tău: făr�
 
 ## 2. Referințele și lectura
 
-Fiecare referință are o notă în **Reading Notes**, cu numele *Autor An – Titlu*, și PDF-ul ei în **PDFs**. Cele care sunt deja acolo sunt exemple: le poți șterge oricând. Referințe cu alte nume (dintr-un vault mai vechi): pagina de pornire îți propune să le redenumești.
+Fiecare referință are o notă în **Reading Notes**, cu numele *Autor An – Titlu*, și PDF-ul ei în **PDFs**. Referințe cu alte nume (dintr-un vault mai vechi): pagina de pornire îți propune să le redenumești.
 
 ### 2.1 Cauți și adaugi
 
@@ -195,8 +186,8 @@ PDF-uri rămase fără referință: **PDF-uri fără referință**, în **Referi
 
 **Adnotările făcute în altă parte** (Zotero, Preview, Acrobat) intră singure în notă, cu eticheta celei mai apropiate culori. Făcute după ce ai adăugat referința: clic dreapta pe PDF sau pe notă → **Texere** → **Importă adnotările din PDF**. Făcute sub alt nume: Texere te întreabă dacă sunt ale tale.
 
-> [!example] Dintr-o notă-exemplu
-> În [[Descartes 1641 (2022) – Meditations on First Philosophy]]:
+> [!example] Cum arată
+> Într-o notă de lectură (Descartes, *Meditations*):
 > ```
 > #claim I am, I exist, is necessarily true each time it is expressed by me, or conceived in my mind [@descartes_meditations_2022, p. 29] · PDF
 >
@@ -254,7 +245,6 @@ La lucrări completezi **title**, **autor**, **coordonator** și **an**. Regulil
 - [[Primii pași în filosofie – citit, argumentat, scris]]: de la eseul de seminar la doctorat: forma unui text bun, cuvintele pentru fiecare mișcare, semnalele de alarmă și o listă de verificare. Cele paisprezece referințe ale lui sunt în **Writing guide references**.
 - [Guidelines on Writing a Philosophy Paper](https://www.jimpryor.net/teaching/guidelines/writing.html), de Jim Pryor
 - [LEADERSHIP LAB: The Craft of Writing Effectively](https://www.youtube.com/watch?v=vtIzMaLkCaM) (video)
-- [[Metodologia cercetării - Literature Review]] și [[Metodologia cercetării - Structura unei lucrări științifice]]
 
 ### 3.4 Modul Editare: încerci variante
 
@@ -401,6 +391,10 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Texere caută o versiune nouă la pornire, la 20 de minute și când revii în Obsidian. Când apare una, pagina de pornire ți-o arată cu butonul **Actualizează**, apoi **Reîncarcă**; nimic nu se instalează fără clicul tău. Excepție: BRAT, dacă la el e pornit **Auto-update plugins at startup**, instalează versiunea nouă la pornire; dacă vrei să alegi tu, oprește-l din **Settings → BRAT**. Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.5.0** · 16 noiembrie 2026
+- **Un singur drum, doar pluginul:** Texere se instalează prin BRAT în orice vault, gol sau cu notele tale, pe Windows și pe Mac. Nu mai e nevoie de vault-ul de descărcat: configurarea aduce tot, inclusiv ghidul de redactare al facultății și sursele ghidurilor de scris.
+- **Harta vine colorată:** când configurarea creează harta filosofiei, pune și culorile ei în grafic.
 
 **0.4.24** · 16 noiembrie 2026
 - **Harta filosofiei, colorată în grafic:** în graficul Obsidian, ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lui. Pagina de pornire ți le propune (**Adaugă**); grupurile tale de culori rămân cum sunt. Oricând: **Texere: Culori în grafic pentru harta disciplinei**.
