@@ -991,7 +991,12 @@ class Highlights {
     if (ch) this.S.save();
   }
   // rândul unei evidențieri: formatul ales în PDF++ (același cu rândurile lipite), altfel formatul Texere
+  // comentariul adnotării (din Zotero, Acrobat, Preview…) vine dedesubt, ca o notiță a ta, dacă formatul ales nu-l pune deja
   lineFor(h, pdf, note, list, props) {
+    const line = this.lineFor0(h, pdf, note, list, props), c = String(h.comment || "").trim();
+    return c && !line.includes(c) ? `${line}\n\n${c}` : line;
+  }
+  lineFor0(h, pdf, note, list, props) {
     const pp = this.app.plugins.plugins["pdf-plus"], set = pp?.settings || {}, mc = this.app.metadataCache;
     const rgb = h.rgb || null, tag = this.tagFor(rgb);
     const linktext = `${mc.fileToLinktext(pdf, note.path, true)}#page=${h.page}&annotation=${h.id}`;

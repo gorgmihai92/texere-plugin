@@ -112,6 +112,10 @@ module.exports = class Texere extends Plugin {
     this.app.workspace.onLayoutReady(() => { try { require("./core/tagcolors").start(this); } catch (e) { console.error("Texere: culorile etichetelor", e); } });
     // pointerul în PDF: selectezi ca să urmărești unde citești, fără să copiezi în notă (butonul din bara PDF-ului, tasta H)
     { const { PdfHand } = require("./core/pdfhand"); this.pdfHand = new PdfHand(this);
+      // culorile hărții în graficul Obsidian (Graph view → Groups): doar cele care lipsesc
+      this.coreCommand({ id: "graph-colors", name: this.T("Culori în grafic pentru harta disciplinei", "Colours in the graph for the discipline map"), icon: "palette", callback: async () => {
+        const GC = require("./core/graphcolors"); if (!(await GC.mapFolder(this))) return new Notice(this.T("Harta disciplinei nu e în vault: o creezi din Settings → Texere → Foldere → Harta disciplinei.", "The discipline map isn't in your vault: create it in Settings → Texere → Folders → Discipline map."), 8000);
+        const n = await GC.apply(this); new Notice(n ? this.T(`Graficul are acum culori pentru ${GC.legend(this)}.`, `The graph now has colours for ${GC.legend(this)}.`) : this.T("Culorile hărții sunt deja în grafic.", "The map's colours are already in the graph."), 7000); } });
       this.coreCommand({ id: "pdf-hand", name: this.T("Pointer în PDF: selectezi fără să copiezi în notă", "Pointer in PDF: select without copying into the note"), icon: "mouse-pointer-2", callback: () => this.pdfHand.toggle() });
       this.app.workspace.onLayoutReady(() => { try { this.pdfHand.start(); } catch (e) { console.error("Texere: pointerul în PDF", e); } }); }
     // ce aduce o versiune nouă în vault (core/vaultupdates.js): doar propuneri în pagina de pornire; nimic fără clicul tău

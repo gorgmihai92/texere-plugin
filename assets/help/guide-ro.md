@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.23"
-date: "Versiunea 0.4.23 · 16 noiembrie 2026"
+version: "0.4.24"
+date: "Versiunea 0.4.24 · 16 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -98,6 +98,8 @@ Texere stă liniștit în notele tale: cât scrii vezi doar textul tău, semnele
 #### Harta filosofiei
 
 **2. Notes/Disciplines/Philosophy** are câte o notă pentru fiecare ramură, teorie, concept, curent, perioadă și autor, pornind de la [[Philosophy|Filosofie]], fiecare cu alias în română.
+
+În graficul Obsidian (**Ctrl/Cmd + G**), fiecare tip de notă din hartă are culoarea lui: ramuri, subdomenii, concepte, teorii, curente, perioade, autori. Lipsesc culorile? **Ctrl/Cmd + P** → **Texere: Culori în grafic pentru harta disciplinei**.
 
 Folosește-le în metadatele referințelor. [[Descartes 1641 (2022) – Meditations on First Philosophy]] are la **branch** valoarea [[Epistemology|Epistemologie]]: deschide [[Epistemology|Epistemologie]], iar **Backlinks** arată toate referințele din ramura asta.
 
@@ -399,6 +401,10 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Texere caută o versiune nouă la pornire, la 20 de minute și când revii în Obsidian. Când apare una, pagina de pornire ți-o arată cu butonul **Actualizează**, apoi **Reîncarcă**; nimic nu se instalează fără clicul tău. Excepție: BRAT, dacă la el e pornit **Auto-update plugins at startup**, instalează versiunea nouă la pornire; dacă vrei să alegi tu, oprește-l din **Settings → BRAT**. Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.24** · 16 noiembrie 2026
+- **Harta filosofiei, colorată în grafic:** în graficul Obsidian, ramurile, subdomeniile, conceptele, teoriile, curentele, perioadele și autorii au fiecare culoarea lui. Pagina de pornire ți le propune (**Adaugă**); grupurile tale de culori rămân cum sunt. Oricând: **Texere: Culori în grafic pentru harta disciplinei**.
+- **Comentariile din Zotero ajung în notă:** comentariul unei adnotări făcute în Zotero (sau în Acrobat, Preview) intră acum sub pasajul ei, ca o notiță a ta.
 
 **0.4.23** · 16 noiembrie 2026
 - **Importul din Zotero: doar referințele sau și PDF-urile.** În fila **Zotero**, jos, sunt două butoane: **Importă referințele** și **Importă referințele și PDF-urile** (cu evidențierile și adnotările din Zotero), ca la citarea cu `@`. Fiecare arată câte referințe importă. Înlocuiesc bifele **Cu PDF-urile** și **Cu adnotările**.

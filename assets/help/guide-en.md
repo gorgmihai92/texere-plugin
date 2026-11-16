@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.23"
-date: "Version 0.4.23 · 16 November 2026"
+version: "0.4.24"
+date: "Version 0.4.24 · 16 November 2026"
 ---
 ## 1. Start
 
@@ -98,6 +98,8 @@ Texere stays quiet in your notes: while you write you see only your text, marks 
 #### The map of philosophy
 
 **2. Notes/Disciplines/Philosophy** has a note for each branch, theory, concept, movement, period and author, starting from [[Philosophy]], each with a Romanian alias.
+
+In the Obsidian graph (**Ctrl/Cmd + G**), each kind of note in the map has its own colour: branches, subfields, concepts, theories, movements, periods, authors. No colours? **Ctrl/Cmd + P** → **Texere: Colours in the graph for the discipline map**.
 
 Use them in your references' metadata. [[Descartes 1641 (2022) – Meditations on First Philosophy]] has [[Epistemology]] as **branch**: open [[Epistemology]] and **Backlinks** lists every reference in that branch.
 
@@ -399,6 +401,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 Texere looks for a new version at startup, every 20 minutes and when you come back to Obsidian. When there is one, the home page shows it with **Update**, then **Reload**; nothing installs without your click. One exception: BRAT, if its **Auto-update plugins at startup** is on, installs the new version at startup; to choose yourself, turn it off in **Settings → BRAT**. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.24** · 16 November 2026
+- **The map of philosophy, coloured in the graph:** in the Obsidian graph, branches, subfields, concepts, theories, movements, periods and authors each get their own colour. The home page offers them (**Add**); your own colour groups stay as they are. Any time: **Texere: Colours in the graph for the discipline map**.
+- **Zotero comments reach the note:** the comment of an annotation made in Zotero (or Acrobat, Preview) now goes under its passage, as your own note.
 
 **0.4.23** · 16 November 2026
 - **Zotero import: references only, or with the PDFs.** The **Zotero** tab has two buttons at the bottom: **Import references** and **Import references and PDFs** (with your Zotero highlights and annotations), as when citing with `@`. Each shows how many references it imports. They replace the **With the PDFs** and **With annotations** boxes.

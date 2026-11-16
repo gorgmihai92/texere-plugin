@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.24 (16 November 2026)
+
+- **Graph colours for the discipline map.** `core/graphcolors.js` adds one colour group per kind of map note (Branches, Subfields, Concepts, Theories, Movements, Periods, Authors) to `.obsidian/graph.json`, after your own groups, only the missing ones; an open graph is recoloured at once. Offered once on the home page (vault update `graph-colors-1`, a new `fn` kind that waits until the map is in the vault) and available as the command **Colours in the graph for the discipline map**.
+- The comment of an annotation made in Zotero (or Acrobat, Preview) now comes into the reading note too, on its own line under the passage, when PDF++'s copy format doesn't already include it. Found by the new Windows end-to-end tests.
+
 ## 0.4.23 (16 November 2026)
 
 - **Zotero import: references only, or references and PDFs.** The Zotero tab of Add a reference and the Import from Zotero window replace the two boxes (With the PDFs, With annotations) with two buttons, as when citing with `@`: **Import references** and **Import references and PDFs** (the PDF with the Zotero highlights and annotations), each with its count. You see what you get at the moment you click.

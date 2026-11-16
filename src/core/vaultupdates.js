@@ -17,6 +17,8 @@
 //       o setare nouă a lui Texere: primește valoarea doar dacă lipsește (n-ai ales-o tu).
 //   { id, kind: "plugin-setting", plugin: "pdf-plus", path: "a.b", value, why: {ro, en} }
 //       o setare a altui plugin: doar la clicul tău.
+//   { id, kind: "fn", ready: async P => bool, need: async P => bool, text: {ro, en}, yes: {ro, en}, run: async P => "mesaj" }
+//       altceva pentru vault (ex. culorile hărții în grafic): „ready” fals = încă nu (se verifică la pornirea următoare); „need” = de propus.
 //   { id, kind: "plugin-version", plugin: "pdf-plus", min: "0.40.0", why: {ro, en} }
 //       alt plugin are nevoie de o versiune mai nouă: te trimite la el (Obsidian îl actualizează, nu Texere).
 //
@@ -25,7 +27,13 @@ const { TFile, Notice, normalizePath } = require("obsidian");
 
 // ——— pașii, în ordinea versiunilor ———
 const STEPS = [
-  // 0.4.1: primul set de pași vine cu versiunile următoare (aici se adaugă: un șablon nou, un câmp, o setare…)
+  // 0.4.24: culorile hărții în graficul Obsidian (Graph view → Groups), doar cele care lipsesc
+  { id: "graph-colors-1", kind: "fn",
+    ready: async P => !!(await require("./graphcolors").mapFolder(P)),
+    need: async P => !!(await require("./graphcolors").missing(P))?.length,
+    text: { ro: "Culori în grafic pentru harta filosofiei: ramuri, subdomenii, concepte, teorii, curente, perioade și autori, fiecare cu culoarea lui (Graph view → Groups). Grupurile tale rămân cum sunt.", en: "Colours in the graph for the map of philosophy: branches, subfields, concepts, theories, movements, periods and authors, each with its own colour (Graph view → Groups). Your own groups stay as they are." },
+    yes: { ro: "Adaugă", en: "Add" },
+    run: async P => { const n = await require("./graphcolors").apply(P); return n ? P.T(`Am adăugat ${n} culori în grafic.`, `Added ${n} colours to the graph.`) : P.T("Culorile erau deja în grafic.", "The colours were already in the graph."); } },
 ];
 
 // același text, oricum l-ar fi salvat Obsidian (rânduri Windows, spații la capăt de rând, rânduri goale la final)
@@ -68,6 +76,7 @@ class VaultUpdates {
     if (!fresh.length) return { applied: 0, offered: 0 };
     let applied = 0, offered = 0;
     for (const s of fresh) {
+      if (s.kind === "fn" && s.ready) { let ok = false; try { ok = await s.ready(this.P); } catch (e) {} if (!ok) continue; }   // încă nu: data viitoare
       let r = null;
       try { r = await this.check(s); } catch (e) { console.error("Texere: ce aduce versiunea nouă", s.id, e); r = null; }
       if (r?.offer) { st.pending.push(s.id); offered++; }
@@ -101,6 +110,7 @@ class VaultUpdates {
       const pl = this.app.plugins?.plugins?.[s.plugin];
       return pl?.settings && JSON.stringify(getPath(pl.settings, s.path)) === JSON.stringify(s.value) ? null : { offer: true };
     }
+    if (s.kind === "fn") return (await s.need(this.P)) ? { offer: true } : null;
     if (s.kind === "plugin-version") {
       const m = this.app.plugins?.manifests?.[s.plugin];
       return m && older(m.version, s.min) ? { offer: true } : null;
@@ -129,6 +139,7 @@ class VaultUpdates {
       }
       return { id, text: T(`Câmp nou pentru notele de lectură: ${s.name}${why}`, `New field for reading notes: ${s.name}${why}`), yes: T("Adaugă", "Add"), run: () => this.addFieldToTemplate(s) };
     }
+    if (s.kind === "fn") return { id, text: this.name(s.text), yes: this.name(s.yes) || T("Adaugă", "Add"), run: () => s.run(this.P, this) };
     if (s.kind === "plugin-setting") {
       const nm = this.app.plugins?.manifests?.[s.plugin]?.name || s.plugin;
       if (!this.app.plugins?.plugins?.[s.plugin]) return { id, text: T(`${nm}: ${this.name(s.why)} (pornește-l întâi)`, `${nm}: ${this.name(s.why)} (turn it on first)`), wait: true };
@@ -143,6 +154,12 @@ class VaultUpdates {
   // textul de acum al notelor propuse (ca să știm dacă le-ai schimbat), citit o dată înainte de desen
   async prepare() {
     const V = this.app.vault, out = {};
+    // ce s-a făcut între timp altfel (ex. culorile, din comandă): nu mai e de propus
+    for (const id of [...this.st.pending, ...this.st.later]) {
+      const s = this.steps.find(x => x.id === id); if (s?.kind !== "fn") continue;
+      let need = true; try { need = await s.need(this.P); } catch (e) {}
+      if (!need) { this.st.pending = this.st.pending.filter(x => x !== id); this.st.later = this.st.later.filter(x => x !== id); if (!this.st.done.includes(id)) this.st.done.push(id); try { await this.P.save(); } catch (e) {} }
+    }
     for (const id of [...this.st.pending, ...this.st.later]) {
       const s = this.steps.find(x => x.id === id); if (s?.kind !== "note") continue;
       const f = V.getAbstractFileByPath(this.target(s.path)); if (f instanceof TFile) { try { out[f.path] = await V.read(f); } catch (e) {} }
