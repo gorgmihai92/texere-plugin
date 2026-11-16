@@ -1000,6 +1000,26 @@ class Zotero {
   }
 }
 
+// ce aduci din Zotero, la apăsarea butonului: doar referințele, sau referințele și PDF-urile (cu evidențierile și adnotările din Zotero), ca la citarea cu @
+// două butoane, fiecare cu numărul lui: vezi exact ce se întâmplă când apeși
+const TIP_REFS = ["O notă de lectură pentru fiecare referință, fără PDF.", "A reading note for each reference, without the PDF."];
+const TIP_PDF = ["Nota de lectură, cu PDF-ul din Zotero și cu evidențierile și adnotările tale (în PDF și în notă). Dacă Zotero n-are PDF, Texere caută unul gratuit.", "The reading note, with the PDF from Zotero and your highlights and annotations (in the PDF and in the note). If Zotero has no PDF, Texere looks for a free one."];
+// refsN: referințe noi; pdfN: referințe noi + PDF-uri fără referință; have: deja în vault (primesc PDF-ul și adnotările care lipsesc)
+function importButtons(R, T, { ready, refsN, pdfN, have, busy }, run) {
+  const refs = R.createEl("button", { cls: "ts-zgo" }), pdf = R.createEl("button", { cls: "mod-cta ts-zgo" });
+  refs.title = T(...TIP_REFS); pdf.title = T(...TIP_PDF);
+  refs.setText(T("Importă referințele", "Import references")); pdf.setText(T("Importă referințele și PDF-urile", "Import references and PDFs"));
+  if (!ready || busy) { refs.disabled = pdf.disabled = true; }
+  else {
+    if (refsN) refs.setText(T(`Importă referințele (${refsN})`, `Import references (${refsN})`)); else refs.disabled = true;
+    if (pdfN) pdf.setText(T(`Importă referințele și PDF-urile (${pdfN})`, `Import references and PDFs (${pdfN})`));
+    else if (have) { pdf.setText(T("Adu PDF-urile și adnotările", "Bring the PDFs and annotations")); pdf.title = T("Sunt deja în vault: aduc PDF-ul celor care nu-l au și adnotările noi din Zotero.", "Already in your vault: I'll bring the PDF to those without one, and the new annotations from Zotero."); }
+    else { pdf.disabled = true; if (!refsN) { refs.setText(T("Deja în vault", "Already in your vault")); pdf.remove(); } }
+  }
+  refs.addEventListener("click", () => run(false)); pdf.addEventListener("click", () => run(true));
+  return { refs, pdf };
+}
+
 // ——— fereastra de import (același aspect ca „Adaugă o sursă”: filele sus, butoanele în subsol) ———
 class ImportModal extends Modal {
   constructor(Z, mode) { super(Z.app); this.Z = Z; this.mode = mode; this.sel = null; this.items = null; }
@@ -1010,18 +1030,11 @@ class ImportModal extends Modal {
     this.titleEl.createSpan({ cls: "ts-head-t", text: T("Importă din Zotero", "Import from Zotero") });
     this.titleEl.createSpan({ cls: "ts-zmode", text: this.mode === "local" ? T("Zotero deschis pe acest calculator", "Zotero open on this computer") : T("prin cheia Zotero", "through your Zotero key") + (Z.conf().zoteroUser?.name ? ` · ${Z.conf().zoteroUser.name}` : "") });
     const pane = this.contentEl.createDiv("ts-pane");
-    pane.createDiv({ cls: "ts-hint", text: T("Alege ce imporți. Referințele care sunt deja în vault se sar; fiecare primește o notă de lectură, cu PDF-ul ei din Zotero.", "Choose what to import. References already in your vault are skipped; each one gets a reading note, with its PDF from Zotero.") });
+    pane.createDiv({ cls: "ts-hint", text: T("Alege ce imporți. Referințele care sunt deja în vault se sar; fiecare primește o notă de lectură. Jos imporți doar referințele, sau referințele și PDF-urile, cu adnotările din Zotero.", "Choose what to import. References already in your vault are skipped; each one gets a reading note. Below, import the references only, or the references and PDFs, with your Zotero annotations.") });
     this.list = pane.createDiv("ts-zlist"); this.list.setText(T("Încarc colecțiile…", "Loading the collections…"));
     const ft = this.contentEl.createDiv("ts-foot"); this.footL = ft.createDiv("ts-foot-l"); this.footR = ft.createDiv("ts-foot-r");
-    const pl = this.footL.createEl("label", { cls: "ts-zpdf" }); this.pdfs = pl.createEl("input", { type: "checkbox" }); this.pdfs.checked = true; pl.appendText(" " + T("Cu PDF-urile", "With the PDFs"));
-    pl.title = T("PDF-ul din Zotero (cu adnotările tale); dacă Zotero n-are PDF, Texere caută unul gratuit.", "The PDF from Zotero (with your annotations); if Zotero has none, Texere looks for a free one.");
-    const hl = this.footL.createEl("label", { cls: "ts-zpdf" }); this.hl = hl.createEl("input", { type: "checkbox" }); this.hl.checked = Z.conf().zoteroHighlights !== false; hl.appendText(" " + T("Cu adnotările", "With annotations"));
-    hl.title = T("Adnotările și comentariile tale din Zotero intră în PDF și în notă, cu eticheta culorii (Settings → Texere → Referințe → Zotero → Avansat). Și pentru referințele care sunt deja în vault.", "Your Zotero annotations and comments go into the PDF and the note, tagged by color (Settings → Texere → References → Zotero → Advanced). Also for references already in your vault.");
-    const sync = () => this.refreshButton();
-    this.pdfs.addEventListener("change", sync); this.hl.addEventListener("change", () => { Z.conf().zoteroHighlights = this.hl.checked; Z.S.save(); sync(); });
     this.info = this.footL.createSpan({ cls: "ts-foot-q" });
-    this.go = this.footR.createEl("button", { cls: "mod-cta", text: T("Importă", "Import") }); this.go.disabled = true;
-    this.go.addEventListener("click", () => this.run());
+    this.btns = this.footR.createDiv({ cls: "ts-zgos" }); this.refreshButton();
     let cols = [];
     try { cols = await Z.collections(this.mode); } catch (e) { this.list.setText(T("Nu pot citi colecțiile din Zotero: ", "Couldn't read your Zotero collections: ") + e.message); return; }
     this.list.empty();
@@ -1038,7 +1051,7 @@ class ImportModal extends Modal {
   }
   // ce e în colecție, numărat ca în Zotero: surse (noi / deja în vault), PDF-uri fără sursă, note; și ce e în coșul lui Zotero
   async pick(key, name, zn) {
-    const T = (a, b) => this.T(a, b); this.sel = key; this.cat = null; this.go.disabled = true;
+    const T = (a, b) => this.T(a, b); this.sel = key; this.cat = null; this.refreshButton();
     this.info.setText(T("Se numără…", "Counting…"));
     try {
       const cat = await this.Z.topItems(key, this.mode, (i, n) => this.info.setText(T(`Citesc ${i} / ${n}…`, `Reading ${i} / ${n}…`)));
@@ -1057,22 +1070,21 @@ class ImportModal extends Modal {
     } catch (e) { this.info.setText(T("Nu pot citi colecția: ", "Couldn't read the collection: ") + e.message); }
   }
   refreshButton() {
-    const T = (a, b) => this.T(a, b), c = this.cat; if (!c || this.busy) return;
-    const fresh = c.sources.length - c.have + (this.pdfs.checked ? c.pdfs.length : 0);
-    if (fresh) { this.go.setText(T(`Importă ${fresh}`, `Import ${fresh}`)); this.go.disabled = false; }
-    else if (c.have && this.hl.checked) { this.go.setText(T("Adu adnotările", "Bring the annotations")); this.go.disabled = false; this.go.title = T("Toate referințele sunt deja în vault: adaug doar adnotările noi din Zotero.", "All references are already in your vault: I'll add only the new annotations from Zotero."); }
-    else { this.go.setText(T("Toate sunt deja în vault", "All already in your vault")); this.go.disabled = true; }
+    const T = (a, b) => this.T(a, b), c = this.cat; if (this.busy || !this.btns) return;
+    this.btns.empty();
+    const refsN = c ? c.sources.length - c.have : 0;
+    importButtons(this.btns, T, { ready: !!c, refsN, pdfN: c ? refsN + c.pdfs.length : 0, have: c?.have || 0 }, v => this.run(v));
   }
-  async run() {
-    const T = (a, b) => this.T(a, b), c = this.cat; if (!c) return;
-    let stop = false; this.busy = true; this.go.disabled = true; this.list.addClass("is-busy");
-    const cancel = this.footR.createEl("button", { text: T("Oprește", "Stop") }); cancel.addEventListener("click", () => { stop = true; cancel.disabled = true; });
-    const pdfs = this.pdfs.checked, hl = this.hl.checked;
-    const res = await this.Z.importItems(c, this.mode, { pdfs, highlights: hl, cancelled: () => stop, onStep: (i, n, t) => this.info.setText(`${i + 1} / ${n} · ${t}`) });
-    cancel.remove(); this.list.removeClass("is-busy"); this.busy = false;
+  async run(withPdf) {
+    const T = (a, b) => this.T(a, b), c = this.cat; if (!c || this.busy) return;
+    let stop = false; this.busy = true; this.btns.empty(); this.list.addClass("is-busy");
+    const cancel = this.btns.createEl("button", { text: T("Oprește", "Stop") }); cancel.addEventListener("click", () => { stop = true; cancel.disabled = true; });
+    const pdfs = !!withPdf;
+    const res = await this.Z.importItems(withPdf ? c : { ...c, pdfs: [] }, this.mode, { pdfs, highlights: pdfs, cancelled: () => stop, onStep: (i, n, t) => this.info.setText(`${i + 1} / ${n} · ${t}`) });
+    this.list.removeClass("is-busy"); this.busy = false; this.btns.empty();
     const msg = this.Z.summary(res, pdfs);
     this.info.setText(msg); new Notice(msg, 10000);
-    this.go.setText(T("Gata", "Done")); this.go.disabled = false; this.go.onclick = () => this.close();
+    const done = this.btns.createEl("button", { cls: "mod-cta", text: T("Gata", "Done") }); done.addEventListener("click", () => this.close());
   }
   onClose() { this.contentEl.empty(); }
 }
@@ -1080,7 +1092,7 @@ class ImportModal extends Modal {
 // ——— fila „Zotero” din „Adaugă o sursă”: colecțiile în stânga, ce e în ele în dreapta; alegi ce imporți (sau tot), cu PDF-urile și evidențierile ———
 const plain = s => String(s || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 class ZoteroPane {
-  constructor(Z, host) { this.Z = Z; this.host = host || {}; this.key = undefined; this.cat = null; this.rows = []; this.checked = new Set(); this.busy = false; this.pdfs = true; this.hl = Z.conf().zoteroHighlights !== false; this.only = "all"; this.tok = 0; }
+  constructor(Z, host) { this.Z = Z; this.host = host || {}; this.key = undefined; this.cat = null; this.rows = []; this.checked = new Set(); this.busy = false; this.pdfs = false; this.only = "all"; this.tok = 0; }
   T(a, b) { return this.Z.T(a, b); }
   foot0() { this.host.refreshFoot?.(); }
   // Zotero s-a închis / s-a deschis cât timp fila e deschisă: fila se reface (nu mai arată „deschis” când nu e)
@@ -1104,7 +1116,7 @@ class ZoteroPane {
     const d = Z.describe(st || {}); head.empty();
     head.createSpan({ cls: "ts-zdot " + (this.mode ? "ok" : d.dot || "warn") });
     head.createSpan({ cls: "ts-zhead-t", text: this.mode === "local" ? T("Zotero e deschis pe acest calculator", "Zotero is open on this computer") : this.mode === "web" ? T("Biblioteca ta, prin cheia Zotero", "Your library, through your Zotero key") + (Z.conf().zoteroUser?.name ? ` · ${Z.conf().zoteroUser.name}` : "") : d.head });
-    if (this.mode) head.createSpan({ cls: "ts-zhead-d", text: T("Alege o colecție, bifează ce vrei (sau nimic, pentru tot) și importă: fiecare referință primește o notă, cu PDF-ul și adnotările ei din Zotero.", "Pick a collection, tick what you want (or nothing, for everything) and import: each reference gets a note, with its PDF and annotations from Zotero.") });
+    if (this.mode) head.createSpan({ cls: "ts-zhead-d", text: T("Alege o colecție și bifează ce vrei (sau nimic, pentru tot). Jos imporți doar referințele, sau referințele și PDF-urile, cu adnotările din Zotero.", "Pick a collection and tick what you want (or nothing, for everything). Below, import the references only, or the references and PDFs, with your Zotero annotations.") });
     if (!this.mode) {
       el.createDiv({ cls: "ts-hint", text: d.detail });
       const row = el.createDiv("ts-zacts");
@@ -1208,27 +1220,20 @@ class ZoteroPane {
   foot(L, R) {
     const T = (a, b) => this.T(a, b), Z = this.Z;
     if (!this.mode) { L.createSpan({ cls: "ts-foot-q", text: T("Deschide Zotero sau adaugă cheia ta Zotero.", "Open Zotero or add your Zotero key.") }); return; }
-    const chk = (label, get, set, tip) => { const l = L.createEl("label", { cls: "ts-zpdf" }); const i = l.createEl("input", { type: "checkbox" }); i.checked = get(); i.disabled = this.busy; l.appendText(" " + label); if (tip) l.title = tip; i.addEventListener("change", () => { set(i.checked); this.foot0(); }); };
-    chk(T("Cu PDF-urile", "With the PDFs"), () => this.pdfs, v => { this.pdfs = v; }, T("PDF-ul din Zotero; dacă Zotero n-are PDF, Texere caută unul gratuit.", "The PDF from Zotero; if Zotero has none, Texere looks for a free one."));
-    chk(T("Cu adnotările", "With annotations"), () => this.hl, v => { this.hl = v; Z.conf().zoteroHighlights = v; Z.S.save(); }, T("Adnotările și comentariile tale din Zotero intră în PDF și în notă, cu eticheta culorii. Și la referințele care sunt deja în vault.", "Your Zotero annotations and comments go into the PDF and the note, tagged by color. Also for references already in your vault."));
     if (this.busy) { const stop = R.createEl("button", { text: T("Oprește", "Stop") }); stop.addEventListener("click", () => { this.stop = true; stop.disabled = true; }); return; }
     if (this.checked.size) { const a = L.createEl("a", { text: T(`Deselectează (${this.checked.size})`, `Clear selection (${this.checked.size})`) }); a.addEventListener("click", () => { this.checked.clear(); this.renderList(); this.foot0(); }); }
-    const sel = this.targets(), fresh = sel.filter(o => o.kind === "src" ? !o.have : this.pdfs).length, have = sel.filter(o => o.have).length;
-    const go = R.createEl("button", { cls: "mod-cta" });
-    if (!this.cat) { go.setText(T("Importă", "Import")); go.disabled = true; }
-    else if (fresh) go.setText(this.checked.size ? T(`Importă ${fresh}`, `Import ${fresh}`) : T(`Importă tot (${fresh})`, `Import all (${fresh})`));
-    else if (have && (this.hl || this.pdfs)) { go.setText(T("Actualizează din Zotero", "Update from Zotero")); go.title = T("Sunt deja în vault: aduc PDF-ul celor care nu-l au și adnotările noi din Zotero.", "Already in your vault: I'll bring the PDF to those without one, and the new annotations from Zotero."); }
-    else { go.setText(T("Deja în vault", "Already in your vault")); go.disabled = true; }
-    go.addEventListener("click", () => this.run());
+    const sel = this.targets(), refsN = sel.filter(o => o.kind === "src" && !o.have).length, pdfN = refsN + sel.filter(o => o.kind === "pdf").length, have = sel.filter(o => o.have).length;
+    importButtons(R.createDiv({ cls: "ts-zgos" }), T, { ready: !!this.cat, refsN, pdfN, have }, v => this.run(v));
   }
-  async run() {
-    const T = (a, b) => this.T(a, b), Z = this.Z, sel = this.targets(); if (!sel.length || this.busy) return;
+  async run(withPdf) {
+    const T = (a, b) => this.T(a, b), Z = this.Z, sel0 = this.targets(); if (!sel0.length || this.busy) return;
+    this.pdfs = !!withPdf; const sel = withPdf ? sel0 : sel0.filter(o => o.kind === "src");   // doar referințele: PDF-urile fără referință rămân în Zotero
     const st = await Z.refresh().catch(() => null), m = st?.zotero === "on" ? "local" : st?.key ? "web" : null;
     if (m !== this.mode) { new Notice(m ? T("Zotero s-a schimbat între timp: am reîncărcat lista.", "Zotero changed in the meantime: I reloaded the list.") : T("Zotero e închis: deschide-l și importă din nou (PDF-urile și adnotările vin din el).", "Zotero is closed: open it and import again (the PDFs and annotations come from it)."), 8000); this.build(this.el); return; }
     const cat = { sources: sel.filter(o => o.kind === "src").map(o => o.r), pdfs: sel.filter(o => o.kind === "pdf").map(o => o.r), other: [] };
     this.busy = true; this.stop = false; this.list.addClass("is-busy"); this.foot0();
     let res = null;
-    try { res = await Z.importItems(cat, this.mode, { pdfs: this.pdfs, highlights: this.hl, cancelled: () => this.stop, onStep: (i, n, t) => this.stat.setText(`${i + 1} / ${n} · ${plain(t)}`) }); }
+    try { res = await Z.importItems(cat, this.mode, { pdfs: this.pdfs, highlights: this.pdfs, cancelled: () => this.stop, onStep: (i, n, t) => this.stat.setText(`${i + 1} / ${n} · ${plain(t)}`) }); }
     catch (e) { new Notice(T("Importul n-a mers: ", "The import failed: ") + e.message, 10000); }
     finally { this.busy = false; this.list.removeClass("is-busy"); }
     const msg = res ? Z.summary(res, this.pdfs) : "";

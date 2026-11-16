@@ -126,6 +126,12 @@ class CiteSuggest extends EditorSuggest {
     let at = null; try { const off = ed.posToOffset(ctx.start), c = ed.cm?.coordsAtPos?.(off); if (c) at = { x: c.left, y: c.bottom + 4 }; } catch (e) {}
     const ln = ctx.start.line, before = ed.getLine(ln), typed = "@" + (ctx.query || ""), end0 = { ...ctx.end };
     this.put(key, ctx);
+    // cât alegi (și cât vine din Zotero), cheia nu apare în bibliografie la „Negăsite”
+    const host = this.plugin, pend = host._zPending || (host._zPending = new Set()); pend.add(key);
+    const unpend = () => { pend.delete(key); try { host.bibTick?.(); } catch (e) {} };
+    try { await this.fromZoteroAfterPut(it, ctx, { S, Z, x, csl, ed, T, key, at, ln, before, typed, end0 }); } finally { unpend(); }
+  }
+  async fromZoteroAfterPut(it, ctx, { S, Z, x, csl, ed, T, key, at, ln, before, typed, end0 }) {
     const placed = ed.getLine(ln);
     // renunți (Esc, clic în altă parte): nu se adaugă nimic, iar în text rămâne ce scriseseși („@ethic”)
     const undo = () => {
@@ -585,6 +591,9 @@ const CiteStyleMixin = {
     const targets = [root.querySelector(".markdown-source-view .cm-sizer"), root.querySelector(".markdown-reading-view .markdown-preview-sizer")].filter(Boolean);
     // liniște cât scrii: fără nicio sursă găsită nu apare panoul; o cheie pe care încă o scrii (începutul unei chei cunoscute) nu e „negăsită”
     if (b) b.missing = b.missing.filter(k => !Object.keys(E.items || {}).some(id => id !== k && id.startsWith(k)));
+    // nici cheia la care e cursorul acum (o scrii, iar lista cu sugestii e deschisă): „@f” nu e „negăsită” cât timp tastezi „@frank”
+    if (b?.missing.length && this._zPending?.size) b.missing = b.missing.filter(k => !this._zPending.has(k));
+    if (b?.missing.length) { try { const ed = view.editor, cur = ed?.getCursor?.(); const at = cur ? /@([\w:.#$%&\-+?<>~/]*)$/.exec(ed.getLine(cur.line).slice(0, cur.ch)) : null; if (at) b.missing = b.missing.filter(k => k !== at[1]); } catch (e) {} }
     if (!b || !b.html.length) { root.querySelectorAll(".texere-biblio").forEach(e => e.remove()); root.querySelectorAll(".tx-has-biblio").forEach(e => e.removeClass("tx-has-biblio")); return; }
     const en = isEn(this.app);
     // dacă nota are deja un titlu „Bibliografie” (ex. șablonul New essay), panoul nu-l mai repetă

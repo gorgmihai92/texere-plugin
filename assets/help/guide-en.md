@@ -3,8 +3,8 @@ title: Texere
 subtitle: The Researcher's Vault
 author: George Mihai
 lang: en
-version: "0.4.22"
-date: "Version 0.4.22 · 16 November 2026"
+version: "0.4.23"
+date: "Version 0.4.23 · 16 November 2026"
 ---
 ## 1. Start
 
@@ -140,9 +140,9 @@ Already have the citation, BibTeX, RIS or DOI? **Paste**. No catalog has it? **E
 
 1. Open Zotero. **First time only:** **Settings → Advanced** → tick **Allow other applications on this computer to communicate with Zotero**.
 2. In Texere: **References** → **Zotero**. ✎ marks items with annotations.
-3. Tick what you want and click **Import**.
+3. Tick what you want (or nothing, for everything) and click **Import references** or **Import references and PDFs**.
 
-You get the note, the PDF and the annotations, each tagged by its color.
+Each reference gets a reading note. With **Import references and PDFs**, the PDFs come too, with your Zotero highlights and annotations, each tagged by its color.
 
 - **Nothing is doubled:** a reference already in the vault only gets what's missing.
 - **A PDF without title or authors** goes to **PDFs/Inbox**, and Texere asks which reference it belongs to.
@@ -399,6 +399,10 @@ The step numbers are those in [[#6.3 Manual setup]].
 ## 7. What's new
 
 Texere looks for a new version at startup, every 20 minutes and when you come back to Obsidian. When there is one, the home page shows it with **Update**, then **Reload**; nothing installs without your click. One exception: BRAT, if its **Auto-update plugins at startup** is on, installs the new version at startup; to choose yourself, turn it off in **Settings → BRAT**. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+
+**0.4.23** · 16 November 2026
+- **Zotero import: references only, or with the PDFs.** The **Zotero** tab has two buttons at the bottom: **Import references** and **Import references and PDFs** (with your Zotero highlights and annotations), as when citing with `@`. Each shows how many references it imports. They replace the **With the PDFs** and **With annotations** boxes.
+- **While you type a citation** (`@frank…`), the bibliography no longer lists the half-typed key under **Not found**.
 
 **0.4.22** · 16 November 2026
 - **Help, up to date:** the guide and the frequent questions now explain citing from Zotero with `@` (with or without the PDF), what to do about the Better BibTeX message, reading with the pointer, deleting a highlight, focus mode and how updates arrive; plus new rows in the error table.

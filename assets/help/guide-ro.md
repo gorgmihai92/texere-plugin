@@ -3,8 +3,8 @@ title: Texere
 subtitle: Vault-ul cercetătorului
 author: George Mihai
 lang: ro
-version: "0.4.22"
-date: "Versiunea 0.4.22 · 16 noiembrie 2026"
+version: "0.4.23"
+date: "Versiunea 0.4.23 · 16 noiembrie 2026"
 ---
 ## 1. Început
 
@@ -140,9 +140,9 @@ Ai deja citarea, BibTeX, RIS sau DOI-ul? **Lipește**. Nu e în niciun catalog? 
 
 1. Deschide Zotero. **Doar prima dată:** **Setări → Avansat** → bifează **Permite altor aplicații de pe acest computer să comunice cu Zotero**.
 2. În Texere: **Referințe** → **Zotero**. ✎ arată referințele cu adnotări.
-3. Bifează ce vrei și apasă **Importă**.
+3. Bifează ce vrei (sau nimic, pentru tot) și apasă **Importă referințele** sau **Importă referințele și PDF-urile**.
 
-Primești nota, PDF-ul și adnotările, fiecare cu eticheta culorii ei.
+Fiecare referință primește o notă de lectură. Cu **Importă referințele și PDF-urile** vin și PDF-urile, cu evidențierile și adnotările din Zotero, fiecare cu eticheta culorii ei.
 
 - **Nimic nu se dublează:** o referință care e deja în vault primește doar ce lipsește.
 - **Un PDF fără titlu și autori** intră în **PDFs/Inbox**, iar Texere te întreabă cărei referințe îi aparține.
@@ -399,6 +399,10 @@ Numerele pașilor sunt cele din [[#6.3 Configurarea manuală]].
 ## 7. Ce e nou
 
 Texere caută o versiune nouă la pornire, la 20 de minute și când revii în Obsidian. Când apare una, pagina de pornire ți-o arată cu butonul **Actualizează**, apoi **Reîncarcă**; nimic nu se instalează fără clicul tău. Excepție: BRAT, dacă la el e pornit **Auto-update plugins at startup**, instalează versiunea nouă la pornire; dacă vrei să alegi tu, oprește-l din **Settings → BRAT**. Ce aduce o versiune pentru vault (un șablon, o notă sau un câmp nou) doar ți se propune în pagina de pornire, cu **Adaugă** sau **Nu acum**: nimic nu intră singur în vault, iar ce lași pe mai târziu te așteaptă în **Settings → Texere → General → Din actualizări**. Reparațiile cresc ultimul număr (0.4.0 → 0.4.1), funcțiile noi pe cel din mijloc (0.4 → 0.5), o schimbare în felul în care merge Texere pe primul (0.x → 1.0).
+
+**0.4.23** · 16 noiembrie 2026
+- **Importul din Zotero: doar referințele sau și PDF-urile.** În fila **Zotero**, jos, sunt două butoane: **Importă referințele** și **Importă referințele și PDF-urile** (cu evidențierile și adnotările din Zotero), ca la citarea cu `@`. Fiecare arată câte referințe importă. Înlocuiesc bifele **Cu PDF-urile** și **Cu adnotările**.
+- **Cât scrii o citare** (`@frank…`), bibliografia nu mai arată cheia neterminată la **Negăsite**.
 
 **0.4.22** · 16 noiembrie 2026
 - **Ajutorul, la zi:** ghidul și întrebările frecvente spun acum cum citezi din Zotero cu `@` (cu sau fără PDF), ce faci cu mesajul despre Better BibTeX, cum citești cu pointerul, cum ștergi o evidențiere, modul concentrare și cum vin actualizările; plus rânduri noi în tabelul cu erori.

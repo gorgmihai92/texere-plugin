@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.4.23 (16 November 2026)
+
+- **Zotero import: references only, or references and PDFs.** The Zotero tab of Add a reference and the Import from Zotero window replace the two boxes (With the PDFs, With annotations) with two buttons, as when citing with `@`: **Import references** and **Import references and PDFs** (the PDF with the Zotero highlights and annotations), each with its count. You see what you get at the moment you click.
+- While you type a citation (`@frank…`), the bibliography no longer lists the half-typed key as **Not found**.
+
 ## 0.4.22 (16 November 2026)
 
 - **Help brought up to date** with 0.4.14–0.4.21. Guide: focus mode in 1.4; 2.5 now describes auto-paste (the passage goes in by itself, in page order, and the note scrolls to it) and deleting a highlight in either direction; 6.4 has rows for `@` without Zotero results, a highlight that doesn't reach the note, a PDF that reloads (`pdf-reload.log`) and a note that doesn't scroll (`highlights.log`); chapter 7 says how often Texere checks and that BRAT's own auto-update is the one exception. Frequent questions: new ones on citing from Zotero, the Better BibTeX message, reading with the pointer, deleting a highlight and focus mode; updated answers on annotating, citing, updates and whether you need Zotero.
