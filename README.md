@@ -149,19 +149,4 @@ Texere bundles these libraries and data in its `main.js`; each keeps its own lic
 
 ---
 
-Version 0.4.1 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
-
-## Pe scurt, în română
-
-**Texere** e un plugin pentru [Obsidian](https://obsidian.md) care adună cercetarea într-un singur loc: cauți și citezi referințe, adnotările din PDF ajung în notele de lectură, scrii cu lecturile la îndemână și exporți lucrarea în PDF sau Word. Merge în română și engleză și nu cere cunoștințe tehnice. Cel mai simplu început e vault-ul gata făcut: [Texere – The Researcher's Vault](https://github.com/gorgmihai92/texere).
-
-**Într-un vault al tău, chiar gol:**
-1. Instalează [Obsidian](https://obsidian.md/download) (gratuit) și fă un vault: **Create new vault**, un nume, un loc, **Create**.
-2. **Settings → Community plugins → Turn on community plugins**.
-3. În **Community plugins → Browse**, caută **BRAT** (instalează pluginuri de pe GitHub și le ține la zi), apoi **Install** și **Enable**.
-4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Lipești `gorgmihai92/texere-plugin`, lași **Latest version**, bifezi **Enable after installing the plugin** și apeși **Add plugin**.
-5. Configurarea pornește singură: limba, folderele, disciplina, PDF++ (apeși tu Install și Enable) și ce lipsește din vault. Într-un vault gol, lași totul bifat și apeși **Înainte** la fiecare pas.
-
-**Actualizări:** cu BRAT, Texere se actualizează singur la fiecare pornire a Obsidian (se poate opri din **Settings → BRAT**); fără BRAT, versiunea nouă apare în pagina de pornire, cu **Actualizează**.
-
-**Ajutor:** butonul **?** de pe pagina de pornire. O problemă: **Settings → Texere → Despre → Semnalează o problemă** (un e-mail la [hi@georgemihai.com](mailto:hi@georgemihai.com)).
+Version 0.4.24 · by [George Mihai](https://www.georgemihai.com/?utm_source=texere&utm_medium=github_plugin&utm_campaign=texere) · code under MIT, guides and the Philosophy map under CC BY 4.0 (see [LICENSE](LICENSE))
