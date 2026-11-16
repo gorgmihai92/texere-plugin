@@ -33,8 +33,8 @@ const UI = {
   crumbQ: ["Întrebare frecventă", "Frequent question"], crumbG: ["Ghid", "Guide"], crumbCh: ["Ghid · capitolul ", "Guide · chapter "], crumbSetup: ["Configurare", "Setup"],
 };
 // întrebările arătate la început (după titlul în română, ca să nu depindă de ordinea din help-data.js); restul: căutarea sau „Mai multe întrebări”
-const TOP = ["Cum adaug o referință (carte sau articol)?", "Cum adnotez un PDF?", "Cum citez o referință în text?", "Cum export în Word sau PDF?",
-  "Cum import din Zotero, cu PDF-urile și adnotările?", "Ce este Distilează?", "Ceva nu mai funcționează. Ce fac?", "Cum cer ajutor, semnalez o problemă sau trimit o sugestie?"];
+const TOP = ["Cum instalez Texere?", "Cum adaug o referință (carte sau articol)?", "Cum import din Zotero, cu PDF-urile și adnotările?", "Cum adnotez un PDF?",
+  "Cum citez o referință în text?", "Cum export în Word sau PDF?", "Ceva nu mai funcționează. Ce fac?", "Cum cer ajutor, semnalez o problemă sau trimit o sugestie?"];
 const t = (k, lg) => UI[k][lg === "en" ? 1 : 0];
 
 // ---------- căutare (fără nicio legătură cu Obsidian: se poate testa singură) ----------
@@ -230,7 +230,7 @@ function makeHelp(plugin) {
   const A = {
     setup: { icon: "settings", label: ["Rulează configurarea", "Run the setup"], run: () => plugin.onboard?.(true) },
     core: { icon: "sliders-horizontal", label: ["Ce e pornit și ce lipsește", "What's on and what's missing"], run: () => settings("texere") },
-    errors: { icon: "table", label: ["Vezi tabelul de erori", "See the error table"], guide: ["6.4", "eroare", "error"] },
+    errors: { icon: "table", label: ["Vezi problemele frecvente", "See common problems"], guide: ["6.2", "Probleme", "problems"] },
     bib: { icon: "book-open", label: ["Refă bibliografia din note", "Rebuild the bibliography from notes"], run: lg => cmd("texere-sources:sources-rebuild-bib", lg) },
     keys: { icon: "library", label: ["Caută o referință", "Search a reference"], run: lg => cmd("texere-sources:sources-search", lg) },
     add: { icon: "file-plus", label: ["Adaugă o referință", "Add a reference"], run: lg => cmd("texere-sources:sources-search", lg) },

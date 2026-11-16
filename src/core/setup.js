@@ -266,7 +266,7 @@ const markConfigured = plugin => { const app = plugin.app; try { app.saveLocalSt
 const needsConfig = plugin => { const app = plugin.app, f = app.loadLocalStorage(FLAG); return !f || f.base !== C.basePath(app); };
 
 // ---------- ultima configurare: ce s-a făcut și ce mai e de făcut, în Ajutor (plugin.settings.lastSetup), cu legături spre ghidul din Ajutor ----------
-const START = [["2", M("Adaugi o referință", "Add a reference")], ["2.5", M("Citești și adnotezi pasajele importante", "Read and annotate the key passages")], ["3", M("Scrii și citezi", "Write and cite")], ["4", M("Exporți în PDF sau Word", "Export to PDF or Word")]];
+const START = [["2", M("Adaugi o referință", "Add a reference")], ["2.2", M("Citești și adnotezi pasajele importante", "Read and annotate the key passages")], ["3", M("Scrii și citezi", "Write and cite")], ["4", M("Exporți în PDF sau Word", "Export to PDF or Word")]];
 const secLines = (txt, num) => {
   const A = txt.split("\n"), i = A.findIndex(l => new RegExp("^#{2,6}\\s+" + num.replace(".", "\\.") + "[.\\s]").test(l));
   if (i < 0) return [];
@@ -300,7 +300,7 @@ async function writeReport(plugin, results) {
   const secHead = num => (ghid.match(new RegExp("^#{2,3}\\s+(" + num.replace(".", "\\.") + "\\.?\\s[^\\n]+?)\\s*$", "m")) || [])[1];
   const refs = []; todo.forEach(t => { if (t.ref && !refs.some(r => JSON.stringify(r) === JSON.stringify(t.ref))) refs.push(t.ref); });
   const howTo = refs.map(guideFix).filter(Boolean).join("\n\n");
-  const h8 = secHead("6") || tx(M("6. Probleme și întrebări", "6. Problems and questions"));
+  const h8 = secHead("6") || tx(M("6. Când ceva nu merge", "6. When something goes wrong"));
   const setupHow = tx(M("**Settings → Texere** → **Rulează configurarea din nou**", "**Settings → Texere** → **Run the setup again**"));
   const os = Platform?.isWin ? "Windows" : (Platform?.isMacOS ? "Mac" : "Linux"), base = C.basePath(app);
   const md = `### ${tx(M("Începe aici", "Start here"))}\n\n`

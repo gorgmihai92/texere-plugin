@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.1 (16 November 2026)
+
+- **A short Help, written like the getting-started tutorial.** The guide (EN and RO) goes from about 7,000 to about 2,500 words per language: the same seven chapters (start, references and reading, writing, export, Insights, when something goes wrong, what's new), each in the tutorial's words, with pictures from `docs/img`. Zotero is now part of "Adding a reference" (2.1), with a picture of the Zotero setting it needs, so reading and annotating becomes 2.2. The frequent questions go from 62 to 20, two or three sentences each. The long error table, the glossary and the full version history leave the guide (the history stays in this file); the manual setup stays, in six short steps (6.3), because the setup report quotes it.
+- **README** is now the tutorial in English, with a link to the Romanian one (`README.ro.md`), in the tutorial's order (0 installing to 7 Insights); the extra details, privacy, credits and the license come after it.
+
 ## 0.5.0 (16 November 2026)
 
 - **Texere installs as a plugin only.** The ready-made vault is no longer the recommended start: README and guide describe one way in (BRAT, in any vault, Windows and Mac). The plugin now ships what the vault used to bring: the faculty's writing guide and the 14 writing-guide sources (`assets/notes/guides`, added by the setup's notes step as `source` notes, counted apart in its summary).

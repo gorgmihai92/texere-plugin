@@ -1,575 +1,224 @@
 ---
 title: Texere
-subtitle: The Researcher's Vault
+subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.0"
-date: "Version 0.5.0 · 16 November 2026"
+version: "0.5.1"
+date: "Version 0.5.1 · 16 November 2026"
 ---
+
 ## 1. Start
 
-Research is usually scattered across many applications and places: Zotero, Mendeley or EndNote, Word or Google Docs, a laptop, the cloud, a phone, USB sticks and external drives. Moving between them costs time and loses things along the way.
+Texere is a free Obsidian plugin that brings the references, the reading and the writing of a research paper together in one place.
 
-Texere is an Obsidian plugin for researchers who want one place for the whole process: finding references, reading PDFs, taking notes, writing, citing and exporting. It comes with a map of philosophy, which you can reshape for any discipline.
+Research is usually split across several applications:
+- Zotero or Mendeley for references
+- a PDF reader for annotations
+- Word for writing
 
-#### Who it's for
+Information gets lost on the way between them: a highlighted passage stays in the PDF, an idea noted two years ago can no longer be found, and a citation has to be checked once more in the text. Texere links these steps together, and Zotero can remain your database.
 
-- **Anyone, without technical knowledge.** Install the plugin in Obsidian, and a short setup does the rest. No code, no command line, no LaTeX.
-- **English and Romanian writers.** The interface, the setup, Help and the guide work in both languages. Notes have English names and Romanian aliases: type `[[Etică` and you get **Ethics**.
-- **University of Bucharest students.** Export templates for BA and MA theses at the Faculty of Philosophy, following the faculty's writing guide.
+### 1.1 Installing
 
-**Step 1. Install Texere (once, on Windows or Mac)**
+The Texere plugin installs with the same steps on Windows and on Mac:
+1. Install [Obsidian](https://obsidian.md/download) and create a new vault. If you already have a vault in Obsidian, go on from step 2.
+2. In **Settings → Community plugins** click **Turn on community plugins**, then install and enable the **BRAT** plugin.
+3. From the command palette (**Ctrl/Cmd + P**) choose **BRAT: Add a beta plugin**, paste `gorgmihai92/texere-plugin` and click **Add plugin**.
+4. Texere prepares everything by itself. In an existing vault it only adds what it needs to work properly, without moving anything you have.
 
-1. Install [Obsidian](https://obsidian.md/download) (free) and open a vault: a new one (**Create new vault**) or one you already have.
-2. **Settings → Community plugins → Turn on community plugins**.
-3. **Browse**, search for **BRAT**, then **Install** and **Enable**. BRAT installs plugins from GitHub.
-4. **Ctrl/Cmd + P** → `BRAT plugin` → **Plugins: Add a beta plugin for testing**. Paste `gorgmihai92/texere-plugin`, tick **Enable after installing the plugin** and click **Add plugin**.
-5. The setup opens by itself. In an empty vault, leave **The Texere structure** and click **Next** at each step: Texere makes the folders, the bibliography and citation styles, the map of philosophy (coloured in the graph), the templates and writing guides, then installs PDF++. In a vault with your notes, **My own folders** is selected: Texere's folders (reading notes, PDFs, export, bibliography) are created with the names you choose, and Texere moves nothing of yours.
-6. At the end, **See what was done** shows a summary (later: **Help → Your last setup**).
+During the setup you choose your language and click **Next** until the end. Texere prepares the folders, the bibliography and citation styles, the map of philosophy, the templates, the writing guides and PDF++, the plugin for annotations. You can run the setup again at any time from **Settings → Texere → General**.
 
-> [!warning] Clicked "Restricted mode" by mistake?
-> The plugins are off. Turn them on in **Settings → Community plugins**.
+### 1.2 The home page
 
-> [!note] PDF++
-> Texere needs **PDF++** for annotations. The setup installs it from Obsidian's official list, turns it on and gives it Texere's settings: colours as tags (fact, claim, question…), auto-copy and auto-paste on, the copy formats, highlights written into the PDF. Offline? **Try again** later, or **Open its page**: **Install**, then **Enable**.
+Texere's home page opens from the braided icon at the top left or from any new tab (+). Its bottom bar takes you to the four parts of the plugin:
 
-**Step 2. Work:** add a reference ([[#2. References and reading]]), read and annotate ([[#2.5 Reading and annotations]]), write and cite ([[#3. Writing]]), export ([[#4. Export]]).
+- **Home**: your first steps, your recent notes and what's new in Texere.
+- **References**: you search for and add works from online catalogs or from Zotero.
+- **Export**: you get your essay, article or thesis as PDF, Word or Markdown, with the citations and bibliography in the style you chose.
+- **Insights**: statistics about what you write and read, together with the links between ideas.
 
-#### The home page
+The **?** button next to the bar opens this Help, where you can type your question in your own words.
 
-Every new tab opens Texere's home page (so does the braid icon in the ribbon, the icon bar on the left): your last files, the main actions, anything that needs fixing (with a button) and, in a new vault, **your first week**, four steps that tick themselves off.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/home.png)
 
-Stuck? The **?** button next to **+**, at the bottom, opens Help: type your question in your own words. New to Obsidian? Start with [[#1.4 Obsidian in five minutes]].
+### 1.3 Obsidian in a few words
 
-### 1.1 Terms
-
-| Term | Meaning |
-| --- | --- |
-| **Vault** | The folder with your notes and settings (including the hidden `.obsidian`). |
-| **Link** | `[[Note name]]` points to another note. **Backlinks** shows who links to the open note. |
-| **Tag** | A word with `#` in front, like `#claim`. |
-| **Properties (metadata)** | The fields at the top of a note. For a reference: author, year, title, DOI, branch… |
-| **Reading note** | One per reference: its data, its PDF and your annotations. |
-| **Citekey** | A reference's code, like `descartes_meditations_2022`: the note's `id`. |
-| **Citation** | `[@citekey, p. 29]`, shown as (Descartes, 1641/2022, p. 29). |
-| **Bibliography** | `bibliography.json`, in **Support/Texere/Bibliography**, kept up to date by Texere. |
-| **Command palette** | Every command, with **Ctrl/Cmd + P**. |
-
-### 1.2 The Texere plugin and its modules
-
-Texere is one plugin with three modules. Turn them on or off in **Settings → Texere → General**.
-
-| Module | What it does | Where |
-| --- | --- | --- |
-| **References** | Adds references, shows citations in your style, brings annotations into notes, keeps the bibliography | bottom bar |
-| **Export** | PDF, Word or Markdown, with citations, bibliography and contents | bottom bar, or the Texere item at the bottom right |
-| **Insights** `LAB` | How much and how you write, links and patterns | bottom bar |
-
-Each module also works alone. Without References, Export still works, but citations stay `[@citekey]` and there is no bibliography.
-
-Texere stays quiet in your notes: while you write you see only your text, marks appear only if you turn them on, and nothing is written into a note without your click. Everything it can do for a note: right-click the note → **Texere**.
-
-### 1.3 Vault structure
-
-| Folder | What's in it |
-| --- | --- |
-| **1. References** | **Reading Notes** (one per reference) and **PDFs** |
-| **2. Notes** | **Essays**, **Personal**, **Imported** (Word and PDF documents you import), and **Disciplines** (the discipline maps) |
-| **3. Workspace** | **Courses**, **Thesis**, **Articles**, **Projects** |
-| **4. Export** | the exported files |
-| **Support** | **Media** (images), **Templates**, and **Texere**: **Guides** (with **Writing guide references**), **Bibliography** (and citation styles), **Cuts** (what you cut from each note) |
-
-#### Changing the structure
-
-- **Move or rename in Obsidian**, not in Finder or Explorer, and Texere follows. Moved something in Finder? A new tab helps you find it.
-- **Where each folder is**, and where new references go: **Settings → Texere → General → Folders**.
-- **A suggested folder missing?** Create it there with one click. Texere never puts back a folder you deleted.
-- **The one rule:** don't change a reading note's `id` (its citekey).
-
-#### The map of philosophy
-
-**2. Notes/Disciplines/Philosophy** has a note for each branch, theory, concept, movement, period and author, starting from [[Philosophy]], each with a Romanian alias.
-
-In the Obsidian graph (**Ctrl/Cmd + G**), each kind of note in the map has its own colour: branches, subfields, concepts, theories, movements, periods, authors. No colours? **Ctrl/Cmd + P** → **Texere: Colours in the graph for the discipline map**.
-
-Use them in your references' metadata. A reference with [[Epistemology]] as **branch** shows up on the Epistemology page: open it and **Backlinks** lists every reference in that branch.
-
-No **Disciplines** folder? **Settings → Texere → General → Folders → Discipline map → Create the map**. A map for another discipline? Write to [hi@georgemihai.com](mailto:hi@georgemihai.com).
-
-### 1.4 Obsidian in five minutes
-
-Obsidian is free and works with plain text files on your computer: no account, nothing in the cloud unless you put it there. Each note is a `.md` file you can open in any editor.
-
-- **Left sidebar:** **Files**, **Search**, **Bookmarks**; above them, the icons for Texere, the graph and other plugins.
-- **Middle:** your notes, in tabs, like a browser.
-- **Right sidebar:** about the open note: **Outline**, **Backlinks**, the writing companion.
-- **Bottom right:** the status bar, with the **Texere** item (export, citation style…).
-- **Settings:** the gear at the bottom left.
-- **Focus mode:** **Cmd/Ctrl + Shift + D** hides everything except the notes and PDFs you have open (two side by side too); the same shortcut brings it all back.
-
-**Writing.** Markdown, shown as you type: `**bold**`, `# Heading`, `- list`. The ⋯ menu at the top of a note switches to **Reading view**.
-
-**Links.** Type `[[` and pick a note; a link to a note that doesn't exist yet creates it when clicked. Click a tag to see every place you used it.
-
-**Graph view.** Notes as dots, links as lines. The whole vault: the graph icon on the left. Around one note: ⋯ → **Open local graph**. References linked to the map (by branch, concept or author) gather into clusters, so you see what you read most. The graph's settings filter by folder or tag, e.g. `path:"1. References"`.
-
-**Plugins.** The vault comes with Texere and PDF++, plus Style Settings, Omnisearch, Excalidraw and Editing Toolbar. You don't need anything else.
-
-[This video](https://www.youtube.com/watch?v=z4AbijUCoKU) shows the interface in a few minutes.
+Obsidian works with text files on your computer, with no account and no cloud. Each note is an `.md` file. On the left you have your files and search, in the middle your open notes in tabs, and on the right information about the open note, for example **Backlinks**, the notes that link to it. Type `[[` to link one note to another, and **Ctrl/Cmd + P** opens the list of all commands. **Ctrl/Cmd + Shift + D** hides everything except your open notes, so you can focus.
 
 ## 2. References and reading
 
-Each reference has a note in **Reading Notes**, named *Author Year – Title*, and its PDF in **PDFs**. References with other names (from an older vault): the home page offers to rename them.
+### 2.1 Adding a reference
 
-### 2.1 Search and add
+You add a reference by searching for the author, the title of the article or book, the ISBN or DOI, by pasting a BibTeX entry, or from your Zotero library. Each reference becomes a reading note in **Reading Notes**, and Texere downloads the PDF when it finds one. If it doesn't, you add it yourself.
 
-1. Open **References** in the bottom bar (or **Ctrl/Cmd + P** → **Texere: Add a reference**).
-2. Type a title, an author, a DOI, an ISBN or a link.
-3. Pick the reference and click **Add to vault**. The free PDF comes with it, when there is one.
+For Texere to talk to Zotero, turn on **Allow other applications on this computer to communicate with Zotero** in Zotero's advanced settings (**Zotero → Preferences/Settings → Advanced**).
 
-Already have the citation, BibTeX, RIS or DOI? **Paste**. No catalog has it? **Enter manually**. "Limit reached"? Add a free key in **Settings → Texere → References → Catalogs**.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/zotero-setari.png)
 
-### 2.2 From Zotero
+How it works:
+- **Search**: type the title, author, DOI or ISBN, and Texere searches open academic catalogs such as OpenAlex, Crossref, Semantic Scholar and Google Books. For each result you see the year, the journal, the number of citations and whether the PDF is free. **Add to vault** brings the metadata (author, title, year, journal, DOI) together with the PDF, when there is one.
+- **Zotero**: you see your Zotero library and tick what you want to add. **Import references** brings only the metadata, while **Import references and PDFs** also brings the PDFs, with the highlights and annotations you made in Zotero, each tagged by its colour.
+- **Other ways**: you can paste a citation, a BibTeX entry or a DOI, fill in the metadata by hand, save a reference from your browser with Zotero Connector, or turn a PDF you already have into a reference, with **Ctrl/Cmd + P** and **Texere: Add this PDF as a reference**.
 
-1. Open Zotero. **First time only:** **Settings → Advanced** → tick **Allow other applications on this computer to communicate with Zotero**.
-2. In Texere: **References** → **Zotero**. ✎ marks items with annotations.
-3. Tick what you want (or nothing, for everything) and click **Import references** or **Import references and PDFs**.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/cauta.png)
 
-Each reference gets a reading note. With **Import references and PDFs**, the PDFs come too, with your Zotero highlights and annotations, each tagged by its color.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/zotero.png)
 
-- **Nothing is doubled:** a reference already in the vault only gets what's missing.
-- **A PDF without title or authors** goes to **PDFs/Inbox**, and Texere asks which reference it belongs to.
-- **Which color becomes which tag:** **Settings → Texere → References → Zotero → Advanced**.
-- **Cite straight from Zotero:** type `@` in a note and your Zotero references show up too ([[#3.2 Citing references]]).
-- **No Better BibTeX needed.** If another plugin (e.g. Zotero Integration) asks for it, click **How to fix it** in its message.
+**Why it helps**: the reference, the PDF and your notes stay together, in Markdown files, on your computer.
 
-> [!tip] Recommended: a Zotero key
-> Add it in the same place. Import then works with Zotero closed.
+A Zotero reference already in your vault only gets what it is missing, so nothing is doubled, and Better BibTeX is not needed. Zotero has to be open, but with a Zotero key, added in **Settings → Texere → References → Zotero**, importing works with Zotero closed too. That is also where you turn on the Zotero browser button, so that an article saved with Zotero Connector goes straight into your vault. If a catalog says you've reached its daily limit, add a free key in **Settings → Texere → References → Catalogs**.
 
-### 2.3 From the browser, with the Zotero button
+### 2.2 Reading and annotating
 
-1. Install [Zotero Connector](https://www.zotero.org/download/connectors) in your browser.
-2. Turn on **Settings → Texere → References → Zotero → Zotero browser button**.
-3. On an article's page, click the Zotero button (Obsidian must be open). With Zotero open, the reference goes to Zotero, then to the vault; with Zotero closed, straight to the vault.
+You read and annotate PDFs right in Obsidian. Each colour has a tag, and the passage you highlight goes into the reading note by itself, with the page, the citation and a link back to the exact place in the PDF.
 
-> [!warning]- It saved a web page instead of the article?
-> On a Mac, closing Zotero's window doesn't quit it: press **Cmd + Q**. Then **Zotero Connector → Preferences → Advanced → Reset Translators**, and try again.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/evidentiere.gif)
 
-### 2.4 A PDF you already have
+How it works:
+1. Open the PDF next to the reading note.
+2. Choose a colour and select a passage.
+3. The passage is added to the note by itself.
 
-1. Open the PDF in Obsidian.
-2. **Ctrl/Cmd + P** → **Texere: Add this PDF as a reference**.
-3. Pick the reference. The PDF is attached and moved to **PDFs**.
-
-PDFs still without a reference: **PDFs without a reference**, in **References** or the Texere item. A reference without a PDF: right-click its note → **Texere** → **Find the free PDF**.
-
-### 2.5 Reading and annotations
-
-1. Open the reading note and click the PDF in **attachment**.
-2. Select a passage and pick a color from the **PDF++** palette.
-3. The passage goes into the note by itself (auto-copy and auto-paste, turned on in PDF++ by Texere), in its place by page, and the note scrolls there, even if it was closed or in Reading view. If you turned auto-paste off, paste it with **Ctrl/Cmd + V**. It starts with the color's tag and ends with the citation and **· PDF**, a link back to the exact place.
-
-| Color | Tag | You mark |
+| Colour | Tag | What you mark |
 | --- | --- | --- |
 | pink | `#fact` | facts, dates, figures |
 | yellow | `#claim` | the author's claims |
 | red | `#disagree` | what you disagree with |
 | teal | `#agree` | what you agree with |
-| blue | `#connection` | links to other texts or ideas |
+| blue | `#connection` | links to other texts |
 | purple | `#question` | questions |
 | orange | `#definition` | definitions |
-| gray | `#word` | terms to remember |
+| grey | `#word` | terms to remember |
 
-**Just reading?** Click the pointer in the PDF toolbar, before the colours (or press **H**): select text to follow where you're reading, and nothing is copied into the note. Press **H** again to go back to the colour you had, or pick another.
+**Why it helps**: in an ordinary PDF reader, highlights stay in the file. Here they become notes you can search across all your readings, for example everything you marked `#disagree`. The colour you choose while reading is already a first judgement about the text. Under each passage you can write one or two sentences in your own words (**Distil**, from the home page), so that when you start writing, your material is already sorted and cited.
 
-**Deleting a highlight:** delete its line in the note and it goes from the PDF too; delete it in the PDF (its menu → **Delete**) and its line goes from the note. The PDF doesn't reload: only the page is redrawn.
-
-**Annotations made elsewhere** (Zotero, Preview, Acrobat) come into the note by themselves, with the tag of the closest color. Made after adding the reference: right-click the PDF or the note → **Texere** → **Import annotations from PDF**. Made under another name: Texere asks whether they're yours.
-
-> [!example] What it looks like
-> In a reading note (Descartes, *Meditations*):
-> ```
-> #claim I am, I exist, is necessarily true each time it is expressed by me, or conceived in my mind [@descartes_meditations_2022, p. 29] · PDF
->
-> The cogito as it appears here: not an inference, but true each time I think it. [@descartes_meditations_2022, p. 29]
-> ```
-> The annotation, then your comment under it.
-
-**After reading:** search a tag (`tag:#disagree`) across all your readings, and fill in **Thesis**, **Arguments**, **Counterarguments** and **Conclusions** in the note.
-
-#### Distil: your annotations in your own words
-
-Open it from **Home → Distil**, or right-click a reading note → **Texere**. Texere shows one annotation at a time; you write a sentence or two, saved right under it, already cited: `… [@descartes_meditations_2022, p. 29]`.
-
-- An annotation counts as used once something of yours sits under it; `#word` annotations are skipped.
-- **Delete annotation** removes it from the note and the PDF; **Undo** brings both back.
-- From a debate map, **Distil them** takes only that concept's annotations you haven't written about.
-
-#### Reference stats
-
-At the top of each reading note, refreshed daily: how others cite it ([scite](https://scite.ai), [OpenAlex](https://openalex.org), [Semantic Scholar](https://www.semanticscholar.org)), what you annotated and, for an article, how expert panels in Norway and Finland rate its journal and whether it's in ERIH PLUS or DOAJ.
+If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the PDF, **Texere** and **Import annotations from PDF**.
 
 ## 3. Writing
 
-### 3.1 Start from a template (optional)
+### 3.1 The map of philosophy
 
-| Template | For |
+Texere comes with a map of philosophy, with a note for each branch, theory, concept, movement, period and author, starting from the *Philosophy* note. The notes have English names and Romanian aliases, so typing `[[Etică` gives you *Ethics*.
+
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/harta.png)
+
+How it works: each reference and each note gets a few properties (*discipline*, *branch*, concepts, authors) that point to notes in the map. A reading marked *branch: Epistemology* shows up on the Epistemology page, next to the other readings in the same branch.
+
+In the Obsidian graph, which you open with **Ctrl/Cmd + G**, each dot is a note and the lines are the links between them. Branches, subfields, concepts, theories, movements, periods and authors each have their own colour. The colours come with Texere, and in an older vault the home page offers them with the **Add** button. You can also add them at any time with **Ctrl/Cmd + P** and **Texere: Colours in the graph for the discipline map**.
+
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/graf.png)
+
+**Why it helps**: your readings are no longer ordered only by folders or courses, but also by branches and concepts. When you open a concept, you see everything you have read and written about it. The map can be adapted to other disciplines too.
+
+### 3.2 Citations and bibliography
+
+You add citations right in the text, from your references or from Zotero, and the bibliography builds itself at the end of the note.
+
+How it works:
+1. Type `@` in a note, followed by a word from the author's name or the title.
+2. Your references appear and, if Zotero is open, those from Zotero too, marked with the **Zotero** label.
+3. Choose the reference. For one from Zotero you can choose between **Reference only**, which brings only the metadata, and **Reference and PDF**, which also brings the annotations from Zotero.
+4. Add the page, for example `[@descartes_meditations_2022, p. 29]`.
+
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/citare.gif)
+
+In the note, the citation shows formatted, for example *(Descartes, 1641/2022, p. 29)*. The bibliography updates as you write, so each reference you cite appears in it at once, and one you no longer cite disappears.
+
+You change the citation style from the bottom bar. Click **APA** and choose another style (Chicago, MLA, Harvard, IEEE) or **Add a citation style…**, from more than 10,000 available. The citations in the text and the bibliography are redone on the spot, and the export uses the same style.
+
+| You type | You get (APA) |
 | --- | --- |
-| [[New essay]] | a paper or an article, with contents and a simple structure (introduction, sections, objections, limitations, conclusion): duplicate it, fill in **title** and **author**, leave **Bibliography** empty (the export fills it) |
-| [[Licență – Facultatea de Filosofie UB]] | a BA thesis, by the faculty's rules |
-| [[Disertație – Facultatea de Filosofie UB]] | an MA thesis, by the faculty's rules |
-
-For the theses, fill in **title**, **autor**, **coordonator** and **an**. The rules: [[Ghid de redactare – Licență și disertație (Facultatea de Filosofie, Universitatea din București)]].
-
-### 3.2 Citing references
-
-1. Type `@` and a word from the author or the title.
-2. Pick the reference: Texere writes `[@citekey]`. With Zotero open (or with a Zotero key), the references from Zotero show under the ones in your vault, labelled **Zotero**: pick one and, if it has a PDF in Zotero, choose **Reference only** (reading note and bibliography) or **Reference and PDF**, with its highlights and annotations from Zotero. Esc or a click elsewhere: nothing is added.
-3. Add the page: `[@citekey, p. 29]`. Always give it when you quote or paraphrase.
-
-In the note, the citation reads like text: (Descartes, 1641/2022, p. 29). Click it to open the reference or the PDF, or to edit it.
-
-| You write | You get (APA) |
-| --- | --- |
-| `[@descartes_meditations_2022]` | (Descartes, 1641/2022) |
 | `[@descartes_meditations_2022, p. 29]` | (Descartes, 1641/2022, p. 29) |
-| `[@descartes_meditations_2022, pp. 29-31]` | (Descartes, 1641/2022, pp. 29–31) |
 | `[@descartes_meditations_2022; @mill_utilitarianism_2022]` | (Descartes, 1641/2022; Mill, 1863/2022) |
 | `@descartes_meditations_2022 [p. 29]` | Descartes (1641/2022, p. 29) |
-| `[see @mill_utilitarianism_2022, ch. 2]` | (see Mill, 1863/2022, Chapter 2) |
 
-**The citation style** shows in the Texere item at the bottom right (e.g. **APA**). Click it to pick another for this note (saved in its `csl` property; the export follows), or **Add a citation style…** from 10,000+.
+**Why it helps**: it works much like the Zotero plugin for Word, but in the same place as your notes and PDFs. A click on a citation takes you to the reference or to the page in the PDF.
 
-### 3.3 Writing guides
+### 3.3 Templates and writing guides
 
-- [[Getting started in philosophy – reading, arguing, writing]]: from a seminar essay to a PhD: the shape of a good text, the words for each move, red flags and a checklist. Its fourteen references are in **Writing guide references**.
-- [Guidelines on Writing a Philosophy Paper](https://www.jimpryor.net/teaching/guidelines/writing.html), by Jim Pryor
-- [LEADERSHIP LAB: The Craft of Writing Effectively](https://www.youtube.com/watch?v=vtIzMaLkCaM) (video)
+Papers start easily from a template in **Support/Templates**: **New essay** for an essay or article, **Licență** and **Disertație** for BA and MA theses at the Faculty of Philosophy of the University of Bucharest, following the faculty's writing guide. In **Support/Texere/Guides** you'll find the writing guides (**Getting started in philosophy**, with its Romanian version), their sources and the faculty's writing guide.
 
-### 3.4 Edit mode: try versions
+### 3.4 Edit mode
 
-For reworking a written draft.
-
-- **On:** ✎ at the top of the note, or right-click → **Texere** → **Edit mode**. A bar at the bottom says **✎ Edit mode** and the note's edge is colored.
-- **Off:** **Done**, in that bar.
-
-#### Versions
-
-1. Select a word, a sentence or a paragraph and press **Versions**.
-2. Type a version in the last line and press Enter; add as many as you like.
-3. Try them with ↑ ↓ or a click. ✕ removes one; the original always stays.
-4. **Keep what's showing** settles it.
-
-Text with versions gets a hand-drawn line ending in dots (● the one in the note, ○ the others); click the dots to reopen them. Click the text: **← →** switch, **⌫** deletes the one showing, **⌘Z** undoes. Without clicking: **⌃⌘← →** switches, **⌃⌘↑ ↓** jumps to the next spot (Windows and Linux: **Ctrl + Alt + Shift**). Esc, or typing, takes you back to writing.
-
-#### Dim, Cuts, checks and trims
-
-- **Dim:** the selected passage fades, so you read the page without it. Click it to bring it back.
-- **Move to Cuts:** the passage goes to this note's Cuts (**Support/Texere/Cuts**), opened with **Cuts** in the bar; **Ctrl/⌘ + Enter** puts a paragraph back at the cursor. Nothing is deleted.
-- **Marks** (from **Texere** in the bar, no AI): long sentences, hedges and filler, words off in tone, claims stated too strongly, personal opinions. Click one: **Versions**, **Dim** or **Fine as is**.
-- **Trims:** **Slight trim**, **Tighten more** and **Even sharper** only fade the words they'd cut. Click a word to keep it; **Original** undoes it all.
-
-Versions and dims are kept in Texere's settings on this computer, not in the note, and switching versions doesn't count as words written. Edit mode is based on Wordplay by Rob Hardy, after Jason Fried's Write_On.
+When you have a written draft, **Edit mode** helps you work on it without losing anything. Turn it on with ✎ at the top of the note and close it with **Done**. Select a word, a sentence or a paragraph and try **Versions** until you pick one, **Dim** a passage to read the page without it, or move it to **Cuts**, from where you can bring it back at any time.
 
 ## 4. Export
 
-1. Open the note, then the Texere item at the bottom right → **Export this note…** (or **Export** in the bottom bar).
-2. Choose **PDF**, **Word** or **Markdown**; the preview shows the result.
-3. Click **Export**. The message has an **Open** button.
+Any note can be exported to PDF, Word or Markdown, with the citations and bibliography in the style you chose.
 
-The bibliography makes itself from the references you cite, under the **Bibliography** heading or at the end.
+How it works: click **Export** in the bottom bar, choose **PDF**, **Word** or **Markdown**, check the preview and click **Export**.
 
-In the export window: the **template** (general, or the faculty's), the **citation style**, contents and a few options (each H2 on a new page, colors, tags, colored links), and the **layout** (page and text), set by the template until you open it. Your choices are kept for next time.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/export.png)
 
-#### Your own templates
+The page layout comes from the template, which can be a general one or the Faculty of Philosophy's, following the writing guide for BA and MA theses. The table of contents and page numbers are added by themselves, and the Word file can be sent on for corrections like any other document.
 
-1. **Settings → Texere → Export → A new template** (it starts from an existing one).
-2. Set the page, the text and the document there. **Done** closes them; **Edit** reopens them.
-3. A note uses it with the property `export: <its name>`.
+You make a template of your own in **Settings → Texere → Export**, and you choose the folder the files go to in **Settings → Texere → General → Folders**. You put the table of contents where you want it with a right-click in the note, **Texere** and **Insert the contents here**.
 
-#### Good to know
+## 5. Insights (BETA)
 
-- **Contents:** right-click in the note → **Texere** → **Insert the contents here**. It updates as you write and gets page numbers in PDF and Word (when Word asks to update the fields, say **Yes**).
-- **Images** must be in the vault, linked with `![[image.png]]`.
-- **The export folder** (inside or outside the vault): **Settings → Texere → General → Folders**.
+Insights reads the notes in your vault and shows you how your ideas link together. The analysis runs locally, on your computer, with programming rules and no artificial intelligence models.
 
-## 5. Insights: your writing, links and patterns
+For research, the most useful part is the **Debate map**. You choose a concept, for example *Happiness*, and see on a single page every passage you highlighted about it, across all your readings. Each passage has its citation, page and your note, and the passages are grouped by the author or chapter they come from.
 
-> [!lab] Lab
-> Insights is experimental and improves with each version; some counts may change. What it counts stays in your vault. It goes online only when you ask (to translate a concept's title, or to look up the works your references cite).
+How it works:
+1. Open the map from the concept panel or from Insights, in the **Reading** tab, with the **Debate map** button.
+2. Choose what interests you with the filters at the top, for example **You disagree** and **Claims and definitions**.
+3. Click **Start a note from these…**, and Texere creates the draft of a new text with the passages you chose, grouped by kind, with the citations already in place and a line for your answer under each one.
 
-**Insights**, in the bottom bar, has four tabs: **Writing** (how much and how you write), **Reading** (what you annotate and cite), **Links** (what connects, what's missing a link), **Projects** (how far your thesis or article is). **Scan now** reads the vault again. Settings: **Settings → Texere → Insights**.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/dezbatere.gif)
 
-#### Words, targets and projects
+Besides the debate map, Insights helps you in three more ways:
+- **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
+- **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
+- **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
-- **Words:** written today, this week or this month; pasted, inserted and deleted in one line underneath; your streak and a calendar of the last year. **How you work** shows the hours and days you write, and your reading next to your writing. Undo isn't counted; each computer keeps its own count and the totals add them up.
-- **Word target:** right-click a note → **Texere** → **Set a word target…**. A thin bar above the text shows how far you are.
-- **Projects:** a folder, a tag or a note (your thesis, an article, a course), with an optional target and deadline: words, weekly pace and when you'll get there. **Add a project** is on the **Projects** tab.
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/revizuieste.png)
 
-#### Writing companion and Check this draft
+![](https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/img/panou.png)
 
-The companion is a side panel for the draft you're working on: right-click the note → **Texere** → **Writing companion**.
+The **Writing** tab shows how much and how you write, and **Check this draft**, in the **Writing companion** (right-click on a note and **Texere**), shows what each paragraph does and what is still missing, following Texere's writing guides.
 
-- **At the top:** **Philosophical essay** or **General text**, and **Check this draft**.
-- **One line per paragraph:** what it does and what's missing (a thesis, a citation, a reply to an objection, a definition).
-- **For the paragraph you're in:** definitions and annotations from your vault, and a reference to cite, inserted with one click.
+**Why it helps**: in a folder of Word documents, the link between a text read two years ago and today's idea depends on memory. In Texere, the passages you highlighted about the same concept gather by themselves from all your readings, and a new article can start straight from them.
 
-**Check this draft** reads a note after the guides in [[Getting started in philosophy – reading, arguing, writing|Getting started in philosophy]]: what your paragraphs do (argue, present others, analyze, illustrate), the argument (an early thesis, a roadmap, defined terms, objections and replies), the reasoning (reasons, examples, thought experiments, signposts), and the prose (sentence length, hedging, overclaiming, "I feel", stock phrases, loose words). **+** more is better, **−** less is better, **◦** keep it balanced. Only text you typed counts, only signals right at least 8 times in 10, and there is no score.
+## 6. When something goes wrong
 
-#### How you write (Insights → Writing)
+### 6.1 What to do first
 
-The same signals across notes: **Compare [B] with [A]**, each your **starting point**, your last 30 or 90 days, all your writing, or notes you pick (an old draft against the new one shows your progress). Eight key measures first; **Show all** for the rest. The switches above the cards choose the signals (**General text / Philosophical essay**) and the picture (**Compare / Over time / Numbers**): a line from A to B (**blue** better, **orange** worse), small charts over time, or a table.
+Open a new tab or **Settings → Texere**. Both show what is missing, with a button that fixes it. If it still doesn't work, run the setup again from **Settings → Texere → General**, and if the problem stays, write to us from **Settings → Texere → About → Report a problem**. Every now and then, copy your vault folder to an external drive, so you have a backup.
 
-#### While you write (off to start with)
+### 6.2 Common problems
 
-Each has its switch in **Insights → Writing → While you write**:
-
-- **Writing insights:** a thin margin line in the color of what each paragraph does, and a dotted underline under opinion phrases and loose words.
-- **Uncited claims:** a paragraph that argues but cites nothing gets an orange line and **cite?**. Click it: **Cite…** offers a reference, **Not a claim** hides it.
-- **Concept panels:** at the top of a concept note, its definitions and where you use it.
-
-A summary inside the note: right-click → **Texere** → **Writing stats in this note** (one line, and what to check); **Remove writing stats** takes it out.
-
-#### Concepts, links and patterns
-
-- **Concept panel:** the definitions from your references, where you use the concept, what it appears with, and a warning when you use it often without defining it.
-- **Debate map:** your annotations on one concept from all references, grouped by thinker, with where you stand (`#agree`, `#disagree`, `#question`). Pick one or more filters (e.g. **You disagree** + **Claims and definitions**) and **Start a note from these** makes an outline from what's shown, grouped by kind, with citations and your notes.
-- **To tidy** (the **Links** tab): concepts you wrote without a link (in your notes and your own lines in reading notes, never in quotes), names without a note (**Create note**), possible aliases and duplicates. **Review** groups them; **Link selected** links the first mention in each note and keeps your words: `[[Action|acțiunii]]`.
-- **Patterns:** what you read but don't write about, rising topics, concepts that appear together without a link, forgotten notes that matter now, who you cite.
-- **Weekly review:** turn it on in **Settings → Texere → Insights → Weekly review**: every Monday, a short note in **2. Notes/Weekly reviews**.
-
-## 6. Problems and questions
-
-### 6.1 Backups
-
-Now and then, copy the vault folder to an external drive. No sensitive data? A cloud copy works too.
-
-### 6.2 If something isn't working
-
-1. Open a new tab, or **Settings → Texere**: both show what's missing, with a button to fix it.
-2. Still not right? **Settings → Texere → General → Run the setup again**.
-3. Look up the message in [[#6.4 If an error appears]].
+| What you see | What to do |
+| --- | --- |
+| no plugin starts (“Restricted mode”) | **Settings → Community plugins → Turn on community plugins** |
+| citations stay `[@citekey]` | turn on the **References** module in **Settings → Texere → General** |
+| Zotero references don't show up after `@` | open Zotero and tick in its settings, under **Advanced**, **Allow other applications on this computer to communicate with Zotero** |
+| a message about Better BibTeX | it comes from another plugin, such as Zotero Integration. Texere doesn't need it, and **How to fix it** in the message shows you the steps |
+| a highlight doesn't reach the note | the pointer is on: press **H** or choose a colour |
+| annotations are missing from the note | right-click on the PDF, **Texere** and **Import annotations from PDF** |
+| “limit reached” when searching | add a free key in **Settings → Texere → References → Catalogs** |
+| you can't find the exported file | check the export folder in **Settings → Texere → General → Folders** |
 
 ### 6.3 Manual setup
 
-The setup does steps 3, 4, 5 and 7 with you. By hand:
+If the setup couldn't do a step, you do it yourself, by hand:
 
-1. **Copy the whole vault**, with the hidden `.obsidian` folder (on a Mac, **Cmd + Shift + .** shows it).
-2. **Turn on plugins:** **Settings → Community plugins → Turn on community plugins**.
-3. **Texere and PDF++:** **Settings → Texere → General → Modules**: turn on References and Export. Under **Advanced**, PDF++: **Open its page** (then **Install** and **Enable**) or **Turn on**.
-4. **Bibliography:** **Settings → Texere → References → Notes & citations → Note tag** must be `literature_note`; then **Advanced → Bibliography → Rebuild from notes**.
-5. **Export folder:** **Settings → Texere → General → Folders → Export folder**.
-6. **Font:** **Text → Font** in the export window (only installed fonts are listed).
-7. **Templates and guides:** the setup's **Your vault** step, or **Settings → Texere → General → Advanced → Templates and writing guides**, adds the missing ones without touching yours.
-
-### 6.4 If an error appears
-
-| What you see | Why | What to do |
-| --- | --- | --- |
-| "Restricted mode", no plugins | you didn't trust the author | step 2 |
-| the setup doesn't start | you closed it, or Texere is off | **Run the setup again**; otherwise step 2 |
-| Texere or PDF++ commands are missing | plugins off, or `.obsidian` missing | steps 1 and 3 |
-| citations stay `[@citekey]` | the References module is off | step 3 |
-| "not found: @…" on export | the citekey isn't in your bibliography | type `@` and pick the reference |
-| fewer references than notes | notes without the `literature_note` tag | step 4 |
-| no exported file | the export folder doesn't exist on this computer | step 5 |
-| another font in the export | the font isn't installed | step 6 |
-| a template or writing guide is missing | it was moved or deleted | step 7 |
-| "Zotero is closed" | Zotero isn't running | open it, or add a Zotero key |
-| `@` doesn't show your Zotero references | Zotero closed and no Zotero key, or Zotero doesn't let other apps in | open Zotero (**Settings → Advanced** → allow other applications) or add a Zotero key |
-| "…Better BibTeX plugin is installed" | another plugin's message (Zotero Integration) | Texere doesn't need Better BibTeX: click **How to fix it** in the message |
-| Zotero "doesn't let Texere in" | Zotero blocks other apps | Zotero **Settings → Advanced** → allow other applications |
-| the Zotero button saves only to Zotero | the browser button is off | [[#2.3 From the browser, with the Zotero button]] |
-| a highlight doesn't go into the note | the pointer is on, or auto-paste is off in PDF++ | press **H** (or pick a colour); auto-paste: its icon in the PDF toolbar |
-| the PDF goes white and reloads when you highlight | — | Texere writes why in `.obsidian/plugins/texere/pdf-reload.log`: send it from **Help → How do I ask for help** |
-| the note doesn't scroll to the new highlight | — | the same, with `.obsidian/plugins/texere/highlights.log` |
-| annotations missing from the note | made after the reference was added | right-click the PDF → **Texere** → **Import annotations from PDF** |
-| "limit reached" in search | a catalog's daily limit | add a free key in **Catalogs** |
-
-The step numbers are those in [[#6.3 Manual setup]].
+1. **Plugins**: in **Settings → Community plugins** click **Turn on community plugins**.
+2. **Modules**: in **Settings → Texere → General → Modules** turn on References and Export.
+3. **PDF++**: in **Settings → Texere → General → Advanced** click **Open its page**, then **Install** and **Enable**, or **Turn on**, if it is already installed.
+4. **Bibliography**: in **Settings → Texere → References → Notes & citations**, the **Note tag** has to be `literature_note`, then click **Advanced → Bibliography → Rebuild from notes**.
+5. **Export folder**: choose it in **Settings → Texere → General → Folders → Export folder**.
+6. **Templates and guides**: **Settings → Texere → General → Advanced → Templates and writing guides** adds the missing ones without touching yours.
 
 ## 7. What's new
 
-Texere looks for a new version at startup, every 20 minutes and when you come back to Obsidian. When there is one, the home page shows it with **Update**, then **Reload**; nothing installs without your click. One exception: BRAT, if its **Auto-update plugins at startup** is on, installs the new version at startup; to choose yourself, turn it off in **Settings → BRAT**. What a version brings for your vault (a new template, note or field) is only offered on the home page, with **Add** or **Not now**: nothing goes into your vault by itself, and what you leave for later waits in **Settings → Texere → General → From updates**. Fixes raise the last number (0.4.0 → 0.4.1), new features the middle one (0.4 → 0.5), a change in how Texere works the first (0.x → 1.0).
+Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.1** · 16 November 2026
+- **A shorter Help:** the guide and the frequent questions follow the getting-started tutorial, briefly and with pictures.
 
 **0.5.0** · 16 November 2026
-- **One way in, just the plugin:** install Texere through BRAT in any vault, empty or with your notes, on Windows and Mac. No more vault to download: the setup brings everything, including the faculty's writing guide and the sources of the writing guides.
-- **The map comes coloured:** when the setup creates the map of philosophy, it also puts its colours in the graph.
+- **One way in, just the plugin:** Texere installs through BRAT in any vault, empty or with your notes, on Windows and Mac. The setup brings everything, including the faculty's writing guide and the sources of the writing guides, and the map of philosophy comes coloured in the graph.
 
 **0.4.24** · 16 November 2026
-- **The map of philosophy, coloured in the graph:** in the Obsidian graph, branches, subfields, concepts, theories, movements, periods and authors each get their own colour. The home page offers them (**Add**); your own colour groups stay as they are. Any time: **Texere: Colours in the graph for the discipline map**.
-- **Zotero comments reach the note:** the comment of an annotation made in Zotero (or Acrobat, Preview) now goes under its passage, as your own note.
-
-**0.4.23** · 16 November 2026
-- **Zotero import: references only, or with the PDFs.** The **Zotero** tab has two buttons at the bottom: **Import references** and **Import references and PDFs** (with your Zotero highlights and annotations), as when citing with `@`. Each shows how many references it imports. They replace the **With the PDFs** and **With annotations** boxes.
-- **While you type a citation** (`@frank…`), the bibliography no longer lists the half-typed key under **Not found**.
-
-**0.4.22** · 16 November 2026
-- **Help, up to date:** the guide and the frequent questions now explain citing from Zotero with `@` (with or without the PDF), what to do about the Better BibTeX message, reading with the pointer, deleting a highlight, focus mode and how updates arrive; plus new rows in the error table.
-
-**0.4.21** · 13 November 2026
-- **Citing from Zotero works with the mouse again:** clicking **Reference only** or **Reference and PDF** adds it; clicking elsewhere leaves your text as you typed it (in 0.4.17–0.4.20, clicking a choice counted as cancelling).
-- **Scrolling to the new highlight, more reliable:** the note's cursor moves to the new line, and Texere checks once more after a second and a half.
-
-**0.4.20** · 13 November 2026
-- **The note scrolls to the new highlight**, however it is open (Source, Live Preview or Reading) and even if it has just opened: you see right away where it went.
-
-**0.4.19** · 13 November 2026
-- **The PDF no longer reloads** when you highlight or delete a highlight: on a Mac the same save sometimes reached Obsidian twice, and the second one reloaded the whole PDF (a white screen, "0 of 269"). Now only the page is redrawn, without a flash.
-- **New versions are only shown** on the home page, with **Update**; they no longer install by themselves.
-
-**0.4.17** · 13 November 2026
-- **Changing your mind about a Zotero reference:** if you close the choice (Esc or a click elsewhere), nothing is added and the text goes back to what you typed.
-
-**0.4.16** · 13 November 2026
-- **Citing from Zotero: you choose whether the PDF comes too.** After you pick a Zotero reference that has a PDF, choose **Reference only** (Enter) or **Reference and PDF**, with the number of its Zotero annotations; the PDF comes with its highlights and annotations. Without a PDF in Zotero, only the reference comes in. The message at the end says what was added.
-- **The pointer selects:** with the pointer (or **H**) you select text to follow where you're reading, without copying it into the note or writing it into the PDF.
-- **Highlights reach the note faster:** Texere uses the PDF that's already open instead of reading the whole file again for every highlight.
-- **New versions show up sooner on the home page:** Texere checks at startup, every 20 minutes and when you come back to Obsidian.
-
-**0.4.15** · 13 November 2026
-- **Cite straight from Zotero.** Type `@` and a few letters: under the references in your vault, the ones in Zotero show up too. Pick one, the citation is written right away, and the reference comes into your vault with its note, bibliography entry and the PDF from Zotero. No Better BibTeX: it works with Zotero open or with a Zotero key.
-- **The "…Better BibTeX plugin is installed" message** (from another plugin, e.g. Zotero Integration) now gets a **How to fix it** button: cite with Texere, turn the other plugin off, or install Better BibTeX, step by step.
-- **A note's bibliography comes right after the text**, without the big gap before it.
-- **Articles no longer show "Article 1"** in the bibliography: the issue is written once, and the pages show again.
-- **Pointer in PDF:** the pointer button in the PDF toolbar (or the **H** key) lets you move through a PDF by dragging, without highlighting. **H** takes you back to the colour you had.
-- **A highlight no longer opens another window** with the note: if the note is already open (next to the PDF, in a sidebar, in a separate window or in a tab behind), the line goes there.
-
-**0.4.14** · 12 November 2026
-- **Focus mode is now Cmd/Ctrl + Shift + D.** Cmd + Option + F is Obsidian's own Find and replace, which won on Mac.
-
-**0.4.13** · 12 November 2026
-- **Focus mode:** **Cmd/Ctrl + Shift + D** hides everything except the files you have open (two side by side stay side by side): sidebars, ribbon, tabs, the note's top bar, the status bar. The same shortcut brings them back as they were. You can change it in Settings → Hotkeys ("Texere: Focus mode").
-
-**0.4.12** · 11 November 2026
-- **Reload after an update reloads all of Obsidian**, so the new version starts and the message goes away (before, only Texere restarted and the message stayed).
-
-**0.4.11** · 11 November 2026
-- **First steps, clearer:** on the home page, a thin line shows how far you are; the next step stands out, with one line on how to do it and a link that takes you there (Open References, Open the PDF, New note, Open Export); done steps are checked (with the reference you added); the rest wait, faded.
-
-**0.4.10** · 11 November 2026
-- **A shorter setup:** each step says only what it needs to, without repeating the previous one. **The Texere structure** is always preselected (recommended).
-- **The map's fields in your reading notes:** if you import the map of philosophy, new reading notes get *discipline, branch, subfield, period, movements, theories, concepts* (as lists). Fixed: going to the next step twice while the map was importing could drop them. If you have the map but not its fields, a short window after the update adds them.
-
-**0.4.9** · 11 November 2026
-- **The discipline step says what it does:** "Your discipline's map" — I import the map of philosophy (435 notes: branches, concepts, theories, movements, periods, authors, linked together) into 2. Notes/Disciplines/Philosophy; untick it if you don't want it. In Settings, the button is now **Import the map**.
-
-**0.4.8** · 11 November 2026
-- **Starting over in an emptied vault:** if you delete everything from a vault where Texere was set up, Texere starts the setup again from the beginning, as in a new vault, instead of a list of "isn't in the vault anymore" alerts. Your language and modules stay.
-
-**0.4.7** · 11 November 2026
-- **Tags in your PDF++ colours:** #fact, #claim, #disagree… appear in the colour of their highlight, in every vault, and follow PDF++: change a colour there and the tag changes too.
-- **New versions show up on the home page sooner:** Texere checks when Obsidian starts, every hour, and when you open the home page (at most every 10 minutes), right away after BRAT updated it.
-
-**0.4.6** · 11 November 2026
-- **Highlights are written into the PDF again** ("PDF++: An error occurred while attempting to add an annotation"): PDF++ needs an author name for that, and 0.4.5 left it empty. Texere now sets it to your computer account's name; you can change it in PDF++'s settings (Author).
-
-**0.4.5** · 11 November 2026
-- **PDF++ comes ready:** the setup gives it Texere's settings, as in the ready-made vault: colours as tags (fact, claim, disagree, agree, connection, question, definition, word), **auto-copy** and **auto-paste** on, Texere's copy formats, highlights written into the PDF. Only over PDF++'s own defaults: settings you made stay. If PDF++ still has its defaults, the home page offers **Apply**.
-- **Missing PDF++?** The home page's **Install** button installs it (with Texere's settings) instead of only opening its page.
-- **Updates:** Texere looks for a new version each time Obsidian starts (at most once an hour) and every 6 hours, and says **What's new** after any update, also one made by BRAT.
-- **After an update**, the short "Completing your setup" window also covers PDF++'s settings and link updates.
-
-**0.4.4** · 11 November 2026
-The setup does everything for you, one step at a time.
-
-- **The Texere structure** (recommended): the folders, the bibliography and citation styles, the templates and writing guides, and **PDF++** (installed and turned on). Each is its own step: you see what was done, then **Next**.
-- **My own folders:** Texere's folders (reading notes, PDFs, export, bibliography) are created with your names; your other folders only if you tick them. PDF++ is installed too.
-- **At the end:** the home page opens in a new tab and the Texere icon comes first in the ribbon.
-- **Already using Texere?** After this update, if something Texere needs is missing (one of its folders, the bibliography, a template, PDF++), a short window adds it, one step at a time.
-
-**0.4.3** · 11 November 2026
-Texere works from the first start, in a new vault and in one you already have.
-
-- **New vault:** the setup proposes the Texere structure (the one in the ready-made vault), the home page opens in the new tab and the Texere icon comes first in the ribbon.
-- **A vault you already have:** **My own folders** is selected, so you choose where things go; Texere moves nothing and leaves your sidebar and ribbon as they are.
-- **Citations work at once:** an empty bibliography and six citation styles are added in **Support/Texere/Bibliography** if they were never there.
-- **No false alarms:** a folder that was never in your vault is created when it's first needed; only one that was there and disappeared shows **Put it back** or **Choose…**.
-
-**0.4.2** · 9 November 2026
-Smoother, and a few fixes.
-
-- **No more stutter every second** with the Zotero button turned on and Zotero closed: Texere no longer checks the list of running programs while you work in Obsidian (each check froze Obsidian for a moment). It still lets Zotero have its place as soon as you open it.
-- **Citing with @ forgives typos:** `@ascombe` finds Anscombe, `@vica` finds Vică, and the references you added last come first.
-- **Distil** shows the printed page of an annotation (the one in its citation), not the PDF's page number.
-- **A pasted book citation** (APA, with the publisher after the title) is read as a book, not as an article.
-
-**0.4.1** · 9 November 2026
-What a new version brings for your vault, offered, never imposed.
-
-- **New templates, notes and fields are only offered.** The home page shows them with **Add** or **Not now**; nothing goes into your vault by itself, and nothing is ticked for you. What you leave for later waits in **Settings → Texere → General → From updates**.
-- **A template you changed is never overwritten:** a new version is offered as **Replace**, and yours stays next to it.
-- **Install with BRAT** in a vault of your own (see [[#1. Start]]); BRAT also keeps Texere up to date.
-- **New examples:** Descartes' *Meditations* and Mill's *Utilitarianism*, annotated, with their public-domain PDFs.
-
-**0.4.0** · 8 November 2026
-One plugin instead of four, a guided setup, and Help inside Texere.
-
-- **One plugin, Texere.** References, Export and Insights are modules you turn on or off in **Settings → Texere → General**; your settings came over.
-- **A guided setup:** where Texere keeps things, your discipline, and what's missing.
-- **The words researchers use:** **References**, **reading notes**, **annotations**, **PDFs**, **Cuts** and the **discipline map** (before: Sources, literature notes, highlights, Documents, Overflow, map of fields). Folders renamed in Obsidian, so links follow.
-- **Help** has the frequent questions and the whole guide; the guide updates with the plugin.
-- **Edit mode** (section 3.4): versions of a sentence, dim a passage, move text to Cuts.
-- **Folders.** Texere follows the folders you move or rename in Obsidian; its own things sit in **Support/Texere**.
-- **Insights is in Lab:** it works, and keeps getting better.
-
----
-
-**0.3.3** · 3 November 2026
-Your annotations in your own words.
-
-- **Distil**: write each annotation in your own words, saved under it, already cited.
-- **Your first week** on the new tab.
-- **How you write** and **Check this draft** in Insights, for philosophical writing.
-- A new guide: [[Getting started in philosophy – reading, arguing, writing]].
-- References, Export, Insights and Help open inside the new tab, with a bar at the bottom and a (+) for a new note.
-
----
-
-**0.3.2** · 3 November 2026
-Insights arrives.
-
-- Words typed, pasted, inserted and deleted; word targets.
-- Unlinked mentions linked in one click; alias suggestions.
-- Uncited claims while you write; patterns, thesis pace and a weekly review.
-
----
-
-**0.3.1** · 1 November 2026
-A shorter guide and a smoother Zotero.
-
-- Texere creates the suggested folders and guards the ones it needs.
-- Your own export templates; a dashboard in every new tab.
-- Zotero: filters by annotations without doubling them, restores lost letters (ș, ț), adds one PDF and doesn't wait for it, always finds a free port.
-- A PDF the site won't hand over: **Open the PDF**, save it or drag it into Inbox, and Texere attaches it.
-
----
-
-**0.3.0** · 1 November 2026
-References, citations and export without BibLib, Pandoc or LaTeX.
-
-- Zotero import with annotations.
-- Export with a preview and the faculty's thesis templates.
-
----
-
-**0.2.0 – 0.2.3** · 27–30 October 2026
-One vault for both languages, and the folder structure.
-
-- English and Romanian guides; setup and Help in your language; English note names with Romanian aliases.
-- The folders: References, Notes, Workspace, Export, Support.
-
----
-
-**0.1.0 – 0.1.6** · 26–27 October 2026
-The beginning.
-
-- The first guide, the automatic setup, the Help button and the map of philosophy.
-- The project was called Topos, then Texere (Latin, *to weave*).
-
-<!--
-For whoever maintains the vault:
-1. Raise version and date (x.x.x): last digit for fixes, middle for new features, first for big changes. Add a line above.
-2. Changed the plugin? Update its manifest.json, versions.json and CHANGELOG.md (the guide in the plugin's assets/help, the notes in assets/notes).
-3. Keep both guides in step: same section numbers, same version. Help and the setup find answers by section number.
--->
+- **The map of philosophy, coloured in the graph**, and **the comments of Zotero annotations**, which now reach the reading note.
