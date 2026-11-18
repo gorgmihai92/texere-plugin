@@ -556,7 +556,7 @@ section.cover .cv-bottom { font-size: ${sz + 1}pt; line-height: 1.5; }
         if (tag === "mark") f.shading = { type: "clear", fill: cssHex((/background(?:-color)?:\s*([^;]+)/.exec(ch.getAttribute("style") || "") || [])[1]) || "FFF3A3", color: "auto" };   // evidențierea, cu culoarea ei
         if (tag === "b" || tag === "strong") f.bold = true;
         if (tag === "i" || tag === "em" || tag === "cite") f.italics = true;
-        if (tag === "u") { const c = cssHex((/text-decoration-color:\s*([^;]+)/.exec(ch.getAttribute("style") || "") || [])[1]); f.underline = c ? { color: c } : {}; }   // și colorată (Alt+1…8 în notă)
+        if (tag === "u") f.underline = {};
         if (tag === "s" || tag === "del" || tag === "strike") f.strike = true;
         if (tag === "sup") f.superScript = true;
         if (tag === "sub") f.subScript = true;

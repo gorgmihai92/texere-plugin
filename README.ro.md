@@ -77,7 +77,7 @@ Cum funcționează:
 
 ![Scrii o propoziție cu cuvintele tale sub un pasaj](docs/clips/own-words.gif)
 
-Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Într-o notă, aceleași taste subliniază sau evidențiază textul selectat în culoarea aceea. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
+Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
 
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă.
 
@@ -180,7 +180,7 @@ Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 - **Zotero**: o referință care e deja în seif primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser.
 - **Unde intră evidențierile**: prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Texere salvează fiecare pasaj în nota aceea în fundal, fără s-o deschidă, iar dacă nota e deschisă, vezi pasajul apărând în ea. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 - **Adnotările**: o evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe notă, **Texere** și **Importă adnotările din PDF**.
-- **Scurtăturile**: le găsești pe toate în Ajutor, la **1.4 Scurtături**, de exemplu **Ctrl/Cmd + U** ca să subliniezi într-o notă.
+- **Scurtăturile**: le găsești pe toate în Ajutor, la **1.4 Scurtături**.
 - **Culorile din grafic**: dacă lipsesc, le adaugi cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
 - **Citările**, pe scurt:
 

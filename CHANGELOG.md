@@ -2,6 +2,10 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.9 (18 November 2026)
+
+- **Underlining stays in the PDF.** Removed the note side: Alt + 1…8 in a note (coloured `<u>`/`<mark>`), the *Underline* command (Ctrl/Cmd + U) and the coloured-underline export and CSS. Alt + U and its keyboard fallback now act only in a PDF. Notes that already have such tags keep them as ordinary HTML.
+
 ## 0.5.8 (18 November 2026)
 
 - **Alt + 1…8 and Alt + U on any keyboard.** On a Mac, Option + a key types a character or is a dead key, and with some layouts Obsidian never matched it as a hotkey. Texere now also catches Alt + Digit1…8 and Alt + U by the physical key, in a PDF or a note, only when Obsidian didn't use the key and only while the command still has its Alt hotkey (a hotkey you changed in Settings → Hotkeys stays yours).

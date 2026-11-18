@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.8"
-date: "Versiunea 0.5.8 · 18 noiembrie 2026"
+version: "0.5.9"
+date: "Versiunea 0.5.9 · 18 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -51,10 +51,9 @@ Obsidian lucrează cu fișiere text de pe calculatorul tău, fără cont și fă
 | --- | --- |
 | **Ctrl/Cmd + P** | lista tuturor comenzilor, inclusiv ale lui Texere |
 | `@` într-o notă | referințele tale și cele din Zotero, ca să citezi una |
-| **Alt + 1** … **Alt + 8** | într-un PDF: evidențiază selecția în culoarea aceea sau alege culoarea pentru următoarea evidențiere. Într-o notă: subliniază sau evidențiază selecția în culoarea aceea, iar aceeași tastă din nou o scoate |
-| **Alt + U** | într-un PDF sau într-o notă: subliniezi în loc să evidențiezi, și înapoi |
+| **Alt + 1** … **Alt + 8** | într-un PDF: evidențiază selecția în culoarea aceea sau alege culoarea pentru următoarea evidențiere |
+| **Alt + U** | într-un PDF: subliniezi în loc să evidențiezi, și înapoi |
 | **H** | într-un PDF: pointerul, ca să selectezi text fără să-l copiezi în notă |
-| **Ctrl/Cmd + U** | într-o notă: o subliniere simplă, iar a doua oară o scoate |
 | **Ctrl/Cmd + Shift + D** | rămân la vedere doar notele deschise, iar a doua oară revine totul |
 | **Ctrl/Cmd + 1** … **4** | în fereastra în care adaugi o referință: Caută, Zotero, Lipește și Introdu manual |
 | **Ctrl/Cmd + Enter** | în Distilează salvează ce ai scris, iar în Tăieturi pune pasajul înapoi în notă |
@@ -115,7 +114,7 @@ Cum funcționează:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Scrii o propoziție cu cuvintele tale sub un pasaj" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
-Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Într-o notă, aceleași taste subliniază sau evidențiază textul selectat în culoarea aceea. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
+Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
 
 Prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Texere salvează fiecare pasaj în nota aceea în fundal, fără s-o deschidă, iar dacă nota e deschisă, vezi pasajul apărând în ea. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 
@@ -262,20 +261,22 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
+**0.5.9** · 18 noiembrie 2026
+- **Sublinierea rămâne în PDF.** Culorile și sublinierea din note nu mai sunt, așa că nota rămâne Markdown simplu.
+
 **0.5.8** · 18 noiembrie 2026
-- **Alt + 1…8 merg într-o notă pe orice tastatură**, și pe Mac, unde Option + o cifră scrie un semn.
+- **Alt + 1…8 și Alt + U merg pe orice tastatură**, și pe Mac, unde Option + o tastă scrie un semn.
 - **Evidențierea și ștergerea unei evidențieri merg de două ori mai repede** în PDF-urile mari.
 
 **0.5.7** · 18 noiembrie 2026
 - **Alt + U merge și pe Mac**, ca să treci între subliniere și evidențiere într-un PDF.
 - **Sublinierea stă sub text**, nu mai taie literele cu coadă.
 - **PDF-urile mai grele se adnotează exact.** În cărțile tipărite cu litere legate sau acolo unde textul ascuns nu stă peste literele pe care le vezi, Texere recunoaște pagina și pune evidențierea sau sublinierea exact pe cuvintele selectate.
-- **Culori într-o notă:** selectezi textul și apeși **Alt + 1…8** ca să-l subliniezi sau să-l evidențiezi în culoarea etichetei. Exportul păstrează culorile.
 
 **0.5.6** · 18 noiembrie 2026
 - **Sublinierea în loc de evidențiere:** un buton după culori sau Alt+U, cu aceleași culori și etichete.
 - **Modul Editare** are un clip scurt în Ajutor și o secțiune proprie în README, iar butonul **Tăieturi** deschide panoul de la primul clic.
-- **Sublinierea într-o notă**, cu **Ctrl/Cmd + U**, și toate scurtăturile într-un tabel (1.4).
+- **Toate scurtăturile într-un tabel** (1.4).
 - **Nota nu se mai deschide** când evidențiezi: pasajele se salvează în ea în fundal, iar evidențierea merge mai repede.
 
 **0.5.5** · 18 noiembrie 2026

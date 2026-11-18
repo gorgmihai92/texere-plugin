@@ -77,7 +77,7 @@ How it works:
 
 ![Writing a sentence in your own words under a passage](docs/clips/own-words.gif)
 
-Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. In a note, the same keys underline or highlight the selected text in that colour. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
+Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
 
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note.
 
@@ -180,7 +180,7 @@ Besides the debate map, Insights helps you in three more ways:
 - **Zotero**: a reference already in your vault only gets what it is missing, so nothing is doubled, and Better BibTeX is not needed. With a Zotero key, added in **Settings → Texere → References → Zotero**, importing works with Zotero closed too. That is also where you turn on the Zotero browser button.
 - **Where highlights go**: the first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. Texere saves each passage in that note in the background, without opening it, and if the note is open, you see the passage appear. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 - **Annotations**: you delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the note, **Texere** and **Import annotations from PDF**.
-- **Shortcuts**: all of them are in Help, in **1.4 Shortcuts**, for example **Ctrl/Cmd + U** to underline in a note.
+- **Shortcuts**: all of them are in Help, in **1.4 Shortcuts**.
 - **Graph colours**: if they are missing, add them with **Ctrl/Cmd + P** and **Texere: Colours in the graph for the discipline map**.
 - **Citations**, in short:
 

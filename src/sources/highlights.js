@@ -486,12 +486,11 @@ class Highlights {
       hotkeys: [{ modifiers: ["Alt"], key: String(i + 1) }],
       checkCallback: chk => {
         const v = this.app.workspace.activeLeaf?.view, t = v?.getViewType?.();
-        if (t === "markdown" && v.editor && v.getMode?.() === "source") { if (!chk) this.colourNote(v.editor, tag); return true; }   // în notă: aceeași culoare, pe textul selectat
         if (t !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.colour(v, tag, ro, en); return true;
       },
     }));
     h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
-      checkCallback: chk => { if (!chk) this.setStyle(!this.underline); return true; } });
+      checkCallback: chk => { if (this.app.workspace.activeLeaf?.view?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.setStyle(!this.underline); return true; } });
     // pe Mac, Option+o tastă scrie un semn („¡”, „™”) sau e o tastă „moartă” (Option+U pregătește „¨”), iar pe unele tastaturi
     // (de ex. română) Obsidian nu le recunoaște ca scurtături. Le prindem după tasta apăsată (KeyU, Digit1…8), doar dacă Obsidian
     // n-a folosit-o și doar cât comanda are încă scurtătura Alt+… (dacă ai schimbat-o în Settings → Hotkeys, rămâne a ta)
@@ -500,7 +499,7 @@ class Highlights {
       return !hm || hk.some(h => h.modifiers?.length === 1 && h.modifiers[0] === "Alt" && String(h.key).toUpperCase() === key); };
     this.S.host.registerDomEvent(window, "keydown", e => {
       const k = KEYS[e.code]; if (!k || e.defaultPrevented || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-      if (!["pdf", "markdown"].includes(this.app.workspace.activeLeaf?.view?.getViewType?.()) || !hasAlt(k[0], k[1])) return;
+      if (this.app.workspace.activeLeaf?.view?.getViewType?.() !== "pdf" || !hasAlt(k[0], k[1])) return;
       const cmd = this.app.commands?.commands?.[`${this.S.host.core?.manifest?.id || "texere"}:${k[0]}`];
       if (cmd?.checkCallback && !cmd.checkCallback(true)) return;
       e.preventDefault(); e.stopPropagation();
@@ -515,29 +514,6 @@ class Highlights {
   async setStyle(on) {
     this.S.conf().hlStyle = on ? "underline" : "highlight"; await this.S.save(); this.decorate();
     new Notice(on ? this.T("Subliniezi: culorile pun de acum o linie sub text.", "Underlining: the colours now draw a line under the text.") : this.T("Evidențiezi: culorile colorează din nou textul.", "Highlighting: the colours fill the text again."), 2500);
-  }
-  // culoarea unei etichete, din paleta PDF++ (aceeași ca în PDF și ca eticheta din notă)
-  hexOf(tag) {
-    const cols = this.app.plugins.plugins["pdf-plus"]?.settings?.colors || {}, k = Object.keys(cols).find(n => n.toLowerCase() === tag);
-    const h = k && /^#?[0-9a-f]{6}$/i.test(String(cols[k]).trim()) ? String(cols[k]).trim().replace(/^#?/, "#") : null;
-    return h || { fact: "#e056a0", claim: "#f5a800", disagree: "#e5534b", agree: "#26a69a", connection: "#2f80ed", question: "#8e5ce6", definition: "#f2994a", word: "#7d7d7d" }[tag];
-  }
-  // într-o notă: Alt+1…8 subliniază (sau evidențiază, după Alt+U) textul selectat în culoarea etichetei, cu HTML obișnuit:
-  // <u style="text-decoration-color:#…"> sau <mark style="background:#…">. Aceeași culoare din nou o scoate; alta o schimbă.
-  colourNote(ed, tag) {
-    const hex = this.hexOf(tag), kind = this.underline ? "u" : "mark";
-    if (!ed.somethingSelected()) { const w = ed.wordAt?.(ed.getCursor()); if (!w) return; ed.setSelection(w.from, w.to); }
-    const from = ed.posToOffset(ed.getCursor("from")), to = ed.posToOffset(ed.getCursor("to")), v = ed.getValue(), sel = v.slice(from, to);
-    const open = kind === "u" ? `<u style="text-decoration-color:${hex}">` : `<mark style="background:${hex}55">`, close = `</${kind}>`;
-    const OPEN = /<(u|mark) style="(?:text-decoration-color|background):\s*(#[0-9a-f]{6})[0-9a-f]{0,2}">$/i;
-    // deja marcat: tagul de deschidere chiar înainte de selecție (sau selecția îl cuprinde)
-    let a = from, b = to, inner = sel, m = OPEN.exec(v.slice(Math.max(0, from - 80), from));
-    if (m && v.startsWith(`</${m[1]}>`, to)) { a = from - m[0].length; b = to + m[1].length + 3; }
-    else { const w = /^<(u|mark) style="(?:text-decoration-color|background):\s*(#[0-9a-f]{6})[0-9a-f]{0,2}">([\s\S]*)<\/\1>$/i.exec(sel); if (w) { m = [null, w[1], w[2]]; inner = w[3]; } else m = null; }
-    const same = m && m[1].toLowerCase() === kind && m[2].toLowerCase() === hex.toLowerCase();
-    const out = !m ? open + sel + close : same ? inner : open + inner + close;
-    ed.replaceRange(out, ed.offsetToPos(a), ed.offsetToPos(m ? b : to));
-    const s0 = a + (same ? 0 : open.length); ed.setSelection(ed.offsetToPos(s0), ed.offsetToPos(s0 + inner.length));
   }
   decorate() {
     const T = (a, b) => this.T(a, b), on = this.underline;

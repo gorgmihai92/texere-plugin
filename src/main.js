@@ -124,15 +124,6 @@ module.exports = class Texere extends Plugin {
     // modul concentrare: doar fișierele deschise (și cele puse unul lângă altul); aceeași scurtătură le readuce pe toate
     { const { Focus } = require("./core/focus"); this.focus = new Focus(this); this.register(() => this.focus.unload());
       this.coreCommand({ id: "focus-mode", name: this.T("Mod concentrare: doar fișierele deschise", "Focus mode: only the open files"), icon: "maximize", hotkeys: [{ modifiers: ["Mod", "Shift"], key: "d" }], callback: () => this.focus.toggle() }); }
-    // sublinierea în notă: <u>…</u>, ca butonul U din Editing Toolbar (Obsidian nu are una); din nou, o scoate
-    this.coreCommand({ id: "underline", name: this.T("Subliniază", "Underline"), icon: "underline", hotkeys: [{ modifiers: ["Mod"], key: "u" }], editorCallback: ed => {
-      const a = ed.getCursor("from"), b = ed.getCursor("to"), sel = ed.getSelection(), A = ed.posToOffset(a), B = ed.posToOffset(b), v = ed.getValue();
-      const w = /^<u(?: [^>]*)?>([\s\S]*)<\/u>$/.exec(sel); if (w) return ed.replaceSelection(w[1]);
-      const o = /<u(?: [^>]*)?>$/.exec(v.slice(Math.max(0, A - 80), A));   // și una colorată (Alt+1…8)
-      if (o && v.slice(B, B + 4) === "</u>") { const L = o[0].length; ed.replaceRange("", b, ed.offsetToPos(B + 4)); ed.replaceRange("", ed.offsetToPos(A - L), a); ed.setSelection(ed.offsetToPos(A - L), ed.offsetToPos(B - L)); return; }
-      ed.replaceSelection(`<u>${sel}</u>`);
-      ed.setSelection(ed.offsetToPos(A + 3), ed.offsetToPos(A + 3 + sel.length));   // rămâne selectat: încă o dată scoate sublinierea
-    } });
     // etichetele evidențierilor (#fact, #claim…) în culorile paletei PDF++, legate de ea
     this.app.workspace.onLayoutReady(() => { try { require("./core/tagcolors").start(this); } catch (e) { console.error("Texere: culorile etichetelor", e); } });
     // pointerul în PDF: selectezi ca să urmărești unde citești, fără să copiezi în notă (butonul din bara PDF-ului, tasta H)
