@@ -96,7 +96,8 @@ function install(P) {
     targetView: () => { const t = E.target(); const act = P.app.workspace.getActiveViewOfType?.(MarkdownView); return act?.file?.path === t ? act : mdViews().find(v => v.file.path === t) || null; },
     showOverflow: () => O.show(true),
     // butonul Deoparte din bară: îl deschide sau îl închide
-    overflowOpen: () => (P.app.workspace.getLeavesOfType?.(O.VIEW) || []).length > 0,
+    // deschis și la vedere (după „Mută în Tăieturi” panoul există, dar poate sta ascuns în bara din dreapta)
+    overflowOpen: () => (P.app.workspace.getLeavesOfType?.(O.VIEW) || []).some(l => { const el = l.view?.containerEl; return !P.app.workspace.rightSplit?.collapsed && (el?.isShown ? el.isShown() : !!el?.offsetParent); }),
     async toggleOverflow() { if (E.overflowOpen()) O.close(); else await O.show(true); },
     // „Pune deoparte”: textul pleacă din notă în panoul Deoparte (Overflow), păstrat în nota de alături; nu se șterge nimic
     async stash(view, text) {

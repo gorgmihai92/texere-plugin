@@ -412,7 +412,7 @@ class Highlights {
     this.S.host.registerInterval(window.setInterval(() => this.patch(), 5000));   // PDF++ se poate încărca după Texere
     this.S.host.registerEvent(this.app.vault.on("rename", (f, old) => {
       const c = this.S.conf(); let ch = false;
-      for (const k of ["hlPending", "hlSnooze", "hlScan", "hlGone", "hlTarget"]) if (c[k]?.[old] !== undefined) { c[k][f.path] = c[k][old]; delete c[k][old]; ch = true; }
+      for (const k of ["hlPending", "hlSnooze", "hlScan", "hlGone", "hlTarget", "hlKept"]) if (c[k]?.[old] !== undefined) { c[k][f.path] = c[k][old]; delete c[k][old]; ch = true; }
       for (const [p, n] of Object.entries(c.hlTarget || {})) if (n === old) { c.hlTarget[p] = f.path; ch = true; }   // nota aleasă pentru un PDF și-a schimbat numele
       if (this.cache.has(old)) { this.cache.set(f.path, this.cache.get(old)); this.cache.delete(old); }
       if (ch) this.S.save();
@@ -472,6 +472,7 @@ class Highlights {
       this.S.host.register(() => { if (lib.autoPaste === wrapped) lib.autoPaste = orig; });
     }
     this.patchWriter(pp);
+    try { this.decorate(); } catch (e) {}   // PDF++ își poate redesena bara (ex. după o setare)
     this.patchCopyLink(pp);
   }
   // o comandă (și o scurtătură, Alt+1…8) pentru fiecare culoare: în PDF, cu text selectat, îl evidențiază în culoarea aceea
@@ -486,9 +487,7 @@ class Highlights {
     h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
       checkCallback: chk => { if (!this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.setStyle(!this.underline); return true; } });
     // butonul de lângă culori, în bara fiecărui PDF
-    const deco = () => { try { this.decorate(); } catch (e) {} };
-    if (this.app.workspace.on) for (const ev of ["layout-change", "file-open", "active-leaf-change"]) this.S.host.registerEvent(this.app.workspace.on(ev, () => setTimeout(deco, 300)));
-    this.S.host.registerInterval(window.setInterval(deco, 3000));   // PDF++ își redesenează bara (ex. după o setare)
+    if (this.app.workspace.on) this.S.host.registerEvent(this.app.workspace.on("layout-change", () => setTimeout(() => this.decorate(), 300)));   // și din patch(), la 5 s
     this.S.host.register(() => { for (const b of document.querySelectorAll(".tx-style")) b.remove(); for (const p of document.querySelectorAll(".tx-ul")) p.removeClass("tx-ul"); });
   }
   // sublinierea: aceleași culori și etichete, doar că pasajul e subliniat în PDF, nu evidențiat (Settings: hlStyle = "underline")
@@ -609,12 +608,12 @@ class Highlights {
         const first = !this.asking.has(pdf.path);
         if (first) this.asking.set(pdf.path, this.chooseTarget(pdf, notes).finally(() => this.asking.delete(pdf.path)));
         const ch = await this.asking.get(pdf.path);
-        if (!ch) { if (first) new Notice(this.T("Adnotarea e salvată în PDF. Te întreb din nou la următoarea.", "The annotation is saved in the PDF. I'll ask again with the next one."), 6000); return true; }
+        if (!ch) { this.keepInPdf(pdf, text); if (first) new Notice(this.T("Adnotarea e salvată în PDF. Te întreb din nou la următoarea.", "The annotation is saved in the PDF. I'll ask again with the next one."), 6000); return true; }
         if (first) await this.setTarget(pdf, ch);
-        if (ch === NONE) { if (first) this.noneNotice(pdf); return true; }
+        if (ch === NONE) { this.keepInPdf(pdf, text); if (first) this.noneNotice(pdf); return true; }
         t = ch;
       }
-      if (!t) return true;   // nicăieri: adnotarea rămâne doar în PDF
+      if (!t) { this.keepInPdf(pdf, text); return true; }   // nicăieri: adnotarea rămâne doar în PDF
       note = t;
     } else {
       // PDF fără sursă: rândul se păstrează și intră în notă când îl adaugi ca sursă (oricând: colțul din dreapta-jos sau clic dreapta)
@@ -637,7 +636,18 @@ class Highlights {
   }
 
   // notele care au PDF-ul în attachment (din bibliografie și din proprietățile notelor)
+  // (ținute minte până se schimbă o notă, bibliografia sau un nume de fișier: PDF++ întreabă de mai multe ori la fiecare evidențiere)
   notesFor(pdf) {
+    if (!this.nf) {
+      this.nf = new Map(); const reset = () => { this.nf?.clear(); }, mc = this.app.metadataCache;
+      if (mc.on) this.S.host.registerEvent(mc.on("changed", reset));
+      for (const ev of ["rename", "delete", "create"]) this.S.host.registerEvent(this.app.vault.on(ev, reset));
+      this.S.lib.onChange?.(reset);
+    }
+    if (!this.nf.has(pdf.path)) this.nf.set(pdf.path, this._notesFor(pdf));
+    return this.nf.get(pdf.path).filter(f => f instanceof TFile && this.app.vault.getAbstractFileByPath(f.path) === f);
+  }
+  _notesFor(pdf) {
     const out = new Set(), mc = this.app.metadataCache, arr = v => Array.isArray(v) ? v : v ? [v] : [];
     for (const e of this.S.lib.all()) if (arr(e.attachment).some(a => typeof a === "string" && a.includes(pdf.name))) {
       const f = this.app.vault.getAbstractFileByPath(e.obsidianPath || ""); if (f instanceof TFile) out.add(f);
@@ -673,13 +683,18 @@ class Highlights {
       `Annotations from “${pdf.basename}” stay in the PDF only. You can add them to a note anytime from the PDF's bottom bar, or right-click the note → Texere → Import annotations from PDF.`), 10000);
   }
   // din bara de jos sau din meniul PDF-ului: alegerea se schimbă; o notă aleasă se deschide și primește adnotările care nu sunt în nicio notă
+  // din bara de jos sau din meniul PDF-ului: doar alegerea (cele de până acum le pui tu, cu „Importă adnotările într-o notă…”)
   async applyTarget(pdf, ch) {
     if (!ch) return;
     await this.setTarget(pdf, ch);
-    if (ch === NONE) { this.noneNotice(pdf); return; }
-    new Notice(this.T(`Adnotările noi din „${pdf.basename}” intră în „${ch.basename}”.`, `New annotations from “${pdf.basename}” go into “${ch.basename}”.`), 6000);
-    await this.showNote(ch, pdf);
-    try { const r = await this.importFromPdf(pdf, ch, { orphans: true }); this.report([{ ...r, note: ch }]); } catch (e) { console.warn("Texere: importul adnotărilor", e); }
+    if (ch === NONE) this.noneNotice(pdf);
+    else new Notice(this.T(`Adnotările noi din „${pdf.basename}” intră în „${ch.basename}”.`, `New annotations from “${pdf.basename}” go into “${ch.basename}”.`), 5000);
+  }
+  // o evidențiere lăsată doar în PDF nu intră singură într-o notă (nici la deschidere, nici la pornire), doar când o imporți tu
+  keepInPdf(pdf, text) {
+    const id = loc(LINK.exec(text)?.[2] || "").annot; if (!id) return;
+    const c = this.S.conf(), k = ((c.hlKept = c.hlKept || {})[pdf.path] = c.hlKept[pdf.path] || []);
+    if (!k.includes(id)) { k.push(id); if (k.length > 2000) k.splice(0, k.length - 2000); this.S.save(); }
   }
   async chooseFor(pdf) { const notes = this.notesFor(pdf); if (notes.length) await this.applyTarget(pdf, await this.chooseTarget(pdf, notes)); }
   // adnotările de până acum din PDF într-una dintre notele lui (de ex. după ce ai ales „nicăieri”)
@@ -688,7 +703,6 @@ class Highlights {
     note = note || (notes.length === 1 ? notes[0] : await this.chooseTarget(pdf, notes, { none: false }));
     if (!note || note === NONE) return;
     let r; try { r = await this.importFromPdf(pdf, note); } catch (e) { console.error("Texere: importul adnotărilor", e); new Notice(this.T("Nu am putut aduce adnotările din PDF: ", "Couldn't bring the annotations from the PDF: ") + (e?.message || e), 10000); return; }
-    await this.showNote(note, pdf);
     this.report([{ ...r, note }]);
     if (!r.added && !r.healed && !r.retagged) new Notice(this.T(`„${note.basename}” are deja toate adnotările tale din PDF.`, `“${note.basename}” already has all your annotations from the PDF.`), 7000);
   }
@@ -862,7 +876,8 @@ class Highlights {
       const ed0 = this.editorOf(note), cur = ed0 ? ed0.getValue() : await this.app.vault.read(note);
       if (this.idsIn(cur, pdf, note.path).has(id)) return false;
     }
-    const leaf = await this.showNote(note, pdf);   // nota aleasă se deschide lângă PDF și primește pasajul
+    // nota nu se deschide: dacă e deschisă, pasajul apare în ea; altfel se scrie în fișier, în fundal
+    const leaf = this.app.workspace.getLeavesOfType("markdown").find(l => l.view?.file === note) || null;
     const ed = this.editorOf(note, leaf) || this.editorOf(note);
     const src = ed ? ed.getValue() : await this.app.vault.read(note);
     const L = src.split("\n"), at = await this.placeIn(L, pdf, text, note.path);
@@ -1279,7 +1294,7 @@ class Highlights {
     let healed = 0;
     const missing = [...inNote].filter(([id]) => !inPdf.has(id));
     if (missing.length) { try { healed = await this.heal(pdf, missing); if (healed) list = await this.read(pdf); } catch (e) { console.warn("Texere: adnotările de pus înapoi", e); } }
-    const skip = orphans ? this.linkedAnywhere(pdf) : new Set();
+    const skip = orphans ? new Set([...this.linkedAnywhere(pdf), ...(this.S.conf().hlKept?.[pdf.path] || [])]) : new Set();
     // evidențierile altcuiva (alt autor decât cel din PDF++ → Author) nu intră în notă
     const theirs = h => this.theirs(h);
     const others = list.filter(h => !inNote.has(h.id) && theirs(h));

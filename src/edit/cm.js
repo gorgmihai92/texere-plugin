@@ -219,6 +219,10 @@ function makeEdit(E) {
     async setAside(view, from, to) {
       const text = view.state.doc.sliceString(from, to); if (!text.trim()) return;
       const ok = await E.stash(view, text); if (!ok) return;
+      // fără spațiu dublu sau la început de rând în locul propoziției scoase
+      const doc = view.state.doc, before = from > 0 ? doc.sliceString(from - 1, from) : "\n", after = to < doc.length ? doc.sliceString(to, to + 1) : "\n";
+      if (before === " " && /[ \n.,;:!?)]/.test(after)) from--;
+      else if (before === "\n" && after === " ") to++;
       view.dispatch({ changes: { from, to, insert: "" }, selection: { anchor: from }, userEvent: EV });
     },
     putBack(view, text) { const h = view.state.selection.main.head; view.dispatch({ changes: { from: h, insert: text }, selection: { anchor: h + text.length }, userEvent: EV }); view.focus(); },

@@ -45,6 +45,25 @@ Butonul **?** de lângă bară deschide acest Ajutor, unde poți scrie întrebar
 
 Obsidian lucrează cu fișiere text de pe calculatorul tău, fără cont și fără cloud. Fiecare notă e un fișier `.md`. În stânga ai fișierele și căutarea, la mijloc notele deschise în taburi, iar în dreapta informații despre nota deschisă, de exemplu **Backlinks**, adică notele care trimit la ea. Scrii `[[` ca să legi o notă de alta, iar **Ctrl/Cmd + P** deschide lista tuturor comenzilor. **Ctrl/Cmd + Shift + D** ascunde tot în afară de notele deschise, ca să te poți concentra.
 
+### 1.4 Scurtături
+
+| Scurtătura | Ce face |
+| --- | --- |
+| **Ctrl/Cmd + P** | lista tuturor comenzilor, inclusiv ale lui Texere |
+| `@` într-o notă | referințele tale și cele din Zotero, ca să citezi una |
+| **Alt + 1** … **Alt + 8** | într-un PDF: evidențiază selecția în culoarea aceea sau alege culoarea pentru următoarea evidențiere |
+| **Alt + U** | într-un PDF: subliniezi în loc să evidențiezi, și înapoi |
+| **H** | într-un PDF: pointerul, ca să selectezi text fără să-l copiezi în notă |
+| **Ctrl/Cmd + U** | într-o notă: subliniază selecția, iar a doua oară scoate sublinierea |
+| **Ctrl/Cmd + Shift + D** | rămân la vedere doar notele deschise, iar a doua oară revine totul |
+| **Ctrl/Cmd + 1** … **4** | în fereastra în care adaugi o referință: Caută, Zotero, Lipește și Introdu manual |
+| **Ctrl/Cmd + Enter** | în Distilează salvează ce ai scris, iar în Tăieturi pune pasajul înapoi în notă |
+| **Ctrl + Cmd + ← →** pe Mac, **Ctrl + Alt + Shift + ← →** pe Windows | în modul Editare: treci prin variante |
+| **Ctrl + Cmd + ↑ ↓** pe Mac, **Ctrl + Alt + Shift + ↑ ↓** pe Windows | în modul Editare: următorul loc cu variante |
+| **Ctrl + Cmd + ⌫** pe Mac, **Ctrl + Alt + Shift + ⌫** pe Windows | în modul Editare: șterge varianta pe care o vezi |
+
+Pe Mac, **Alt** e tasta **Option**. Oricare dintre ele o schimbi în **Settings → Hotkeys**, unde cauți *Texere*.
+
 ## 2. Referințele și lectura
 
 ### 2.1 Adaugi o referință
@@ -98,7 +117,7 @@ Cum funcționează:
 
 Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
 
-Prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Nota aleasă se deschide lângă PDF și primește fiecare pasaj. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
+Prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Texere salvează fiecare pasaj în nota aceea în fundal, fără s-o deschidă, iar dacă nota e deschisă, vezi pasajul apărând în ea. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă. O evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe notă, **Texere** și **Importă adnotările din PDF**.
 
@@ -158,7 +177,16 @@ Lucrările pornesc ușor dintr-un șablon din **Support/Templates**: **New essay
 
 ### 3.4 Modul Editare
 
-Când ai o ciornă scrisă, **Modul Editare** te ajută să o lucrezi fără să pierzi nimic. Îl pornești din ✎, sus în notă, și îl închizi cu **Gata**. Selectezi un cuvânt, o propoziție sau un paragraf și încerci **Variante** până alegi una, **Estompezi** un pasaj ca să citești pagina fără el sau îl muți în **Tăieturi**, de unde îl poți aduce înapoi oricând.
+Când ai o ciornă, **Modul Editare** te ajută s-o lucrezi fără să pierzi nimic. Încerci variante ale unui cuvânt, ale unei propoziții sau ale unui paragraf direct în notă, iar nimic nu e definitiv până nu alegi tu.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/edit-mode.mp4" title="Încerci o variantă a unei propoziții, estompezi un pasaj și muți unul în Tăieturi" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+Cum funcționează:
+1. Îl pornești cu ✎ din partea de sus a notei sau cu clic dreapta pe notă, **Texere** și **Modul Editare**.
+2. Selectezi un cuvânt, o propoziție sau un paragraf și alegi **Variante**. Scrii o variantă, apeși **Enter** și dai clic pe oricare variantă ca s-o vezi în pagină. **Păstrează ce se vede** o păstrează pe cea aleasă, iar originalul rămâne în listă până atunci.
+3. **Estompează** face un pasaj mai șters, ca să citești pagina fără el, iar un clic îl aduce înapoi. **Mută în Tăieturi** îl scoate din text și îl păstrează în **Tăieturi**, de unde îl poți aduce înapoi oricând.
+4. Butonul **Texere** marchează propozițiile lungi, ezitările sau afirmațiile prea tari, după ghidurile de scris, fără AI.
+5. Apeși **Gata** când ai terminat.
 
 ## 4. Exportul
 
@@ -236,10 +264,13 @@ Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o ar
 
 **0.5.6** · 18 noiembrie 2026
 - **Sublinierea în loc de evidențiere:** un buton după culori sau Alt+U, cu aceleași culori și etichete.
+- **Modul Editare** are un clip scurt în Ajutor și o secțiune proprie în README, iar butonul **Tăieturi** deschide panoul de la primul clic.
+- **Sublinierea într-o notă**, cu **Ctrl/Cmd + U**, și toate scurtăturile într-un tabel (1.4).
+- **Nota nu se mai deschide** când evidențiezi: pasajele se salvează în ea în fundal, iar evidențierea merge mai repede.
 
 **0.5.5** · 18 noiembrie 2026
 - **Scurtături pentru culori:** de la Alt+1 la Alt+8, câte una pentru fiecare culoare a evidențierii.
-- **Alegi unde intră evidențierile:** la prima evidențiere dintr-un PDF, într-una dintre notele la care e atașat sau nicăieri. Nota aleasă se deschide lângă PDF, iar alegerea o schimbi din bara de jos a PDF-ului.
+- **Alegi unde intră evidențierile:** la prima evidențiere dintr-un PDF, într-una dintre notele la care e atașat sau nicăieri. Pasajele se salvează în nota aleasă, iar alegerea o schimbi din bara de jos a PDF-ului.
 - **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar evidențierile lăsate în PDF le poți adăuga mai târziu în oricare dintre notele lui.
 - **Nume fără notă:** vezi unde apare fiecare nume, iar cuvintele de la început de propoziție nu mai sunt luate drept nume.
 

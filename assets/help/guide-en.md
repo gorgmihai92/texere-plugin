@@ -45,6 +45,25 @@ The **?** button next to the bar opens this Help, where you can type your questi
 
 Obsidian works with text files on your computer, with no account and no cloud. Each note is an `.md` file. On the left you have your files and search, in the middle your open notes in tabs, and on the right information about the open note, for example **Backlinks**, the notes that link to it. Type `[[` to link one note to another, and **Ctrl/Cmd + P** opens the list of all commands. **Ctrl/Cmd + Shift + D** hides everything except your open notes, so you can focus.
 
+### 1.4 Shortcuts
+
+| Shortcut | What it does |
+| --- | --- |
+| **Ctrl/Cmd + P** | the list of all commands, Texere's included |
+| `@` in a note | your references and those from Zotero, to cite one |
+| **Alt + 1** … **Alt + 8** | in a PDF: highlights the selection in that colour, or picks the colour for the next highlight |
+| **Alt + U** | in a PDF: underline instead of highlight, and back |
+| **H** | in a PDF: the pointer, to select text without copying it into the note |
+| **Ctrl/Cmd + U** | in a note: underlines the selection, and the second time takes the underline off |
+| **Ctrl/Cmd + Shift + D** | only your open notes stay in view, and the second time everything comes back |
+| **Ctrl/Cmd + 1** … **4** | in the window for adding a reference: Search, Zotero, Paste and Enter manually |
+| **Ctrl/Cmd + Enter** | in Distil, saves what you wrote, and in Cuts, puts the passage back in the note |
+| **Ctrl + Cmd + ← →** on a Mac, **Ctrl + Alt + Shift + ← →** on Windows | in Edit mode: goes through the versions |
+| **Ctrl + Cmd + ↑ ↓** on a Mac, **Ctrl + Alt + Shift + ↑ ↓** on Windows | in Edit mode: the next place with versions |
+| **Ctrl + Cmd + ⌫** on a Mac, **Ctrl + Alt + Shift + ⌫** on Windows | in Edit mode: deletes the version you see |
+
+On a Mac, **Alt** is the **Option** key. You change any of them in **Settings → Hotkeys**, where you search for *Texere*.
+
 ## 2. References and reading
 
 ### 2.1 Adding a reference
@@ -98,7 +117,7 @@ How it works:
 
 Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
 
-The first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. The note you chose opens beside the PDF and gets each passage. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
+The first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. Texere saves each passage in that note in the background, without opening it, and if the note is open, you see the passage appear. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the note, **Texere** and **Import annotations from PDF**.
 
@@ -158,7 +177,16 @@ Papers start easily from a template in **Support/Templates**: **New essay** for 
 
 ### 3.4 Edit mode
 
-When you have a written draft, **Edit mode** helps you work on it without losing anything. Turn it on with ✎ at the top of the note and close it with **Done**. Select a word, a sentence or a paragraph and try **Versions** until you pick one, **Dim** a passage to read the page without it, or move it to **Cuts**, from where you can bring it back at any time.
+When you have a draft, **Edit mode** helps you rework it without losing anything. You try versions of a word, a sentence or a paragraph right in the note, and nothing is final until you choose.
+
+<video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/edit-mode.mp4" title="Trying a version of a sentence, dimming a passage and moving one to Cuts" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
+
+How it works:
+1. Turn it on with ✎ at the top of the note, or with a right-click on the note, **Texere** and **Edit mode**.
+2. Select a word, a sentence or a paragraph and choose **Versions**. Write a version, press **Enter** and click any version to see it in the page. **Keep what's showing** keeps the one you chose, and the original stays in the list until then.
+3. **Dim** fades a passage, so you can read the page without it, and a click brings it back. **Move to Cuts** takes it out of the text and keeps it in **Cuts**, from where you can bring it back at any time.
+4. The **Texere** button marks long sentences, hedges or claims stated too strongly, following the writing guides, without AI.
+5. Click **Done** when you have finished.
 
 ## 4. Export
 
@@ -236,10 +264,13 @@ Texere looks for new versions by itself. When there is one, the home page shows 
 
 **0.5.6** · 18 November 2026
 - **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.
+- **Edit mode** has a short clip in Help and its own section in the README, and the **Cuts** button opens the panel at the first click.
+- **Underline in a note** with **Ctrl/Cmd + U**, and all the shortcuts in one table (1.4).
+- **The note no longer opens** when you highlight: the passages are saved in it in the background, and highlighting is quicker.
 
 **0.5.5** · 18 November 2026
 - **Shortcuts for the colours:** Alt+1 to Alt+8, one for each highlight colour.
-- **You choose where highlights go:** at the first highlight in a PDF, into one of the notes it is attached to or nowhere. The chosen note opens beside the PDF, and you change the choice from the PDF's bottom bar.
+- **You choose where highlights go:** at the first highlight in a PDF, into one of the notes it is attached to or nowhere. The passages are saved in the chosen note, and you change the choice from the PDF's bottom bar.
 - **A PDF linked from several notes** no longer stops highlighting, and highlights left in the PDF can be added later to any of its notes.
 - **Names without a note:** see where each name is used, and words at the start of a sentence are no longer taken for names.
 

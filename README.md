@@ -123,7 +123,22 @@ You change the citation style from the bottom bar. Click **APA** and choose anot
 
 **Why it helps**: it works much like the Zotero plugin for Word, but in the same place as your notes and PDFs. A click on a citation takes you to the reference or to the page in the PDF.
 
-## 6. Export
+## 6. Edit mode
+
+When you have a draft, Edit mode helps you rework it without losing anything. You try versions of a word, a sentence or a paragraph right in the note, and nothing is final until you choose.
+
+![Trying a version of a sentence, dimming a passage and moving one to Cuts](docs/clips/edit-mode.gif)
+
+How it works:
+1. Turn it on with ✎ at the top of the note, or with a right-click on the note, **Texere** and **Edit mode**.
+2. Select a word, a sentence or a paragraph and choose **Versions**. Write a version, press **Enter** and click any version to see it in the page. **Keep what's showing** keeps the one you chose, and the original stays in the list until then.
+3. **Dim** fades a passage, so you can read the page without it, and a click brings it back. **Move to Cuts** takes it out of the text and keeps it in **Cuts**, from where you can bring it back at any time.
+4. The **Texere** button marks long sentences, hedges or claims stated too strongly, following the writing guides, without AI.
+5. Click **Done** when you have finished.
+
+**Why it helps**: rewriting usually means deleting, and a good sentence gets lost on the way. Here the original stays next to each version, the rest of the page fades so you see only what you rewrite, and what you cut is kept for this note.
+
+## 7. Export
 
 Any note can be exported to PDF, Word or Markdown, with the citations and bibliography in the style you chose.
 
@@ -138,7 +153,7 @@ In the same window you can change the citation style or add a table of contents,
 
 ![Changing the citation style and adding a table of contents in the export](docs/clips/export-style.gif)
 
-## 7. Insights (BETA)
+## 8. Insights (BETA)
 
 Insights reads the notes in your vault and shows you how your ideas link together. The analysis runs locally, on your computer, with programming rules and no artificial intelligence models.
 
@@ -163,8 +178,9 @@ Besides the debate map, Insights helps you in three more ways:
 - **The setup**: choose your language and click **Next** until the end. Texere prepares the folders, the bibliography and citation styles, the map of philosophy, the templates, the writing guides and PDF++, the plugin for annotations. You can run it again at any time from **Settings → Texere → General**.
 - **Catalogs**: if a catalog says you've reached its daily limit, add a free key in **Settings → Texere → References → Catalogs**. A PDF you already have becomes a reference with **Ctrl/Cmd + P** and **Texere: Add this PDF as a reference**.
 - **Zotero**: a reference already in your vault only gets what it is missing, so nothing is doubled, and Better BibTeX is not needed. With a Zotero key, added in **Settings → Texere → References → Zotero**, importing works with Zotero closed too. That is also where you turn on the Zotero browser button.
-- **Where highlights go**: the first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. The note you chose opens beside the PDF and gets each passage. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
+- **Where highlights go**: the first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. Texere saves each passage in that note in the background, without opening it, and if the note is open, you see the passage appear. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 - **Annotations**: you delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the note, **Texere** and **Import annotations from PDF**.
+- **Shortcuts**: all of them are in Help, in **1.4 Shortcuts**, for example **Ctrl/Cmd + U** to underline in a note.
 - **Graph colours**: if they are missing, add them with **Ctrl/Cmd + P** and **Texere: Colours in the graph for the discipline map**.
 - **Citations**, in short:
 

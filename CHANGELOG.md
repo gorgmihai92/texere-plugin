@@ -5,6 +5,12 @@ Version numbers: a big new feature raises the middle number (0.4 → 0.5), a cha
 ## 0.5.6 (18 November 2026)
 
 - **Underline instead of highlight**: a button right after the colours in the PDF's toolbar, or **Alt+U** (command *Underline instead of highlight (on/off)*). While it is on, the colour dots turn into lines and every highlight is written into the PDF as an `Underline` annotation instead of a `Highlight` (Texere changes the subtype PDF++ writes), with the same colour, tag and line in the note. The choice is kept (`hlStyle`). Reading, importing and deleting already handled underlines.
+- **The chosen note no longer opens when you highlight.** The passage is written into it in the background (into the editor if the note is open, otherwise into the file). Changing the target from the bottom bar only changes it, and **Import annotations into a note…** doesn't open the note either. Highlights left in the PDF (*Nowhere*, or Esc at the question) are remembered (`hlKept`) and never imported by themselves, only when you import them.
+- **Highlighting is quicker in a large vault.** The notes a PDF is attached to are worked out once and kept until a note, the bibliography or a file name changes; PDF++ asked for them several times per highlight, and each time Texere read every note's properties.
+- **Underline in a note: Ctrl/Cmd + U** (command *Underline*). It wraps the selection in `<u>…</u>`, the same as the U button of Editing Toolbar, and the second time takes it off; export already keeps it in Word and PDF. No menu entry, only the shortcut.
+- **Help lists all the shortcuts** (1.4 Shortcuts): the command palette, `@`, Alt+1…8, Alt+U, H, Ctrl/Cmd+U, Focus mode, the add-reference tabs, Ctrl/Cmd+Enter in Distil and Cuts, and Edit mode's keys.
+- **Edit mode in the README and Help**, with a short clip (`docs/clips/edit-mode.gif` / `.mp4`): versions of a sentence, Dim, Move to Cuts, the Texere checks and Done. In the README it is its own section (6), so Export is 7 and Insights 8.
+- **Edit mode fixes**: after *Move to Cuts*, the **Cuts** button closed the hidden panel instead of showing it, so it took two clicks; it now shows it. A sentence moved to Cuts no longer leaves a double space or a space at the start of the line.
 
 ## 0.5.5 (18 November 2026)
 

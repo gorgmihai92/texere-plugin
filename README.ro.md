@@ -123,7 +123,22 @@ Stilul citărilor se schimbă din bara de jos. Dai clic pe **APA** și alegi alt
 
 **Avantaje**: funcționează asemănător pluginului Zotero din Word, dar în același loc cu notițele și PDF-urile. Un clic pe o citare te duce la referință sau la pagina din PDF.
 
-## 6. Exportul
+## 6. Modul Editare
+
+Când ai o ciornă, modul Editare te ajută s-o lucrezi fără să pierzi nimic. Încerci variante ale unui cuvânt, ale unei propoziții sau ale unui paragraf direct în notă, iar nimic nu e definitiv până nu alegi tu.
+
+![Încerci o variantă a unei propoziții, estompezi un pasaj și muți unul în Tăieturi](docs/clips/edit-mode.gif)
+
+Cum funcționează:
+1. Îl pornești cu ✎ din partea de sus a notei sau cu clic dreapta pe notă, **Texere** și **Modul Editare**.
+2. Selectezi un cuvânt, o propoziție sau un paragraf și alegi **Variante**. Scrii o variantă, apeși **Enter** și dai clic pe oricare variantă ca s-o vezi în pagină. **Păstrează ce se vede** o păstrează pe cea aleasă, iar originalul rămâne în listă până atunci.
+3. **Estompează** face un pasaj mai șters, ca să citești pagina fără el, iar un clic îl aduce înapoi. **Mută în Tăieturi** îl scoate din text și îl păstrează în **Tăieturi**, de unde îl poți aduce înapoi oricând.
+4. Butonul **Texere** marchează propozițiile lungi, ezitările sau afirmațiile prea tari, după ghidurile de scris, fără AI.
+5. Apeși **Gata** când ai terminat.
+
+**De ce te ajută**: de obicei, a rescrie înseamnă a șterge, iar o propoziție bună se pierde pe drum. Aici originalul rămâne lângă fiecare variantă, restul paginii se estompează ca să vezi doar ce rescrii, iar ce tai se păstrează pentru nota asta.
+
+## 7. Exportul
 
 Orice notă se poate exporta în PDF, Word sau Markdown, cu citările și bibliografia în stilul ales.
 
@@ -138,7 +153,7 @@ Tot în fereastra exportului poți schimba stilul citărilor sau poți adăuga u
 
 ![Schimbi stilul citărilor și adaugi un cuprins la export](docs/clips/export-style.gif)
 
-## 7. Insights (BETA)
+## 8. Insights (BETA)
 
 Insights citește notele din seif și îți arată cum se leagă ideile tale. Analiza se face local, pe calculatorul tău, prin reguli de programare și fără modele de inteligență artificială.
 
@@ -163,8 +178,9 @@ Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 - **Configurarea**: alegi limba și apeși **Înainte** până la final. Texere pregătește folderele, bibliografia și stilurile de citare, harta filosofiei, șabloanele, ghidurile de scris și PDF++, pluginul pentru adnotări. O poți rula oricând din nou, din **Settings → Texere → General**.
 - **Cataloagele**: dacă un catalog îți spune că ai atins limita pe zi, adaugi o cheie gratuită în **Settings → Texere → Referințe → Cataloage**. Un PDF pe care îl ai deja devine referință cu **Ctrl/Cmd + P** și **Texere: Adaugă acest PDF ca referință**.
 - **Zotero**: o referință care e deja în seif primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser.
-- **Unde intră evidențierile**: prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Nota aleasă se deschide lângă PDF și primește fiecare pasaj. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
+- **Unde intră evidențierile**: prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Texere salvează fiecare pasaj în nota aceea în fundal, fără s-o deschidă, iar dacă nota e deschisă, vezi pasajul apărând în ea. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 - **Adnotările**: o evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe notă, **Texere** și **Importă adnotările din PDF**.
+- **Scurtăturile**: le găsești pe toate în Ajutor, la **1.4 Scurtături**, de exemplu **Ctrl/Cmd + U** ca să subliniezi într-o notă.
 - **Culorile din grafic**: dacă lipsesc, le adaugi cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
 - **Citările**, pe scurt:
 
