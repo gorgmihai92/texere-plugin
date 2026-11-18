@@ -472,6 +472,7 @@ class Highlights {
       this.S.host.register(() => { if (lib.autoPaste === wrapped) lib.autoPaste = orig; });
     }
     this.patchWriter(pp);
+    this.patchGeometry(pp);
     try { this.decorate(); } catch (e) {}   // PDF++ își poate redesena bara (ex. după o setare)
     this.patchCopyLink(pp);
   }
@@ -482,14 +483,18 @@ class Highlights {
     COLOURS.forEach(([tag, ro, en], i) => h.addCommand({
       id: `highlight-${tag}`, name: this.T(`Evidențiază: #${tag} (${ro})`, `Highlight: #${tag} (${en})`),
       hotkeys: [{ modifiers: ["Alt"], key: String(i + 1) }],
-      checkCallback: chk => { const v = this.app.workspace.activeLeaf?.view; if (v?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.colour(v, tag, ro, en); return true; },
+      checkCallback: chk => {
+        const v = this.app.workspace.activeLeaf?.view, t = v?.getViewType?.();
+        if (t === "markdown" && v.editor && v.getMode?.() === "source") { if (!chk) this.colourNote(v.editor, tag); return true; }   // în notă: aceeași culoare, pe textul selectat
+        if (t !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.colour(v, tag, ro, en); return true;
+      },
     }));
     h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
-      checkCallback: chk => { if (!this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.setStyle(!this.underline); return true; } });
+      checkCallback: chk => { if (!chk) this.setStyle(!this.underline); return true; } });
     // pe Mac, Option+U e o tastă „moartă” (pregătește „¨”) și Obsidian nu o recunoaște ca scurtătură: o prindem după cod, doar dacă Obsidian n-a folosit-o
     this.S.host.registerDomEvent(window, "keydown", e => {
       if (e.defaultPrevented || e.code !== "KeyU" || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-      if (this.app.workspace.activeLeaf?.view?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return;
+      if (!["pdf", "markdown"].includes(this.app.workspace.activeLeaf?.view?.getViewType?.())) return;
       e.preventDefault(); this.setStyle(!this.underline);
     }, true);
     // butonul de lângă culori, în bara fiecărui PDF
@@ -501,6 +506,29 @@ class Highlights {
   async setStyle(on) {
     this.S.conf().hlStyle = on ? "underline" : "highlight"; await this.S.save(); this.decorate();
     new Notice(on ? this.T("Subliniezi: culorile pun de acum o linie sub text.", "Underlining: the colours now draw a line under the text.") : this.T("Evidențiezi: culorile colorează din nou textul.", "Highlighting: the colours fill the text again."), 2500);
+  }
+  // culoarea unei etichete, din paleta PDF++ (aceeași ca în PDF și ca eticheta din notă)
+  hexOf(tag) {
+    const cols = this.app.plugins.plugins["pdf-plus"]?.settings?.colors || {}, k = Object.keys(cols).find(n => n.toLowerCase() === tag);
+    const h = k && /^#?[0-9a-f]{6}$/i.test(String(cols[k]).trim()) ? String(cols[k]).trim().replace(/^#?/, "#") : null;
+    return h || { fact: "#e056a0", claim: "#f5a800", disagree: "#e5534b", agree: "#26a69a", connection: "#2f80ed", question: "#8e5ce6", definition: "#f2994a", word: "#7d7d7d" }[tag];
+  }
+  // într-o notă: Alt+1…8 subliniază (sau evidențiază, după Alt+U) textul selectat în culoarea etichetei, cu HTML obișnuit:
+  // <u style="text-decoration-color:#…"> sau <mark style="background:#…">. Aceeași culoare din nou o scoate; alta o schimbă.
+  colourNote(ed, tag) {
+    const hex = this.hexOf(tag), kind = this.underline ? "u" : "mark";
+    if (!ed.somethingSelected()) { const w = ed.wordAt?.(ed.getCursor()); if (!w) return; ed.setSelection(w.from, w.to); }
+    const from = ed.posToOffset(ed.getCursor("from")), to = ed.posToOffset(ed.getCursor("to")), v = ed.getValue(), sel = v.slice(from, to);
+    const open = kind === "u" ? `<u style="text-decoration-color:${hex}">` : `<mark style="background:${hex}55">`, close = `</${kind}>`;
+    const OPEN = /<(u|mark) style="(?:text-decoration-color|background):\s*(#[0-9a-f]{6})[0-9a-f]{0,2}">$/i;
+    // deja marcat: tagul de deschidere chiar înainte de selecție (sau selecția îl cuprinde)
+    let a = from, b = to, inner = sel, m = OPEN.exec(v.slice(Math.max(0, from - 80), from));
+    if (m && v.startsWith(`</${m[1]}>`, to)) { a = from - m[0].length; b = to + m[1].length + 3; }
+    else { const w = /^<(u|mark) style="(?:text-decoration-color|background):\s*(#[0-9a-f]{6})[0-9a-f]{0,2}">([\s\S]*)<\/\1>$/i.exec(sel); if (w) { m = [null, w[1], w[2]]; inner = w[3]; } else m = null; }
+    const same = m && m[1].toLowerCase() === kind && m[2].toLowerCase() === hex.toLowerCase();
+    const out = !m ? open + sel + close : same ? inner : open + inner + close;
+    ed.replaceRange(out, ed.offsetToPos(a), ed.offsetToPos(m ? b : to));
+    const s0 = a + (same ? 0 : open.length); ed.setSelection(ed.offsetToPos(s0), ed.offsetToPos(s0 + inner.length));
   }
   decorate() {
     const T = (a, b) => this.T(a, b), on = this.underline;
@@ -570,8 +598,7 @@ class Highlights {
         if (name === "addTextMarkupAnnotation" && rest[2] === "Highlight" && H.underline) rest[2] = "Underline";
         // PDF++ face dreptunghiurile de la linia de bază a textului în sus; linia sublinierii (trasă de cititor la baza lor) ar tăia
         // literele cu coadă (p, g, ș): coborâm baza cât coada literelor, ca linia să treacă pe sub ele
-        if (name === "addTextMarkupAnnotation" && rest[2] === "Underline" && Array.isArray(rest[1]))
-          rest[1] = rest[1].map(r => { if (!Array.isArray(r) || r.length < 4) return r; const [x1, y1, x2, y2] = r, lo = Math.min(y1, y2), hi = Math.max(y1, y2); return [x1, lo - 0.24 * (hi - lo), x2, hi]; });
+        if (name === "addTextMarkupAnnotation" && rest[2] === "Underline" && Array.isArray(rest[1])) rest[1] = H.underRects(file, rest[0], rest[1]);
         try { return await orig.call(this, file, ...rest); }
         catch (e) {
           let why = null, open = false;
@@ -591,6 +618,44 @@ class Highlights {
       wrapped.__texere = true; io[name] = wrapped;
       this.S.host.register(() => { if (io[name] === wrapped) io[name] = orig; });
     }
+  }
+  // dreptunghiurile unei sublinieri: cele care încep de la linia de bază a rândului (estimate din stratul de text) coboară cât coada
+  // literelor; cele luate din literele desenate (care o cuprind deja) rămân cum sunt
+  underRects(file, pageNo, rects) {
+    let items = null;
+    this.app.workspace.iterateAllLeaves(l => { if (items || l.view?.file !== file) return; const pv = l.view?.viewer?.child?.pdfViewer?.pdfViewer?.getPageView?.(pageNo - 1); items = require("./pdfgeom").layerOf(pv)?.items || null; });
+    return rects.map(r => {
+      if (!Array.isArray(r) || r.length < 4) return r;
+      const [x1, y1, x2, y2] = r, lo = Math.min(y1, y2), hi = Math.max(y1, y2), h = hi - lo;
+      const base = items ? items.find(it => it.transform && Math.abs(it.transform[5] - lo) < 0.08 * h && it.transform[4] < x2 && it.transform[4] + (it.width || 0) > x1) : true;
+      return base ? [x1, lo - 0.24 * h, x2, hi] : r;
+    });
+  }
+  // PDF-urile cu ligaturi și cu stratul de text care „alunecă” (pdfgeom.js): evidențierea după literele desenate, nu după estimări
+  patchGeometry(pp) {
+    const g = pp?.lib?.highlight?.geometry, G = require("./pdfgeom");
+    this.geom = G;
+    if (g && typeof g.computeHighlightRectForItem === "function" && !g.computeHighlightRectForItem.__texere && typeof g.computeHighlightRectForItemFromChars === "function") {
+      const orig = g.computeHighlightRectForItem;
+      const wrapped = function (item, div, idx, bI, bO, eI, eO) {
+        if (item?.chars && item.chars.length < String(item.str || "").length) {   // ligaturi: PDF++ ar estima din stratul de text
+          try { const ch = G.alignChars(item); if (ch) return this.computeHighlightRectForItemFromChars({ ...item, chars: ch }, idx, bI, bO, eI, eO); } catch (e) {}
+        }
+        return orig.apply(this, arguments);
+      };
+      wrapped.__texere = true; g.computeHighlightRectForItem = wrapped;
+      this.S.host.register(() => { if (g.computeHighlightRectForItem === wrapped) g.computeHighlightRectForItem = orig; });
+    }
+    if (this._selFix) return; this._selFix = true;
+    // selecția cu mouse-ul: capetele pe literele pe care le vezi (doar pe paginile la care stratul de text alunecă)
+    let down = null;
+    const pageOf = t => { const el = t?.closest?.(".pdf-viewer .page[data-page-number]"); if (!el) return null;
+      let pv = null; this.app.workspace.iterateAllLeaves(l => { const v = l.view?.viewer?.child?.pdfViewer?.pdfViewer; if (!pv && v && l.view.containerEl.contains(el)) pv = v.getPageView?.(+el.dataset.pageNumber - 1); }); return pv; };
+    this.S.host.registerDomEvent(window, "pointerdown", e => { down = e.button === 0 && e.detail <= 1 && e.target?.closest?.(".textLayer") ? { x: e.clientX, y: e.clientY, t: e.target } : null; }, true);
+    this.S.host.registerDomEvent(window, "pointerup", e => {
+      const d = down; down = null; if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) < 4) return;
+      try { const pv = pageOf(d.t); if (pv && pageOf(e.target) === pv) G.fixSelection(pv, d, { x: e.clientX, y: e.clientY }); } catch (err) { console.warn("Texere: selecția din PDF", err); }
+    }, true);
   }
   // un mesaj pe care îl înțelegi, în locul celui din PDF++
   writeError(file, e, why) {

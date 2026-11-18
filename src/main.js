@@ -127,8 +127,9 @@ module.exports = class Texere extends Plugin {
     // sublinierea în notă: <u>…</u>, ca butonul U din Editing Toolbar (Obsidian nu are una); din nou, o scoate
     this.coreCommand({ id: "underline", name: this.T("Subliniază", "Underline"), icon: "underline", hotkeys: [{ modifiers: ["Mod"], key: "u" }], editorCallback: ed => {
       const a = ed.getCursor("from"), b = ed.getCursor("to"), sel = ed.getSelection(), A = ed.posToOffset(a), B = ed.posToOffset(b), v = ed.getValue();
-      if (/^<u>[\s\S]*<\/u>$/.test(sel)) return ed.replaceSelection(sel.slice(3, -4));
-      if (v.slice(A - 3, A) === "<u>" && v.slice(B, B + 4) === "</u>") { ed.replaceRange("", b, ed.offsetToPos(B + 4)); ed.replaceRange("", ed.offsetToPos(A - 3), a); ed.setSelection(ed.offsetToPos(A - 3), ed.offsetToPos(B - 3)); return; }
+      const w = /^<u(?: [^>]*)?>([\s\S]*)<\/u>$/.exec(sel); if (w) return ed.replaceSelection(w[1]);
+      const o = /<u(?: [^>]*)?>$/.exec(v.slice(Math.max(0, A - 80), A));   // și una colorată (Alt+1…8)
+      if (o && v.slice(B, B + 4) === "</u>") { const L = o[0].length; ed.replaceRange("", b, ed.offsetToPos(B + 4)); ed.replaceRange("", ed.offsetToPos(A - L), a); ed.setSelection(ed.offsetToPos(A - L), ed.offsetToPos(B - L)); return; }
       ed.replaceSelection(`<u>${sel}</u>`);
       ed.setSelection(ed.offsetToPos(A + 3), ed.offsetToPos(A + 3 + sel.length));   // rămâne selectat: încă o dată scoate sublinierea
     } });

@@ -51,10 +51,10 @@ Obsidian works with text files on your computer, with no account and no cloud. E
 | --- | --- |
 | **Ctrl/Cmd + P** | the list of all commands, Texere's included |
 | `@` in a note | your references and those from Zotero, to cite one |
-| **Alt + 1** … **Alt + 8** | in a PDF: highlights the selection in that colour, or picks the colour for the next highlight |
-| **Alt + U** | in a PDF: underline instead of highlight, and back |
+| **Alt + 1** … **Alt + 8** | in a PDF: highlights the selection in that colour, or picks the colour for the next highlight. In a note: underlines or highlights the selection in that colour, and the same key again takes it off |
+| **Alt + U** | in a PDF or a note: underline instead of highlight, and back |
 | **H** | in a PDF: the pointer, to select text without copying it into the note |
-| **Ctrl/Cmd + U** | in a note: underlines the selection, and the second time takes the underline off |
+| **Ctrl/Cmd + U** | in a note: a plain underline, and the second time takes the underline off |
 | **Ctrl/Cmd + Shift + D** | only your open notes stay in view, and the second time everything comes back |
 | **Ctrl/Cmd + 1** … **4** | in the window for adding a reference: Search, Zotero, Paste and Enter manually |
 | **Ctrl/Cmd + Enter** | in Distil, saves what you wrote, and in Cuts, puts the passage back in the note |
@@ -115,7 +115,7 @@ How it works:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Writing a sentence in your own words under a passage" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
-Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
+Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. In a note, the same keys underline or highlight the selected text in that colour. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
 
 The first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. Texere saves each passage in that note in the background, without opening it, and if the note is open, you see the passage appear. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 
@@ -265,6 +265,8 @@ Texere looks for new versions by itself. When there is one, the home page shows 
 **0.5.7** · 18 November 2026
 - **Alt + U works on a Mac too**, to switch between underlining and highlighting in a PDF.
 - **The underline sits under the text**, no longer through the letters with a tail.
+- **Harder PDFs are annotated exactly.** In printed books with joined letters, or where the hidden text doesn't sit on the letters you see, Texere recognises the page and puts the highlight or underline exactly on the words you selected.
+- **Colours in a note:** select text and press **Alt + 1…8** to underline it, or highlight it, in that tag's colour. Export keeps the colours.
 
 **0.5.6** · 18 November 2026
 - **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.
