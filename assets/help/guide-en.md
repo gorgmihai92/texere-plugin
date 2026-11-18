@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.6"
-date: "Version 0.5.6 · 18 November 2026"
+version: "0.5.7"
+date: "Version 0.5.7 · 18 November 2026"
 ---
 
 ## 1. Start
@@ -261,6 +261,10 @@ If the setup couldn't do a step, you do it yourself, by hand:
 ## 7. What's new
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.7** · 18 November 2026
+- **Alt + U works on a Mac too**, to switch between underlining and highlighting in a PDF.
+- **The underline sits under the text**, no longer through the letters with a tail.
 
 **0.5.6** · 18 November 2026
 - **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.

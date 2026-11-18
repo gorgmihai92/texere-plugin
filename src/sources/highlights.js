@@ -486,6 +486,12 @@ class Highlights {
     }));
     h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
       checkCallback: chk => { if (!this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.setStyle(!this.underline); return true; } });
+    // pe Mac, Option+U e o tastă „moartă” (pregătește „¨”) și Obsidian nu o recunoaște ca scurtătură: o prindem după cod, doar dacă Obsidian n-a folosit-o
+    this.S.host.registerDomEvent(window, "keydown", e => {
+      if (e.defaultPrevented || e.code !== "KeyU" || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (this.app.workspace.activeLeaf?.view?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return;
+      e.preventDefault(); this.setStyle(!this.underline);
+    }, true);
     // butonul de lângă culori, în bara fiecărui PDF
     if (this.app.workspace.on) this.S.host.registerEvent(this.app.workspace.on("layout-change", () => setTimeout(() => this.decorate(), 300)));   // și din patch(), la 5 s
     this.S.host.register(() => { for (const b of document.querySelectorAll(".tx-style")) b.remove(); for (const p of document.querySelectorAll(".tx-ul")) p.removeClass("tx-ul"); });
@@ -508,7 +514,8 @@ class Highlights {
       }
       if (b.dataset.on !== String(on)) {
         b.dataset.on = String(on); setIcon(b, on ? "underline" : "highlighter"); b.toggleClass("is-active", on);
-        b.setAttr("aria-label", on ? T("Subliniezi (Alt+U): clic ca să evidențiezi", "Underlining (Alt+U): click to highlight") : T("Evidențiezi (Alt+U): clic ca să subliniezi", "Highlighting (Alt+U): click to underline"));
+        const k = /Mac|iPhone|iPad/.test(navigator.platform || "") ? "⌥U" : "Alt+U";
+        b.setAttr("aria-label", on ? T(`Subliniezi (${k}): clic ca să evidențiezi`, `Underlining (${k}): click to highlight`) : T(`Evidențiezi (${k}): clic ca să subliniezi`, `Highlighting (${k}): click to underline`));
       }
     }
   }
@@ -561,6 +568,10 @@ class Highlights {
       const wrapped = async function (file, ...rest) {
         // modul „subliniază”: PDF++ scrie „Highlight”, Texere îl face „Underline” (page, rects, subtype, color)
         if (name === "addTextMarkupAnnotation" && rest[2] === "Highlight" && H.underline) rest[2] = "Underline";
+        // PDF++ face dreptunghiurile de la linia de bază a textului în sus; linia sublinierii (trasă de cititor la baza lor) ar tăia
+        // literele cu coadă (p, g, ș): coborâm baza cât coada literelor, ca linia să treacă pe sub ele
+        if (name === "addTextMarkupAnnotation" && rest[2] === "Underline" && Array.isArray(rest[1]))
+          rest[1] = rest[1].map(r => { if (!Array.isArray(r) || r.length < 4) return r; const [x1, y1, x2, y2] = r, lo = Math.min(y1, y2), hi = Math.max(y1, y2); return [x1, lo - 0.24 * (hi - lo), x2, hi]; });
         try { return await orig.call(this, file, ...rest); }
         catch (e) {
           let why = null, open = false;

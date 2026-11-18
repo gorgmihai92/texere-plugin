@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.7 (18 November 2026)
+
+- **Alt + U works on a Mac.** Option+U is a dead key on a Mac (it prepares „¨”), so Obsidian never matched it as a hotkey. Texere now also catches it by its physical key (`KeyU`) in a PDF, only when Obsidian didn't use it, so on Windows and Linux it still switches once. The button's tooltip shows ⌥U on a Mac.
+- **The underline sits under the text, not through it.** PDF++ builds the boxes from the text's baseline up, and viewers draw an underline at the bottom of the box, so it crossed the letters with a tail (p, g, ș). For an underline Texere now lowers the bottom of each box by the depth of those letters. Underlines made before stay as they are.
+
 ## 0.5.6 (18 November 2026)
 
 - **Underline instead of highlight**: a button right after the colours in the PDF's toolbar, or **Alt+U** (command *Underline instead of highlight (on/off)*). While it is on, the colour dots turn into lines and every highlight is written into the PDF as an `Underline` annotation instead of a `Highlight` (Texere changes the subtype PDF++ writes), with the same colour, tag and line in the note. The choice is kept (`hlStyle`). Reading, importing and deleting already handled underlines.
