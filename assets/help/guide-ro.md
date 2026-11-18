@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.4"
-date: "Versiunea 0.5.4 · 16 noiembrie 2026"
+version: "0.5.5"
+date: "Versiunea 0.5.5 · 16 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -96,6 +96,10 @@ Cum funcționează:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Scrii o propoziție cu cuvintele tale sub un pasaj" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
+Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere.
+
+Dacă nu vrei ca nota de lectură să se deschidă la fiecare evidențiere, debifează **Deschide nota când evidențiezi** în **Settings → Texere → Referințe → Note și citări**. Pasajul intră oricum în notă. Un PDF poate fi și în proprietățile altor note, cum ar fi o notă de seminar sau un eseu, iar evidențierile lui ajung tot în nota de lectură.
+
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă. O evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF**.
 
 ## 3. Scrisul
@@ -186,7 +190,7 @@ Cum funcționează:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/debate-map.mp4" title="Filtrezi harta dezbaterii și pornești o notă din pasaje" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
-- **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*.
+- **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*. Pentru un nume fără notă, **Unde apare** îți arată propozițiile în care apare, iar un nume apropiat de un autor pe care îl ai (*Granding* și *Temple Grandin*) e semnalat ca o posibilă greșeală de scriere.
 - **Panoul conceptului**: în nota unui concept apar definițiile lui din referințele tale, notele în care îl folosești și conceptele alături de care apare în aceleași paragrafe.
 - **Tipare**: vezi ce citești, dar nu folosești în scris, subiectele care revin des și conceptele care apar împreună fără să fie legate.
 
@@ -229,6 +233,12 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 ## 7. Ce e nou
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.5** · 18 noiembrie 2026
+- **Scurtături pentru culori:** de la Alt+1 la Alt+8, câte una pentru fiecare culoare a evidențierii.
+- **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar pasajele ajung în nota de lectură.
+- **Nota nu trebuie să se deschidă** la fiecare evidențiere, dacă debifezi asta în setări.
+- **Nume fără notă:** vezi unde apare fiecare nume, iar cuvintele de la început de propoziție nu mai sunt luate drept nume.
 
 **0.5.4** · 16 noiembrie 2026
 - **Ajutorul arată fiecare pas într-un clip scurt:** căutarea, importul din Zotero, sublinierea, citarea, schimbarea unei citări, exportul și Insights.

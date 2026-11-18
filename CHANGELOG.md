@@ -2,6 +2,13 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.5 (18 November 2026)
+
+- **A PDF in the properties of several notes works.** PDF++ stopped every highlight with "Multiple markdown files are associated with this PDF file… Aborting." when the PDF was in the `attachment` of two notes (a reading note and a seminar note, say). Texere now hands PDF++ one note for that copy: the reading note (the one that is a reference in the bibliography), else the open one, else the last one chosen. Highlights go into the reading note, and the other note is no longer offered annotations from that PDF.
+- **Shortcuts for the highlight colours**: eight commands, *Highlight: #fact (pink)* … *#word (grey)*, on **Alt+1** … **Alt+8** by default. With text selected in the PDF they highlight it in that colour, as a click on the colour does; without a selection they pick the colour for the next highlight.
+- **The reading note doesn't have to open**: Settings → Texere → References → Notes & citations → *Open the note when you highlight*. Unticked, the passage is written into the note without opening it.
+- **Names without a note** (Insights → Links and aliases): *Where it's used* shows each sentence where the name appears and marks the ones at the start of a sentence. A name one letter away from an author you have is marked "maybe Temple Grandin?". Words at the start of a sentence, a heading, a list item or after an opening quote no longer count as names, and a word you also write in lower case (autism, idea) is left out.
+
 ## 0.5.4 (16 November 2026)
 
 - **Help and README show each step as a short clip** instead of still pictures: searching and adding, importing from Zotero, highlighting, writing in your own words, citing (from the vault and from Zotero), changing a citation, switching the style, the export window, formats, the concept panel and the debate map. Help plays them as small videos (`docs/clips/*.mp4`), the README as GIFs (`docs/clips/*.gif`); both languages use the English recordings. The guide also says how to change a citation (**Edit the citation**) and that the export window can change the style and add a table of contents.

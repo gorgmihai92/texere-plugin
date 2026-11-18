@@ -77,6 +77,8 @@ How it works:
 
 ![Writing a sentence in your own words under a passage](docs/clips/own-words.gif)
 
+Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight.
+
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note.
 
 ## 4. The map of philosophy
@@ -149,7 +151,7 @@ How it works:
 
 ![Filtering the debate map and starting a note from the passages](docs/clips/debate-map.gif)
 Besides the debate map, Insights helps you in three more ways:
-- **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
+- **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*. For a name without a note, **Where it's used** shows the sentences where it appears, and a name close to an author you have (*Granding* and *Temple Grandin*) is marked as a possible misspelling.
 - **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
 - **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
@@ -161,6 +163,7 @@ Besides the debate map, Insights helps you in three more ways:
 - **The setup**: choose your language and click **Next** until the end. Texere prepares the folders, the bibliography and citation styles, the map of philosophy, the templates, the writing guides and PDF++, the plugin for annotations. You can run it again at any time from **Settings → Texere → General**.
 - **Catalogs**: if a catalog says you've reached its daily limit, add a free key in **Settings → Texere → References → Catalogs**. A PDF you already have becomes a reference with **Ctrl/Cmd + P** and **Texere: Add this PDF as a reference**.
 - **Zotero**: a reference already in your vault only gets what it is missing, so nothing is doubled, and Better BibTeX is not needed. With a Zotero key, added in **Settings → Texere → References → Zotero**, importing works with Zotero closed too. That is also where you turn on the Zotero browser button.
+- **The note when you highlight**: if you'd rather the reading note didn't open with each highlight, untick **Open the note when you highlight** in **Settings → Texere → References → Notes & citations**. The passage still goes into the note. A PDF can also be in the properties of other notes, such as a seminar note or an essay, and its highlights still go into its reading note.
 - **Annotations**: you delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the PDF, **Texere** and **Import annotations from PDF**.
 - **Graph colours**: if they are missing, add them with **Ctrl/Cmd + P** and **Texere: Colours in the graph for the discipline map**.
 - **Citations**, in short:

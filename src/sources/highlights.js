@@ -397,12 +397,16 @@ async function outlineOf(doc) {
   return out;
 }
 
+// culorile evidențierilor, în ordinea din bara PDF-ului (Alt+1 … Alt+8)
+const COLOURS = [["fact", "roz", "pink"], ["claim", "galben", "yellow"], ["disagree", "roșu", "red"], ["agree", "turcoaz", "teal"], ["connection", "albastru", "blue"], ["question", "mov", "purple"], ["definition", "portocaliu", "orange"], ["word", "gri", "grey"]];
+
 class Highlights {
   constructor(S) { this.S = S; this.app = S.app; this.remember = new Map(); this.q = new Map(); this.cache = new Map(); this.noHeal = new Set(); this.hidx = new Map(); }
   T(a, b) { return this.S.T(a, b); }
 
   start() {
     this.patch();
+    this.colourCommands();
     this.S.host.registerInterval(window.setInterval(() => this.patch(), 5000));   // PDF++ se poate încărca după Texere
     this.S.host.registerEvent(this.app.vault.on("rename", (f, old) => {
       const c = this.S.conf(); let ch = false;
@@ -464,6 +468,56 @@ class Highlights {
       this.S.host.register(() => { if (lib.autoPaste === wrapped) lib.autoPaste = orig; });
     }
     this.patchWriter(pp);
+    this.patchCopyLink(pp);
+  }
+  // o comandă (și o scurtătură, Alt+1…8) pentru fiecare culoare: în PDF, cu text selectat, îl evidențiază în culoarea aceea
+  // (ca un clic pe culoare în bara PDF-ului); fără selecție, alege culoarea pentru următoarea evidențiere
+  colourCommands() {
+    const h = this.S.host; if (!h?.addCommand) return;
+    COLOURS.forEach(([tag, ro, en], i) => h.addCommand({
+      id: `highlight-${tag}`, name: this.T(`Evidențiază: #${tag} (${ro})`, `Highlight: #${tag} (${en})`),
+      hotkeys: [{ modifiers: ["Alt"], key: String(i + 1) }],
+      checkCallback: chk => { const v = this.app.workspace.activeLeaf?.view; if (v?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.colour(v, tag, ro, en); return true; },
+    }));
+  }
+  colour(view, tag, ro, en) {
+    const pp = this.app.plugins.plugins["pdf-plus"], pal = pp?.lib?.getColorPaletteFromChild?.(view.viewer?.child); if (!pal) return;
+    const item = (pal.itemEls || []).find(e => e.dataset?.highlightColor === tag);
+    const sel = activeWindow.getSelection(), has = sel && !sel.isCollapsed && sel.toString().trim() && view.containerEl.contains(sel.anchorNode);
+    if (has && item && pal.onItemPointerUp) { pal.onItemPointerUp(item, tag, { preventDefault() {} }); return; }
+    pal.setActiveItem(tag); pp.trigger?.("color-palette-state-change", { source: pal });
+    new Notice(this.T(`Următoarea evidențiere: #${tag} (${ro})`, `Next highlight: #${tag} (${en})`), 1800);
+  }
+  // PDF++ refuză să copieze linkul evidențierii când PDF-ul e în attachment-ul a două note („Multiple markdown files are associated
+  // with this PDF file… Aborting.”), deci evidențierea nu ajunge nicăieri. Când se întâmplă, refacem copierea cu o singură notă:
+  // nota de lectură (owner), cea deschisă sau cea aleasă ultima dată; dacă nu se poate (Dataview), fără notă (doar fără properties.page).
+  patchCopyLink(pp) {
+    const cl = pp?.lib?.copyLink; if (!cl) return;
+    for (const name of ["getTextToCopy", "getDisplayText"]) {
+      const orig = cl[name]; if (typeof orig !== "function" || orig.__texere) continue;
+      const H = this;
+      const wrapped = function (...a) {
+        const pdf = a.find(x => x instanceof TFile && x.extension === "pdf");
+        if (pdf && H.notesFor(pdf).length > 1) return H.oneNote(pp, a, () => orig.apply(this, a));   // getDisplayText prinde singur eroarea
+        try { return orig.apply(this, a); }
+        catch (e) { if (!/Multiple markdown files are associated/i.test(e?.message || "")) throw e; return H.oneNote(pp, a, () => orig.apply(this, a)); }
+      };
+      wrapped.__texere = true; cl[name] = wrapped;
+      this.S.host.register(() => { if (cl[name] === wrapped) cl[name] = orig; });
+    }
+  }
+  oneNote(pp, args, run) {
+    const pdf = args.find(x => x instanceof TFile && x.extension === "pdf") || this.app.workspace.getActiveFile();
+    const notes = pdf ? this.notesFor(pdf) : [], note = pdf && (this.owner(pdf, notes) || this.visibleOf(notes) || this.rememberedFor(pdf, notes) || notes[0]);
+    const mc = this.app.metadataCache, bl = mc.getBacklinksForFile, prop = pp.settings.proxyMDProperty;
+    if (note) mc.getBacklinksForFile = function (f) { if (f !== pdf) return bl.call(this, f); const r = bl.call(this, f); return { ...r, keys: () => [note.path], get: k => (k === note.path ? r.get?.(k) : undefined) }; };
+    try { return run(); }
+    catch (e) {
+      if (!/Multiple markdown files are associated/i.test(e?.message || "")) throw e;
+      pp.settings.proxyMDProperty = "texere-no-note";   // Dataview: PDF++ caută prin el, nu prin backlinks
+      try { return run(); } finally { pp.settings.proxyMDProperty = prop; }
+    }
+    finally { mc.getBacklinksForFile = bl; }
   }
   // scrierea evidențierii în PDF: dacă PDF++ nu reușește („An error occurred while attempting to add an annotation”), Texere spune de ce.
   // Un PDF încuiat fără parolă e descuiat pe loc și evidențierea se scrie din nou, fără nicio eroare.
@@ -514,7 +568,7 @@ class Highlights {
     const notes = this.notesFor(pdf);
     let note = null;
     if (notes.length === 1) note = notes[0];
-    else if (notes.length > 1) note = this.visibleOf(notes) || this.rememberedFor(pdf, notes) || await this.pick(pdf, notes);
+    else if (notes.length > 1) note = this.owner(pdf, notes) || this.visibleOf(notes) || this.rememberedFor(pdf, notes) || await this.pick(pdf, notes);
     else {
       // PDF fără sursă: rândul se păstrează și intră în notă când îl adaugi ca sursă (oricând: colțul din dreapta-jos sau clic dreapta)
       this.keep(pdf, text);
@@ -547,6 +601,13 @@ class Highlights {
     }
     return [...out];
   }
+  // nota de lectură a unui PDF: singura notă care îl are în attachment sau, dacă îl mai au și alte note (o notă de seminar, un eseu),
+  // singura dintre ele care e referință în bibliografie. null: nu se poate spune (ex. două referințe, capitole ale aceleiași cărți)
+  owner(pdf, notes = this.notesFor(pdf)) {
+    if (notes.length === 1) return notes[0];
+    const refs = new Set(this.S.lib.all().map(e => e.obsidianPath).filter(Boolean)), own = notes.filter(n => refs.has(n.path));
+    return own.length === 1 ? own[0] : null;
+  }
   // PDF-urile unei note (din attachment)
   pdfsOf(note) {
     const mc = this.app.metadataCache, fm = mc.getFileCache(note)?.frontmatter, arr = v => Array.isArray(v) ? v : v ? [v] : [];
@@ -554,8 +615,8 @@ class Highlights {
   }
   // perechile { pdf, note } pentru fișierul deschis: o notă cu PDF-uri sau un PDF cu o singură notă
   pairsFor(f) {
-    if (f.extension === "md") return this.pdfsOf(f).map(pdf => ({ pdf, note: f }));
-    if (f.extension === "pdf") { const n = this.notesFor(f); return n.length === 1 ? [{ pdf: f, note: n[0] }] : []; }
+    if (f.extension === "md") return this.pdfsOf(f).filter(pdf => this.owner(pdf) === f).map(pdf => ({ pdf, note: f }));
+    if (f.extension === "pdf") { const n = this.owner(f); return n ? [{ pdf: f, note: n }] : []; }
     return [];
   }
   visible(leaf) {
@@ -698,7 +759,8 @@ class Highlights {
       const ed0 = this.editorOf(note), cur = ed0 ? ed0.getValue() : await this.app.vault.read(note);
       if (this.idsIn(cur, pdf, note.path).has(id)) return false;
     }
-    const leaf = await this.showNote(note, pdf);
+    // Settings → Texere → Referințe → „Deschide nota când evidențiezi”: fără bifă, nota nu se deschide (doar se scrie, sau se vede unde e deja)
+    const leaf = this.S.conf().hlOpenNote === false ? this.app.workspace.getLeavesOfType("markdown").find(l => l.view?.file === note) || null : await this.showNote(note, pdf);
     const ed = this.editorOf(note, leaf) || this.editorOf(note);
     const src = ed ? ed.getValue() : await this.app.vault.read(note);
     const L = src.split("\n"), at = await this.placeIn(L, pdf, text, note.path);
@@ -714,7 +776,7 @@ class Highlights {
     } else {
       await this.app.vault.process(note, t => { const X = t.split("\n"); const pos = Math.min(at, X.length); first = pos; X.splice(pos, 0, ...add); return X.join("\n"); });
     }
-    this.reveal(leaf, note, first, add.length, ed ? "editor" : "file");
+    if (leaf) this.reveal(leaf, note, first, add.length, ed ? "editor" : "file");
     return true;
   }
   // nota se derulează la rândul nou, oricum ar fi deschisă (Editare, Live Preview sau Citire) și chiar dacă abia s-a deschis
@@ -1190,7 +1252,7 @@ class Highlights {
     for (const note of this.app.vault.getMarkdownFiles()) {
       for (const pdf of this.pdfsOf(note)) {
         if (seen.has(pdf.path) || this.scanned(pdf)) continue; seen.add(pdf.path);
-        if (this.notesFor(pdf).length === 1) pairs.push({ pdf, note });
+        if (this.owner(pdf) === note) pairs.push({ pdf, note });
       }
     }
     // întâi culorile → etichetele din toate notele (o culoare veche dintr-un PDF se recunoaște din altul)

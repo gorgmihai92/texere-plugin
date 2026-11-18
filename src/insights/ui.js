@@ -500,10 +500,29 @@ class ReviewModal extends Modal {
   updateFoot() { if (!this.linkBtn) return; const n = this.P.visibleUnlinked().filter(u => this.sel.has(u.note + "\u0000" + u.target)).length; this.linkBtn.setText(this.P.T(`Leagă ${n} selectate`, `Link ${n} selected`)); this.linkBtn.disabled = !n; }
   drawNames(body, foot) {
     const P = this.P, T = (a, b) => P.T(a, b), names = P.names || [];
-    foot.createDiv({ cls: "txi-muted", text: T("Nume cu literă mare care apar de cel puțin 3 ori, în cel puțin 2 note, și n-au notă.", "Capitalized names that appear at least 3 times, in at least 2 notes, and have no note.") });
+    foot.createDiv({ cls: "txi-muted", text: T("Nume cu literă mare care apar de cel puțin 3 ori, în cel puțin 2 note, și n-au notă. Cuvintele pe care le scrii des și cu literă mică nu apar aici. „Unde apare” îți arată propozițiile, ca să vezi dacă e un nume.", "Capitalized names that appear at least 3 times, in at least 2 notes, and have no note. Words you also write often in lower case don't show here. “Where it's used” shows the sentences, so you can tell whether it's a name.") });
     if (!names.length) { body.createDiv({ cls: "txi-empty", text: T("Niciun nume fără notă.", "No names without a note.") }); return; }
     for (const n of names) {
-      const r = body.createDiv("txi-row"); r.createSpan({ cls: "txi-name", text: n.name }); r.createSpan({ cls: "txi-meta", text: T(`${n.count}× · ${n.notes.length} note`, `${n.count}× · ${n.notes.length} notes`) });
+      const r = body.createDiv("txi-row"), nm = r.createSpan({ cls: "txi-name", text: n.name });
+      if (n.like) { const w = nm.createSpan({ cls: "txi-why txi-like", text: T(`poate „${n.like}”?`, `maybe “${n.like}”?`) }); w.title = T(`Seamănă cu ${n.like}, un autor din seiful tău: poate e o greșeală de scriere.`, `Close to ${n.like}, an author in your vault: it may be a misspelling.`); }
+      r.createSpan({ cls: "txi-meta", text: T(`${n.count}× · ${n.notes.length} note`, `${n.count}× · ${n.notes.length} notes`) });
+      // unde apare: propozițiile din notele tale, ca să vezi dacă e un nume, un cuvânt de la început de propoziție sau o greșeală
+      const where = body.createDiv({ cls: "txi-where" }); where.hide();
+      const wb = r.createEl("button", { text: T("Unde apare", "Where it's used") });
+      wb.addEventListener("click", async () => {
+        if (where.isShown()) { where.hide(); return; }
+        where.empty(); where.show(); where.createDiv({ cls: "txi-muted", text: T("Caut…", "Looking…") });
+        const hits = await P.whereName(n.name, [...new Set(Object.entries(n.by || {}).sort((a, b) => b[1] - a[1]).map(e => e[0]).concat(n.notes))]);
+        where.empty();
+        if (!hits.length) { where.createDiv({ cls: "txi-muted", text: T("Nu l-am mai găsit (notele s-au schimbat).", "Not found anymore (the notes changed).") }); return; }
+        for (const h of hits) {
+          const row = where.createDiv("txi-hit click"); row.title = T("Deschide nota la locul acesta", "Open the note at this place");
+          row.createDiv({ cls: "txi-src", text: P.nameOf ? P.nameOf(h.path) : h.path.split("/").pop().replace(/\.md$/, "") });
+          const cx = row.createDiv("txi-ctx"); cx.appendText(h.b); cx.createEl("mark", { text: h.hit }); cx.appendText(h.a);
+          if (h.start) row.createSpan({ cls: "txi-why", text: T("început de propoziție", "start of a sentence") });
+          row.addEventListener("click", () => P.openAt?.(h.path, h.line));
+        }
+      });
       r.createEl("button", { text: T("Creează nota", "Create note") }).addEventListener("click", () => new CreateNoteModal(P, n.name, async () => { await P.scan(false, true); this.draw(); }).open());
       r.createEl("button", { text: T("Ignoră", "Ignore") }).addEventListener("click", async () => { P.settings.ignoredNames = [...new Set([...(P.settings.ignoredNames || []), n.name])]; await P.saveSettings(); P.names = names.filter(x => x !== n); this.draw(); });
     }

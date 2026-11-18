@@ -6,6 +6,26 @@ const X = require("./text");
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const MONTHS = new Set("january february march april may june july august september october november december ianuarie februarie martie aprilie mai iunie iulie august septembrie octombrie noiembrie decembrie monday tuesday wednesday thursday friday saturday sunday luni marti miercuri joi vineri sambata duminica".split(" "));
+// e începutul unei propoziții (sau al unui titlu, al unui rând de listă, după ghilimele/paranteză deschisă)?
+function isStart(text, a) {
+  if (a === 0) return true;
+  const before = text.slice(Math.max(0, a - 16), a);
+  return /(^|[.!?:…]["”»’)\]*_]*\s+["“„«'‘(\[*_]*|\n\s*(?:[-*+>]+|#{1,6}|\d+[.)])?\s*["“„«'‘(\[*_]*)$/.test(before) || /^\s*(?:[-*+>]+\s*|#{1,6}\s+|\d+[.)]\s+)*["“„«'‘(\[*_]*$/.test(text.slice(text.lastIndexOf("\n", a - 1) + 1, a));
+}
+// distanța de editare (Levenshtein), cu oprire timpurie
+function lev(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) { const cur = [i]; let low = i; for (let j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); low = Math.min(low, cur[j]); } if (low > max) return max + 1; prev = cur; }
+  return prev[b.length];
+}
+// un autor cunoscut cu un nume foarte apropiat (o literă în plus, în minus sau schimbată): „Granding” → „Temple Grandin”
+function nearName(name, people) {
+  const toks = name.split(/\s+/), fam = X.fold(toks[toks.length - 1]); if (fam.length < 5 || people.has(fam)) return null;
+  const max = fam.length >= 8 ? 2 : 1;
+  for (const [k, full] of people) if (k[0] === fam[0] && lev(fam, k, max) <= max) return full;
+  return null;
+}
 const NOT_NAMES = new Set("texere obsidian zotero chapter capitolul introducere introduction conclusion concluzie figure figura tabel table note nota pdf the this that these those there what when where which while however therefore also according conform potrivit astfel deci asadar insa totusi daca cand unde care acest aceasta aceste acesta prin pentru dupa intre despre".split(" "));
 const CLAIM_RX = /\b(therefore|thus|hence|consequently|shows? that|argues?|claims?|according to|evidence|studies|research|suggests? that|demonstrates?|proves?|it follows|deci|așadar|asadar|prin urmare|rezultă|rezulta|arată că|arata ca|susține|sustine|afirmă|afirma|potrivit lui|conform lui|după cum arată|studiile|cercetările|demonstrează|demonstreaza|dovedește|dovedeste)\b|\d+\s?%/i;
 
@@ -62,7 +82,7 @@ const LinksMixin = {
     if (this._scanning) return this._scanning;
     this._scanning = (async () => {
       const t0 = Date.now(), idx = this.termIndex(), C = this.scanCache || (this.scanCache = { at: 0, sig: "", notes: {} });
-      const sig = idx.sig + "|" + JSON.stringify([this.excludedFolders(), this.conceptFolders(), this.hlTags(), 4]);
+      const sig = idx.sig + "|" + JSON.stringify([this.excludedFolders(), this.conceptFolders(), this.hlTags(), 5]);
       if (C.sig !== sig) { full = true; C.sig = sig; }
       const files = this.app.vault.getMarkdownFiles().filter(f => !this.scanExcluded(f.path)), seen = new Set();
       let n = 0;
@@ -77,6 +97,7 @@ const LinksMixin = {
       C.at = Date.now(); C.ms = Date.now() - t0; C.read = n;
       // „linkurile existente” se schimbă și fără să se schimbe nota (ai creat nota-țintă): le verificăm la fiecare trecere
       this.computeLinks(); this.computeNames(); this.computeAliases(); this.computeDuplicates();
+      try { await this.refineNames(); } catch (e) { console.warn("Texere · Insights: numele fără notă", e); }
       await this.saveScanCache(); this.changed();
       if (!quiet) new Notice(this.T(`Texere · Insights: ${this.unlinked.length} menționări fără link în ${new Set(this.unlinked.map(u => u.note)).size} note.`, `Texere · Insights: ${this.unlinked.length} unlinked mentions in ${new Set(this.unlinked.map(u => u.note)).size} notes.`), 5000);
       return this.unlinked.length;
@@ -135,7 +156,7 @@ const LinksMixin = {
     const out = {}; const re = /(?<![\p{L}\p{N}])(\p{Lu}[\p{Ll}’'\-]{2,}(?:\s+(?:de|von|van|du|la|der|al|ibn)?\s*\p{Lu}[\p{Ll}’'\-]{2,}){0,2})(?![\p{L}\p{N}])/gu; let m;
     while ((m = re.exec(text))) {
       const a = m.index, b = a + m[0].length; if (X.inRanges(skip, a, b)) continue;
-      const before = text.slice(Math.max(0, a - 3), a), start = a === 0 || /(^|[.!?:…]\s*|\n\s*[-*>\d.]*\s*)$/.test(before) || /\n\s*$/.test(text.slice(Math.max(0, a - 12), a));
+      const start = isStart(text, a);
       // la început de propoziție orice cuvânt are literă mare: „Pentru Heidegger” → „Heidegger”; un singur cuvânt acolo nu contează
       const ws = m[1].trim().split(/\s+/); if (start) ws.shift();
       while (ws.length && (NOT_NAMES.has(X.fold(ws[0])) || X.STOP.has(X.fold(ws[0])) || MONTHS.has(X.fold(ws[0])) || !/^\p{Lu}/u.test(ws[0]))) ws.shift();
@@ -201,7 +222,7 @@ const LinksMixin = {
   // ——— nume care apar des în textul tău, dar n-au notă ———
   computeNames() {
     const acc = {}, idx = this.termIndex();
-    for (const [path, e] of Object.entries(this.scanCache.notes)) for (const [name, n] of Object.entries(e.names || {})) { const a = acc[name] = acc[name] || { name, count: 0, notes: [] }; a.count += n; a.notes.push(path); }
+    for (const [path, e] of Object.entries(this.scanCache.notes)) for (const [name, n] of Object.entries(e.names || {})) { const a = acc[name] = acc[name] || { name, count: 0, notes: [], by: {} }; a.count += n; a.notes.push(path); a.by[path] = n; }
     const ign = new Set((this.settings.ignoredNames || []).map(X.fold)), out = [];
     for (const a of Object.values(acc)) {
       if (a.count < 3 || a.notes.length < 2 || ign.has(X.fold(a.name))) continue;
@@ -211,8 +232,53 @@ const LinksMixin = {
     }
     // „René Descartes” și „Descartes”: îl păstrăm pe cel mai lung, cu numerele adunate
     out.sort((a, b) => b.name.length - a.name.length);
-    const kept = []; for (const a of out) { const sub = kept.find(k => (" " + k.name + " ").includes(" " + a.name + " ")); if (sub) { sub.count += a.count; sub.notes = [...new Set([...sub.notes, ...a.notes])]; } else kept.push({ ...a }); }
-    this.names = kept.sort((a, b) => b.count - a.count).slice(0, 60);
+    const kept = []; for (const a of out) { const sub = kept.find(k => (" " + k.name + " ").includes(" " + a.name + " ")); if (sub) { sub.count += a.count; sub.notes = [...new Set([...sub.notes, ...a.notes])]; for (const [p, n] of Object.entries(a.by)) sub.by[p] = (sub.by[p] || 0) + n; } else kept.push({ ...a, by: { ...a.by } }); }
+    this._namesAll = kept.sort((a, b) => b.count - a.count);
+    this.names = this._namesAll.filter(a => !(this._commonWords || new Set()).has(X.fold(a.name))).slice(0, 60);
+  },
+  // un nume dintr-un singur cuvânt pe care îl scrii des și cu literă mică („autism”, „idea”, „hale”) e un cuvânt obișnuit,
+  // scris cu majusculă doar la început de propoziție sau în titluri: îl scoatem. Și: un nume foarte apropiat de un autor
+  // cunoscut („Granding” / Temple Grandin) primește semnul „poate e …”.
+  async refineNames() {
+    const all = this._namesAll || []; if (!all.length) { this.names = []; return; }
+    const single = new Map(); for (const a of all) if (!/\s/.test(a.name)) single.set(a.name.toLowerCase(), 0);
+    if (single.size) {
+      const re = new RegExp(`(?<![\\p{L}])(${[...single.keys()].map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![\\p{L}])`, "gu");
+      for (const [path, e] of Object.entries(this.scanCache.notes)) {
+        if (e.kind === "lit") continue;
+        const f = this.app.vault.getAbstractFileByPath(path); if (!(f instanceof TFile)) continue;
+        let txt; try { txt = await this.app.vault.cachedRead(f); } catch (err) { continue; }
+        let m; re.lastIndex = 0; while ((m = re.exec(txt))) single.set(m[1], single.get(m[1]) + 1);
+      }
+    }
+    const common = new Set();
+    for (const a of all) { const lw = single.get(a.name.toLowerCase()); if (lw !== undefined && lw >= 2 && lw * 2 >= a.count) common.add(X.fold(a.name)); a.lower = lw || 0; }
+    this._commonWords = common;
+    const people = this.knownPeople();
+    for (const a of all) a.like = common.has(X.fold(a.name)) ? null : nearName(a.name, people);
+    this.names = all.filter(a => !common.has(X.fold(a.name))).slice(0, 60);
+  },
+  // autorii pe care îi știe seiful: notele din Authors/Autori și autorii referințelor; cheia: numele de familie, fără diacritice
+  knownPeople() {
+    if (this._kp && Date.now() - this._kpAt < 600000) return this._kp;
+    const out = new Map(), add = full => { full = String(full || "").replace(/^\[\[|\]\]$/g, "").trim(); if (!full) return; const fam = full.includes(",") ? full.split(",")[0].trim() : full.split(/\s+/).pop(); const k = X.fold(fam); if (k.length > 2 && !out.has(k)) out.set(k, full.includes(",") ? full.split(",").slice(1).join(" ").trim() + " " + fam : full); };
+    for (const f of this.app.vault.getMarkdownFiles()) {
+      if (/(^|\/)(Authors?|Autori)\//i.test(f.path)) add(f.basename);
+      else if (this.isLit(f.path)) { const fm = this.app.metadataCache.getFileCache(f)?.frontmatter || {}; for (const a of [].concat(fm.author ?? fm.authors ?? [])) add(typeof a === "string" ? a : [a?.given, a?.family].filter(Boolean).join(" ")); }
+    }
+    this._kp = out; this._kpAt = Date.now(); return out;
+  },
+  // unde apare un nume: notele și propozițiile (pentru „Unde apare”, în „Nume fără notă”)
+  async whereName(name, paths, max = 12) {
+    const out = [], re = new RegExp(`(?<![\\p{L}\\p{N}])${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+")}(?![\\p{L}\\p{N}])`, "gu");
+    for (const path of paths) {
+      const f = this.app.vault.getAbstractFileByPath(path); if (!(f instanceof TFile)) continue;
+      let txt; try { txt = await this.app.vault.cachedRead(f); } catch (e) { continue; }
+      let m, k = 0; re.lastIndex = 0;
+      while ((m = re.exec(txt)) && k < 2) { const c = X.context(txt, m.index, m.index + m[0].length); out.push({ path, line: txt.slice(0, m.index).split("\n").length - 1, b: c.before, hit: m[0], a: c.after, start: isStart(txt, m.index) }); k++; }
+      if (out.length >= max) break;
+    }
+    return out;
   },
   async createNote(name, folder, template) {
     const dir = String(folder || "").replace(/\/+$/, ""), path = (dir ? dir + "/" : "") + name.replace(/[\\/:*?"<>|#^[\]]/g, " ").trim() + ".md";
@@ -376,4 +442,4 @@ const LinksMixin = {
   },
 };
 
-module.exports = { LinksMixin, lev1, spellingVariant, CLAIM_RX };
+module.exports = { LinksMixin, lev1, spellingVariant, CLAIM_RX, isStart, nearName };

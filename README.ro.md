@@ -77,6 +77,8 @@ Cum funcționează:
 
 ![Scrii o propoziție cu cuvintele tale sub un pasaj](docs/clips/own-words.gif)
 
+Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere.
+
 Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă.
 
 ## 4. Harta filosofiei
@@ -149,7 +151,7 @@ Cum funcționează:
 
 ![Filtrezi harta dezbaterii și pornești o notă din pasaje](docs/clips/debate-map.gif)
 Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
-- **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*.
+- **Linkuri lipsă**: găsește conceptele și autorii pe care i-ai menționat fără link, numele care nu au încă o notă și posibilele dubluri. **Revizuiește** le grupează, iar **Leagă selectate** pune linkurile fără să-ți schimbe textul, astfel încât *„acțiunii”* devine un link spre conceptul *Action*. Pentru un nume fără notă, **Unde apare** îți arată propozițiile în care apare, iar un nume apropiat de un autor pe care îl ai (*Granding* și *Temple Grandin*) e semnalat ca o posibilă greșeală de scriere.
 - **Panoul conceptului**: în nota unui concept apar definițiile lui din referințele tale, notele în care îl folosești și conceptele alături de care apare în aceleași paragrafe.
 - **Tipare**: vezi ce citești, dar nu folosești în scris, subiectele care revin des și conceptele care apar împreună fără să fie legate.
 
@@ -161,6 +163,7 @@ Pe lângă harta dezbaterii, Insights te mai ajută în trei feluri:
 - **Configurarea**: alegi limba și apeși **Înainte** până la final. Texere pregătește folderele, bibliografia și stilurile de citare, harta filosofiei, șabloanele, ghidurile de scris și PDF++, pluginul pentru adnotări. O poți rula oricând din nou, din **Settings → Texere → General**.
 - **Cataloagele**: dacă un catalog îți spune că ai atins limita pe zi, adaugi o cheie gratuită în **Settings → Texere → Referințe → Cataloage**. Un PDF pe care îl ai deja devine referință cu **Ctrl/Cmd + P** și **Texere: Adaugă acest PDF ca referință**.
 - **Zotero**: o referință care e deja în seif primește doar ce îi lipsește, așa că nimic nu se dublează, iar Better BibTeX nu este necesar. Cu o cheie Zotero, adăugată în **Settings → Texere → Referințe → Zotero**, importul merge și cu Zotero închis. Tot acolo pornești butonul Zotero din browser.
+- **Nota când evidențiezi**: dacă nu vrei ca nota de lectură să se deschidă la fiecare evidențiere, debifează **Deschide nota când evidențiezi** în **Settings → Texere → Referințe → Note și citări**. Pasajul intră oricum în notă. Un PDF poate fi și în proprietățile altor note, cum ar fi o notă de seminar sau un eseu, iar evidențierile lui ajung tot în nota de lectură.
 - **Adnotările**: o evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF**.
 - **Culorile din grafic**: dacă lipsesc, le adaugi cu **Ctrl/Cmd + P** și **Texere: Culori în grafic pentru harta disciplinei**.
 - **Citările**, pe scurt:

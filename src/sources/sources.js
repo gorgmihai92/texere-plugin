@@ -2541,6 +2541,8 @@ class SourcesSettingTab extends PluginSettingTab {
       .addToggle(t => t.setValue(conf.citeColor !== false).onChange(async v => { conf.citeColor = v; document.body.toggleClass("tx-cite-plain", !v); await S.save(); }));
     new Setting(el).setName(T("Descarcă PDF-ul gratuit", "Download the free PDF")).setDesc(T("Când adaugi o referință, dacă există o copie gratuită.", "When you add a reference, if there's a free copy."))
       .addToggle(t => t.setValue(conf.pdf).onChange(async v => { conf.pdf = v; await S.save(); }));
+    new Setting(el).setName(T("Deschide nota când evidențiezi", "Open the note when you highlight")).setDesc(T("Nota de lectură se deschide lângă PDF la fiecare evidențiere. Fără bifă, pasajul intră în notă fără s-o deschidă (dacă e deja deschisă, îl vezi acolo).", "The reading note opens beside the PDF with each highlight. Unticked, the passage goes into the note without opening it (if it's already open, you see it there)."))
+      .addToggle(t => t.setValue(conf.hlOpenNote !== false).onChange(async v => { conf.hlOpenNote = v; await S.save(); }));
     new Setting(el).setName(T("Eticheta notei", "Note tag")).setDesc(T("Se pune pe fiecare notă de lectură.", "Added to every reading note."))
       .addText(t => t.setValue((S.T_.tags(tpl.tag) || []).join(", ")).setPlaceholder("literature_note").onChange(async v => { tpl.tag = v; await save(); }));
     this.namesRows(el, S, T, tpl, save);

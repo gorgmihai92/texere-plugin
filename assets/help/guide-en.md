@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.4"
-date: "Version 0.5.4 · 16 November 2026"
+version: "0.5.5"
+date: "Version 0.5.5 · 16 November 2026"
 ---
 
 ## 1. Start
@@ -96,6 +96,10 @@ How it works:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Writing a sentence in your own words under a passage" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
+Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight.
+
+If you'd rather the reading note didn't open with each highlight, untick **Open the note when you highlight** in **Settings → Texere → References → Notes & citations**. The passage still goes into the note. A PDF can also be in the properties of other notes, such as a seminar note or an essay, and its highlights still go into its reading note.
+
 If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the PDF, **Texere** and **Import annotations from PDF**.
 
 ## 3. Writing
@@ -186,7 +190,7 @@ How it works:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/debate-map.mp4" title="Filtering the debate map and starting a note from the passages" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 Besides the debate map, Insights helps you in three more ways:
-- **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*.
+- **Missing links**: it finds the concepts and authors you mentioned without a link, the names that don't have a note yet and possible duplicates. **Review** groups them, and **Link selected** adds the links without changing your text, so that *“actions”* becomes a link to the concept *Action*. For a name without a note, **Where it's used** shows the sentences where it appears, and a name close to an author you have (*Granding* and *Temple Grandin*) is marked as a possible misspelling.
 - **Concept panel**: in a concept's note you see its definitions from your references, the notes where you use it and the concepts it appears with in the same paragraphs.
 - **Patterns**: you see what you read but don't use in your writing, the topics that keep coming back and the concepts that appear together without being linked.
 
@@ -229,6 +233,12 @@ If the setup couldn't do a step, you do it yourself, by hand:
 ## 7. What's new
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.5** · 18 November 2026
+- **Shortcuts for the colours:** Alt+1 to Alt+8, one for each highlight colour.
+- **A PDF linked from several notes** no longer stops highlighting, and the passages go into the reading note.
+- **The note doesn't have to open** with each highlight, if you untick it in the settings.
+- **Names without a note:** see where each name is used, and words at the start of a sentence are no longer taken for names.
 
 **0.5.4** · 16 November 2026
 - **Help shows each step as a short clip:** searching, importing from Zotero, highlighting, citing, changing a citation, exporting and Insights.
