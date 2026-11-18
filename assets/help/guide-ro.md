@@ -96,7 +96,7 @@ Cum funcționează:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Scrii o propoziție cu cuvintele tale sub un pasaj" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
-Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere.
+Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere. Dacă preferi să subliniezi în loc să evidențiezi, apasă butonul cu marker de imediat după culori sau **Alt+U**. Culorile trag atunci o linie sub text, cu aceleași etichete, iar același buton te întoarce la evidențiere.
 
 Prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Nota aleasă se deschide lângă PDF și primește fiecare pasaj. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 
@@ -236,6 +236,7 @@ Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o ar
 
 **0.5.5** · 18 noiembrie 2026
 - **Scurtături pentru culori:** de la Alt+1 la Alt+8, câte una pentru fiecare culoare a evidențierii.
+- **Sublinierea în loc de evidențiere:** un buton după culori sau Alt+U, cu aceleași culori și etichete.
 - **Alegi unde intră evidențierile:** la prima evidențiere dintr-un PDF, într-una dintre notele la care e atașat sau nicăieri. Nota aleasă se deschide lângă PDF, iar alegerea o schimbi din bara de jos a PDF-ului.
 - **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar evidențierile lăsate în PDF le poți adăuga mai târziu în oricare dintre notele lui.
 - **Nume fără notă:** vezi unde apare fiecare nume, iar cuvintele de la început de propoziție nu mai sunt luate drept nume.

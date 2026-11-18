@@ -96,7 +96,7 @@ How it works:
 
 <video src="https://raw.githubusercontent.com/gorgmihai92/texere-plugin/main/docs/clips/own-words.mp4" title="Writing a sentence in your own words under a passage" autoplay muted loop playsinline style="width:100%;border-radius:8px"></video>
 
-Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight.
+Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight. If you'd rather underline than highlight, click the highlighter button right after the colours, or press **Alt+U**. The colours then draw a line under the text, with the same tags, and the same button takes you back to highlighting.
 
 The first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. The note you chose opens beside the PDF and gets each passage. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 
@@ -236,6 +236,7 @@ Texere looks for new versions by itself. When there is one, the home page shows 
 
 **0.5.5** · 18 November 2026
 - **Shortcuts for the colours:** Alt+1 to Alt+8, one for each highlight colour.
+- **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.
 - **You choose where highlights go:** at the first highlight in a PDF, into one of the notes it is attached to or nowhere. The chosen note opens beside the PDF, and you change the choice from the PDF's bottom bar.
 - **A PDF linked from several notes** no longer stops highlighting, and highlights left in the PDF can be added later to any of its notes.
 - **Names without a note:** see where each name is used, and words at the start of a sentence are no longer taken for names.

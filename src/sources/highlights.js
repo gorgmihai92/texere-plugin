@@ -13,7 +13,7 @@
 //  • oricând: „Importă evidențierile din PDF” (comenzi, clic dreapta pe notă sau pe PDF).
 // Dacă nota trimite la o evidențiere care a dispărut din pagină, dar mai există în fișier, o pune înapoi.
 const obsidian = require("obsidian");
-const { Notice, Modal, SuggestModal, TFile, MarkdownView, loadPdfJs } = obsidian;
+const { Notice, Modal, SuggestModal, TFile, MarkdownView, loadPdfJs, setIcon } = obsidian;
 
 // ——— șabloanele PDF++ ({{…}}), fără să rulăm cod ———
 // Texere face rândul unei evidențieri cu șablonul tău din PDF++, ca să arate la fel ca rândurile lipite de PDF++.
@@ -483,6 +483,35 @@ class Highlights {
       hotkeys: [{ modifiers: ["Alt"], key: String(i + 1) }],
       checkCallback: chk => { const v = this.app.workspace.activeLeaf?.view; if (v?.getViewType?.() !== "pdf" || !this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.colour(v, tag, ro, en); return true; },
     }));
+    h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
+      checkCallback: chk => { if (!this.app.plugins.plugins["pdf-plus"]) return false; if (!chk) this.setStyle(!this.underline); return true; } });
+    // butonul de lângă culori, în bara fiecărui PDF
+    const deco = () => { try { this.decorate(); } catch (e) {} };
+    if (this.app.workspace.on) for (const ev of ["layout-change", "file-open", "active-leaf-change"]) this.S.host.registerEvent(this.app.workspace.on(ev, () => setTimeout(deco, 300)));
+    this.S.host.registerInterval(window.setInterval(deco, 3000));   // PDF++ își redesenează bara (ex. după o setare)
+    this.S.host.register(() => { for (const b of document.querySelectorAll(".tx-style")) b.remove(); for (const p of document.querySelectorAll(".tx-ul")) p.removeClass("tx-ul"); });
+  }
+  // sublinierea: aceleași culori și etichete, doar că pasajul e subliniat în PDF, nu evidențiat (Settings: hlStyle = "underline")
+  get underline() { return this.S.conf().hlStyle === "underline"; }
+  async setStyle(on) {
+    this.S.conf().hlStyle = on ? "underline" : "highlight"; await this.S.save(); this.decorate();
+    new Notice(on ? this.T("Subliniezi: culorile pun de acum o linie sub text.", "Underlining: the colours now draw a line under the text.") : this.T("Evidențiezi: culorile colorează din nou textul.", "Highlighting: the colours fill the text again."), 2500);
+  }
+  decorate() {
+    const T = (a, b) => this.T(a, b), on = this.underline;
+    for (const pal of document.querySelectorAll(".pdf-plus-color-palette")) {
+      pal.toggleClass("tx-ul", on);
+      let b = pal.querySelector(":scope > .tx-style");
+      if (!b) {
+        const items = pal.querySelectorAll(":scope > .pdf-plus-color-palette-item"); if (!items.length) continue;
+        b = createDiv({ cls: "clickable-icon tx-style" }); items[items.length - 1].after(b);
+        b.addEventListener("click", e => { e.preventDefault(); this.setStyle(!this.underline); });
+      }
+      if (b.dataset.on !== String(on)) {
+        b.dataset.on = String(on); setIcon(b, on ? "underline" : "highlighter"); b.toggleClass("is-active", on);
+        b.setAttr("aria-label", on ? T("Subliniezi (Alt+U): clic ca să evidențiezi", "Underlining (Alt+U): click to highlight") : T("Evidențiezi (Alt+U): clic ca să subliniezi", "Highlighting (Alt+U): click to underline"));
+      }
+    }
   }
   colour(view, tag, ro, en) {
     const pp = this.app.plugins.plugins["pdf-plus"], pal = pp?.lib?.getColorPaletteFromChild?.(view.viewer?.child); if (!pal) return;
@@ -531,6 +560,8 @@ class Highlights {
       const orig = io[name]; if (typeof orig !== "function" || orig.__texere) continue;
       const H = this;
       const wrapped = async function (file, ...rest) {
+        // modul „subliniază”: PDF++ scrie „Highlight”, Texere îl face „Underline” (page, rects, subtype, color)
+        if (name === "addTextMarkupAnnotation" && rest[2] === "Highlight" && H.underline) rest[2] = "Underline";
         try { return await orig.call(this, file, ...rest); }
         catch (e) {
           let why = null, open = false;

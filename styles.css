@@ -1313,3 +1313,6 @@ body.tx-pdf-hand .pdf-plus-color-palette-item{opacity:.4}
 body.tx-pdf-hand .pdf-plus-color-palette-item.is-active{background-color:transparent;box-shadow:none}
 /* Zotero: două butoane, „Importă referințele” și „Importă referințele și PDF-urile” */
 .texere-src .ts-zgos{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+/* Texere: sublinierea în loc de evidențiere. Culorile din bara PDF-ului devin linii, ca să se vadă ce fac */
+.pdf-plus-color-palette.tx-ul .pdf-plus-color-palette-item-inner{height:4px;border-radius:2px;transform:translateY(7px)}
+.pdf-plus-color-palette .tx-style{margin-left:2px}
