@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.5"
-date: "Version 0.5.5 · 18 November 2026"
+version: "0.5.6"
+date: "Version 0.5.6 · 18 November 2026"
 ---
 
 ## 1. Start
@@ -234,9 +234,11 @@ If the setup couldn't do a step, you do it yourself, by hand:
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
+**0.5.6** · 18 November 2026
+- **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.
+
 **0.5.5** · 18 November 2026
 - **Shortcuts for the colours:** Alt+1 to Alt+8, one for each highlight colour.
-- **Underline instead of highlight:** a button after the colours, or Alt+U, with the same colours and tags.
 - **You choose where highlights go:** at the first highlight in a PDF, into one of the notes it is attached to or nowhere. The chosen note opens beside the PDF, and you change the choice from the PDF's bottom bar.
 - **A PDF linked from several notes** no longer stops highlighting, and highlights left in the PDF can be added later to any of its notes.
 - **Names without a note:** see where each name is used, and words at the start of a sentence are no longer taken for names.

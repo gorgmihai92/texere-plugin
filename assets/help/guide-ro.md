@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.5"
-date: "Versiunea 0.5.5 · 18 noiembrie 2026"
+version: "0.5.6"
+date: "Versiunea 0.5.6 · 18 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -234,9 +234,11 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
+**0.5.6** · 18 noiembrie 2026
+- **Sublinierea în loc de evidențiere:** un buton după culori sau Alt+U, cu aceleași culori și etichete.
+
 **0.5.5** · 18 noiembrie 2026
 - **Scurtături pentru culori:** de la Alt+1 la Alt+8, câte una pentru fiecare culoare a evidențierii.
-- **Sublinierea în loc de evidențiere:** un buton după culori sau Alt+U, cu aceleași culori și etichete.
 - **Alegi unde intră evidențierile:** la prima evidențiere dintr-un PDF, într-una dintre notele la care e atașat sau nicăieri. Nota aleasă se deschide lângă PDF, iar alegerea o schimbi din bara de jos a PDF-ului.
 - **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar evidențierile lăsate în PDF le poți adăuga mai târziu în oricare dintre notele lui.
 - **Nume fără notă:** vezi unde apare fiecare nume, iar cuvintele de la început de propoziție nu mai sunt luate drept nume.
