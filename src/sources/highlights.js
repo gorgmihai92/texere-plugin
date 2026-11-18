@@ -471,6 +471,7 @@ class Highlights {
       wrapped.__texere = true; wrapped.__orig = orig; lib.autoPaste = wrapped;
       this.S.host.register(() => { if (lib.autoPaste === wrapped) lib.autoPaste = orig; });
     }
+    this.patchSpeed(pp);
     this.patchWriter(pp);
     this.patchGeometry(pp);
     try { this.decorate(); } catch (e) {}   // PDF++ își poate redesena bara (ex. după o setare)
@@ -491,11 +492,19 @@ class Highlights {
     }));
     h.addCommand({ id: "highlight-underline", name: this.T("Subliniază în loc să evidențiezi (pornit/oprit)", "Underline instead of highlight (on/off)"), hotkeys: [{ modifiers: ["Alt"], key: "U" }],
       checkCallback: chk => { if (!chk) this.setStyle(!this.underline); return true; } });
-    // pe Mac, Option+U e o tastă „moartă” (pregătește „¨”) și Obsidian nu o recunoaște ca scurtătură: o prindem după cod, doar dacă Obsidian n-a folosit-o
+    // pe Mac, Option+o tastă scrie un semn („¡”, „™”) sau e o tastă „moartă” (Option+U pregătește „¨”), iar pe unele tastaturi
+    // (de ex. română) Obsidian nu le recunoaște ca scurtături. Le prindem după tasta apăsată (KeyU, Digit1…8), doar dacă Obsidian
+    // n-a folosit-o și doar cât comanda are încă scurtătura Alt+… (dacă ai schimbat-o în Settings → Hotkeys, rămâne a ta)
+    const KEYS = { KeyU: ["highlight-underline", "U"] }; COLOURS.forEach(([tag], i) => { KEYS["Digit" + (i + 1)] = [`highlight-${tag}`, String(i + 1)]; });
+    const hasAlt = (id, key) => { const hm = this.app.hotkeyManager, full = `${this.S.host.core?.manifest?.id || "texere"}:${id}`, hk = hm?.getHotkeys?.(full) || hm?.getDefaultHotkeys?.(full) || [];
+      return !hm || hk.some(h => h.modifiers?.length === 1 && h.modifiers[0] === "Alt" && String(h.key).toUpperCase() === key); };
     this.S.host.registerDomEvent(window, "keydown", e => {
-      if (e.defaultPrevented || e.code !== "KeyU" || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-      if (!["pdf", "markdown"].includes(this.app.workspace.activeLeaf?.view?.getViewType?.())) return;
-      e.preventDefault(); this.setStyle(!this.underline);
+      const k = KEYS[e.code]; if (!k || e.defaultPrevented || !e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (!["pdf", "markdown"].includes(this.app.workspace.activeLeaf?.view?.getViewType?.()) || !hasAlt(k[0], k[1])) return;
+      const cmd = this.app.commands?.commands?.[`${this.S.host.core?.manifest?.id || "texere"}:${k[0]}`];
+      if (cmd?.checkCallback && !cmd.checkCallback(true)) return;
+      e.preventDefault(); e.stopPropagation();
+      if (cmd?.checkCallback) cmd.checkCallback(false); else if (k[0] === "highlight-underline") this.setStyle(!this.underline);
     }, true);
     // butonul de lângă culori, în bara fiecărui PDF
     if (this.app.workspace.on) this.S.host.registerEvent(this.app.workspace.on("layout-change", () => setTimeout(() => this.decorate(), 300)));   // și din patch(), la 5 s
@@ -630,6 +639,21 @@ class Highlights {
       const base = items ? items.find(it => it.transform && Math.abs(it.transform[5] - lo) < 0.08 * h && it.transform[4] < x2 && it.transform[4] + (it.width || 0) > x1) : true;
       return base ? [x1, lo - 0.24 * h, x2, hi] : r;
     });
+  }
+  // scrierea și ștergerea unei adnotări: PDF++ citește și rescrie tot PDF-ul cu pdf-lib, care se oprește din 100 în 100 de obiecte
+  // (la citire) și din 50 în 50 (la scriere) ca să nu blocheze fereastra. La o carte de 8 MB (Blackburn) asta înseamnă ~1 s;
+  // fără opriri, ~0,3 s. Același document, aceleași opțiuni în rest; dacă nu se poate (ex. PDF criptat), face PDF++ ca de obicei.
+  patchSpeed(pp) {
+    const io = pp?.lib?.highlight?.writeFile?.getPdfIo?.(); if (!io || typeof io.process !== "function" || io.process.__texere) return;
+    const H = this, origP = io.process, origR = io.read;
+    const load = async file => { const D = await H.S.zotero?.pdfLibClass?.(io); if (!D?.load) return null; try { return await D.load(await H.app.vault.readBinary(file), { parseSpeed: Infinity }); } catch (e) { return null; } };
+    const process = async function (file, fn) {
+      const doc = await load(file); if (!doc) return origP.call(this, file, fn);
+      const r = await fn(doc); await H.app.vault.modifyBinary(file, await doc.save({ objectsPerTick: Infinity })); return r;
+    };
+    const read = async function (file, fn) { const doc = await load(file); return doc ? fn(doc) : origR.call(this, file, fn); };
+    process.__texere = true; io.process = process; if (typeof origR === "function") io.read = read;
+    this.S.host.register(() => { if (io.process === process) io.process = origP; if (io.read === read) io.read = origR; });
   }
   // PDF-urile cu ligaturi și cu stratul de text care „alunecă” (pdfgeom.js): evidențierea după literele desenate, nu după estimări
   patchGeometry(pp) {

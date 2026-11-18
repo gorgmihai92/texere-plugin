@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.8 (18 November 2026)
+
+- **Alt + 1…8 and Alt + U on any keyboard.** On a Mac, Option + a key types a character or is a dead key, and with some layouts Obsidian never matched it as a hotkey. Texere now also catches Alt + Digit1…8 and Alt + U by the physical key, in a PDF or a note, only when Obsidian didn't use the key and only while the command still has its Alt hotkey (a hotkey you changed in Settings → Hotkeys stays yours).
+- **Writing and deleting an annotation is about twice as fast** in large PDFs. PDF++ reads and rewrites the whole file with pdf-lib, which pauses every 100 objects when reading and every 50 when saving; for an 8 MB book that was about 1 s per highlight or deletion. Texere gives PDF++ the same document read and saved without pauses (about 0.5 s with the file write and the viewer reload). An encrypted PDF still goes the usual way.
+
 ## 0.5.7 (18 November 2026)
 
 - **Alt + U works on a Mac.** Option+U is a dead key on a Mac (it prepares „¨”), so Obsidian never matched it as a hotkey. Texere now also catches it by its physical key (`KeyU`) in a PDF, only when Obsidian didn't use it, so on Windows and Linux it still switches once. The button's tooltip shows ⌥U on a Mac.

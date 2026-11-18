@@ -3,8 +3,8 @@ title: Texere
 subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
-version: "0.5.7"
-date: "Versiunea 0.5.7 · 18 noiembrie 2026"
+version: "0.5.8"
+date: "Versiunea 0.5.8 · 18 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -261,6 +261,10 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 ## 7. Ce e nou
 
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.8** · 18 noiembrie 2026
+- **Alt + 1…8 merg într-o notă pe orice tastatură**, și pe Mac, unde Option + o cifră scrie un semn.
+- **Evidențierea și ștergerea unei evidențieri merg de două ori mai repede** în PDF-urile mari.
 
 **0.5.7** · 18 noiembrie 2026
 - **Alt + U merge și pe Mac**, ca să treci între subliniere și evidențiere într-un PDF.
