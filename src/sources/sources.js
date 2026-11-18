@@ -1164,6 +1164,18 @@ class Sources {
       if (DOC_EXT.test(f.extension)) {
         const e = this.lib.all().find(x => arr(x.attachment).some(a => typeof a === "string" && a.includes(f.name)));
         const note = e?.obsidianPath ? this.app.vault.getAbstractFileByPath(e.obsidianPath) : null;
+        // un PDF atașat la note: în ce notă intră adnotările noi (sau nicăieri) și importul celor de până acum într-una dintre ele
+        const H = this.highlights, notes = f.extension === "pdf" && H?.notesFor ? H.notesFor(f) : [];
+        if (notes.length) {
+          const t = H.target(f, notes), short = s => s.length > 28 ? s.slice(0, 27) + "…" : s;
+          const text = t ? T("Adnotări → ", "Annotations → ") + short(t.basename) : t === null ? T("Adnotări: doar în PDF", "Annotations: PDF only") : T("Vezi nota", "View note");
+          const items = notes.map(n => [notes.length === 1 ? T("Vezi nota", "View note") + (n === note && e?.id ? ` · @${e.id}` : "") : T("Vezi „", "View “") + n.basename + T("”", "”"), "file-text", ev => open(n, ev)]);
+          items.push(null, [T("Adnotările noi intră în:", "New annotations go into:"), "highlighter", null, { label: true }]);
+          for (const n of notes) items.push([n.basename, "file-text", () => H.applyTarget(f, n), { checked: t === n }]);
+          items.push([T("Nicăieri (rămân doar în PDF)", "Nowhere (they stay in the PDF only)"), "file-x", () => H.applyTarget(f, "none"), { checked: t === null }]);
+          items.push(null, [T("Importă adnotările într-o notă…", "Import annotations into a note…"), "file-plus", () => H.addTo(f)]);
+          return { text, items };
+        }
         return note ? { text: T("Vezi nota", "View note"), items: [[T("Vezi nota", "View note") + ` · @${e.id}`, "file-text", ev => open(note, ev)]] }
           : { text: T("Adaugă ca referință", "Add as reference"), items: [[T("Adaugă acest PDF ca referință", "Add this PDF as a reference"), "library", () => this.catalog(f)]] };
       }
@@ -1171,7 +1183,9 @@ class Sources {
       const fm = mc.getFileCache(f)?.frontmatter; if (!fm?.id) return null;
       const files = arr(fm.attachment).map(x => /\[\[([^\]|#]+)/.exec(String(x))?.[1]).filter(Boolean).map(l => mc.getFirstLinkpathDest(l, f.path)).filter(p => p && DOC_EXT.test(p.extension));
       const kind = p => p.extension === "pdf" ? "PDF" : p.extension.toUpperCase();
-      return { items: files.map(p => [files.length === 1 ? T(`Vezi ${kind(p)}-ul`, `View ${kind(p)}`) : p.name, "paperclip", ev => open(p, ev)]) };
+      const items = files.map(p => [files.length === 1 ? T(`Vezi ${kind(p)}-ul`, `View ${kind(p)}`) : p.name, "paperclip", ev => open(p, ev)]);
+      if (this.highlights?.importManual && files.some(p => p.extension === "pdf")) items.push(null, [T("Importă adnotările din PDF", "Import annotations from PDF"), "highlighter", () => this.highlights.importManual(f)]);
+      return { items };
     };
     const st = status(this.host.core);
     // în bara de jos, doar ce ține de nota (sau PDF-ul) deschis: „Vezi PDF-ul” / „Vezi nota”. „Adaugă o sursă” și „PDF-uri fără sursă”
@@ -1179,9 +1193,14 @@ class Sources {
     st.set("sources", { order: 20,
       show: () => { const w = what(); return !!(w && (w.text || w.items?.length)); },
       text: () => what()?.text,
-      menu: m => { for (const [title, icon, fn] of what()?.items || []) m.addItem(i => i.setTitle(title).setIcon(icon).onClick(ev => fn(ev))); } });
+      menu: m => { for (const it of what()?.items || []) {
+        if (!it) { m.addSeparator(); continue; }
+        const [title, icon, fn, o = {}] = it;
+        m.addItem(i => { i.setTitle(title).setIcon(icon); if (o.checked !== undefined) i.setChecked?.(o.checked); if (o.label) i.setDisabled?.(true); else i.onClick(ev => fn(ev)); });
+      } } });
     h.register(() => st.remove("sources"));
     const upd = () => st.refresh();
+    this._statusUpd = upd;   // Highlights.setTarget: textul din bară se schimbă pe loc
     for (const ev of ["file-open", "active-leaf-change"]) if (this.app.workspace.on) h.registerEvent(this.app.workspace.on(ev, upd));
     if (mc.on) h.registerEvent(mc.on("changed", f => { if (f === this.app.workspace.getActiveFile?.()) upd(); }));
     h.registerEvent(this.app.vault.on("rename", () => setTimeout(upd, 300)));
@@ -2541,8 +2560,6 @@ class SourcesSettingTab extends PluginSettingTab {
       .addToggle(t => t.setValue(conf.citeColor !== false).onChange(async v => { conf.citeColor = v; document.body.toggleClass("tx-cite-plain", !v); await S.save(); }));
     new Setting(el).setName(T("Descarcă PDF-ul gratuit", "Download the free PDF")).setDesc(T("Când adaugi o referință, dacă există o copie gratuită.", "When you add a reference, if there's a free copy."))
       .addToggle(t => t.setValue(conf.pdf).onChange(async v => { conf.pdf = v; await S.save(); }));
-    new Setting(el).setName(T("Deschide nota când evidențiezi", "Open the note when you highlight")).setDesc(T("Nota de lectură se deschide lângă PDF la fiecare evidențiere. Fără bifă, pasajul intră în notă fără s-o deschidă (dacă e deja deschisă, îl vezi acolo).", "The reading note opens beside the PDF with each highlight. Unticked, the passage goes into the note without opening it (if it's already open, you see it there)."))
-      .addToggle(t => t.setValue(conf.hlOpenNote !== false).onChange(async v => { conf.hlOpenNote = v; await S.save(); }));
     new Setting(el).setName(T("Eticheta notei", "Note tag")).setDesc(T("Se pune pe fiecare notă de lectură.", "Added to every reading note."))
       .addText(t => t.setValue((S.T_.tags(tpl.tag) || []).join(", ")).setPlaceholder("literature_note").onChange(async v => { tpl.tag = v; await save(); }));
     this.namesRows(el, S, T, tpl, save);

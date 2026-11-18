@@ -4,7 +4,7 @@ subtitle: Cercetarea într-un singur loc
 author: George Mihai
 lang: ro
 version: "0.5.5"
-date: "Versiunea 0.5.5 · 16 noiembrie 2026"
+date: "Versiunea 0.5.5 · 18 noiembrie 2026"
 ---
 
 ## 1. Început
@@ -98,9 +98,9 @@ Cum funcționează:
 
 Fiecare culoare are și o scurtătură, de la **Alt+1** la **Alt+8** (**Option** pe Mac), în ordinea din tabel. Cu text selectat, îl evidențiază în culoarea aceea, iar fără selecție alege culoarea pentru următoarea evidențiere.
 
-Dacă nu vrei ca nota de lectură să se deschidă la fiecare evidențiere, debifează **Deschide nota când evidențiezi** în **Settings → Texere → Referințe → Note și citări**. Pasajul intră oricum în notă. Un PDF poate fi și în proprietățile altor note, cum ar fi o notă de seminar sau un eseu, iar evidențierile lui ajung tot în nota de lectură.
+Prima dată când evidențiezi într-un PDF, Texere te întreabă în ce notă intră pasajele: nota de lectură sau altă notă la care e atașat PDF-ul, cum ar fi o notă de seminar sau un eseu. Poți alege și **Nicăieri**, iar atunci evidențierile rămân doar în PDF. Nota aleasă se deschide lângă PDF și primește fiecare pasaj. Alegerea o schimbi din bara de jos a PDF-ului, unde **Adnotări →** arată nota de acum, sau cu clic dreapta pe PDF, **Texere** și **Unde intră adnotările noi…**. Evidențierile lăsate în PDF le adaugi mai târziu în oricare dintre notele lui, din aceeași bară, cu **Importă adnotările într-o notă…**, sau din notă, cu clic dreapta, **Texere** și **Importă adnotările din PDF**.
 
-Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă. O evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF**.
+Dacă vrei doar să citești, **pointerul** din bara PDF-ului (sau tasta **H**) îți permite să selectezi textul ca să urmărești rândul, fără ca acesta să fie copiat în notă. O evidențiere o ștergi fie din notă, fie din PDF, iar ea dispare din ambele locuri. Adnotările făcute în altă aplicație, cum ar fi Zotero, Preview sau Acrobat, intră și ele în notă, iar pe cele făcute mai târziu le aduci cu clic dreapta pe notă, **Texere** și **Importă adnotările din PDF**.
 
 ## 3. Scrisul
 
@@ -215,7 +215,7 @@ Deschide un tab nou sau **Settings → Texere**. Amândouă îți arată ce lips
 | un mesaj despre Better BibTeX | vine de la alt plugin, de exemplu Zotero Integration. Texere nu are nevoie de el, iar **Cum rezolv** din mesaj îți arată pașii |
 | evidențierea nu intră în notă | pointerul e pornit: apasă **H** sau alege o culoare |
 | „PDF++: An error occurred while attempting to add an annotation” | PDF-ul e încuiat de editor. Texere îl descuie singur când îl deschizi, iar dacă are parolă, îți spune ce să faci |
-| lipsesc adnotări în notă | clic dreapta pe PDF, **Texere** și **Importă adnotările din PDF** |
+| lipsesc adnotări în notă | clic dreapta pe notă, **Texere** și **Importă adnotările din PDF** |
 | „limită atinsă” la căutare | adaugă o cheie gratuită în **Settings → Texere → Referințe → Cataloage** |
 | nu găsești fișierul exportat | verifică folderul exportului în **Settings → Texere → General → Foldere** |
 
@@ -236,8 +236,8 @@ Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o ar
 
 **0.5.5** · 18 noiembrie 2026
 - **Scurtături pentru culori:** de la Alt+1 la Alt+8, câte una pentru fiecare culoare a evidențierii.
-- **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar pasajele ajung în nota de lectură.
-- **Nota nu trebuie să se deschidă** la fiecare evidențiere, dacă debifezi asta în setări.
+- **Alegi unde intră evidențierile:** la prima evidențiere dintr-un PDF, într-una dintre notele la care e atașat sau nicăieri. Nota aleasă se deschide lângă PDF, iar alegerea o schimbi din bara de jos a PDF-ului.
+- **Un PDF legat din mai multe note** nu mai oprește evidențierea, iar evidențierile lăsate în PDF le poți adăuga mai târziu în oricare dintre notele lui.
 - **Nume fără notă:** vezi unde apare fiecare nume, iar cuvintele de la început de propoziție nu mai sunt luate drept nume.
 
 **0.5.4** · 16 noiembrie 2026

@@ -398,10 +398,12 @@ async function outlineOf(doc) {
 }
 
 // culorile evidențierilor, în ordinea din bara PDF-ului (Alt+1 … Alt+8)
+// „nicăieri”: adnotările dintr-un PDF rămân doar în el (Settings: hlTarget[pdf] = calea notei sau NONE)
+const NONE = "none";
 const COLOURS = [["fact", "roz", "pink"], ["claim", "galben", "yellow"], ["disagree", "roșu", "red"], ["agree", "turcoaz", "teal"], ["connection", "albastru", "blue"], ["question", "mov", "purple"], ["definition", "portocaliu", "orange"], ["word", "gri", "grey"]];
 
 class Highlights {
-  constructor(S) { this.S = S; this.app = S.app; this.remember = new Map(); this.q = new Map(); this.cache = new Map(); this.noHeal = new Set(); this.hidx = new Map(); }
+  constructor(S) { this.S = S; this.app = S.app; this.asking = new Map(); this.q = new Map(); this.cache = new Map(); this.noHeal = new Set(); this.hidx = new Map(); }
   T(a, b) { return this.S.T(a, b); }
 
   start() {
@@ -410,13 +412,10 @@ class Highlights {
     this.S.host.registerInterval(window.setInterval(() => this.patch(), 5000));   // PDF++ se poate încărca după Texere
     this.S.host.registerEvent(this.app.vault.on("rename", (f, old) => {
       const c = this.S.conf(); let ch = false;
-      for (const k of ["hlPending", "hlSnooze", "hlScan", "hlGone"]) if (c[k]?.[old] !== undefined) { c[k][f.path] = c[k][old]; delete c[k][old]; ch = true; }
+      for (const k of ["hlPending", "hlSnooze", "hlScan", "hlGone", "hlTarget"]) if (c[k]?.[old] !== undefined) { c[k][f.path] = c[k][old]; delete c[k][old]; ch = true; }
+      for (const [p, n] of Object.entries(c.hlTarget || {})) if (n === old) { c.hlTarget[p] = f.path; ch = true; }   // nota aleasă pentru un PDF și-a schimbat numele
       if (this.cache.has(old)) { this.cache.set(f.path, this.cache.get(old)); this.cache.delete(old); }
       if (ch) this.S.save();
-    }));
-    // alegerea notei (când PDF-ul are mai multe) se uită când închizi PDF-ul
-    if (this.app.workspace.on) this.S.host.registerEvent(this.app.workspace.on("layout-change", () => {
-      for (const p of [...this.remember.keys()]) if (!this.app.workspace.getLeavesOfType("pdf").some(l => l.view?.file?.path === p)) this.remember.delete(p);
     }));
     // importul din PDF: comanda, meniul notei/PDF-ului, la deschidere și o dată la pornire
     // nu e în paleta de comenzi (se face singur când deschizi nota sau PDF-ul); la cerere, din meniul notei sau al PDF-ului (clic dreapta)
@@ -450,9 +449,14 @@ class Highlights {
     else if (r === "password") new Notice(this.T(`„${f.basename}” e protejat cu parolă, așa că evidențierile nu se pot scrie în el. Deschide-l cu parola într-un alt program și salvează-l fără parolă.`, `“${f.basename}” is password-protected, so highlights can't be written into it. Open it with its password in another app and save it without one.`), 12000);
   }
   // în meniul „Texere” al notei sau al PDF-ului (Sources → menuItems)
+  // nota: aduce adnotările din PDF-urile ei; PDF-ul: unde intră adnotările noi și importul celor de până acum într-una dintre notele lui
   menuItems(f) {
-    if (!(f instanceof TFile) || !(f.extension === "md" || f.extension === "pdf") || !this.pairsFor(f).length) return [];
-    return [{ title: this.T("Importă adnotările din PDF", "Import annotations from PDF"), icon: "highlighter", onClick: () => this.importManual(f) }];
+    const T = (a, b) => this.T(a, b);
+    if (!(f instanceof TFile)) return [];
+    if (f.extension === "md") return this.pdfsOf(f).length ? [{ title: T("Importă adnotările din PDF", "Import annotations from PDF"), icon: "highlighter", onClick: () => this.importManual(f) }] : [];
+    if (f.extension !== "pdf" || !this.notesFor(f).length) return [];
+    return [{ title: T("Unde intră adnotările noi…", "Where new annotations go…"), icon: "highlighter", onClick: () => this.chooseFor(f) },
+      { title: T("Importă adnotările într-o notă…", "Import annotations into a note…"), icon: "file-plus", onClick: () => this.addTo(f) }];
   }
   // înlocuiește „auto-paste” din PDF++ cu rutarea noastră; dacă rândul nu e o evidențiere dintr-un PDF, PDF++ face ca de obicei
   patch() {
@@ -508,7 +512,7 @@ class Highlights {
   }
   oneNote(pp, args, run) {
     const pdf = args.find(x => x instanceof TFile && x.extension === "pdf") || this.app.workspace.getActiveFile();
-    const notes = pdf ? this.notesFor(pdf) : [], note = pdf && (this.owner(pdf, notes) || this.visibleOf(notes) || this.rememberedFor(pdf, notes) || notes[0]);
+    const notes = pdf ? this.notesFor(pdf) : [], note = pdf && (this.owner(pdf, notes) || this.target(pdf, notes) || this.visibleOf(notes) || notes[0]);   // cheia de citare e a referinței
     const mc = this.app.metadataCache, bl = mc.getBacklinksForFile, prop = pp.settings.proxyMDProperty;
     if (note) mc.getBacklinksForFile = function (f) { if (f !== pdf) return bl.call(this, f); const r = bl.call(this, f); return { ...r, keys: () => [note.path], get: k => (k === note.path ? r.get?.(k) : undefined) }; };
     try { return run(); }
@@ -567,9 +571,21 @@ class Highlights {
     if (!(pdf instanceof TFile)) return undefined;
     const notes = this.notesFor(pdf);
     let note = null;
-    if (notes.length === 1) note = notes[0];
-    else if (notes.length > 1) note = this.owner(pdf, notes) || this.visibleOf(notes) || this.rememberedFor(pdf, notes) || await this.pick(pdf, notes);
-    else {
+    if (notes.length) {
+      // PDF-ul e atașat la una sau mai multe note: la prima evidențiere alegi în care intră adnotările sau dacă rămân doar în PDF
+      let t = this.target(pdf, notes);
+      if (t === undefined) {
+        const first = !this.asking.has(pdf.path);
+        if (first) this.asking.set(pdf.path, this.chooseTarget(pdf, notes).finally(() => this.asking.delete(pdf.path)));
+        const ch = await this.asking.get(pdf.path);
+        if (!ch) { if (first) new Notice(this.T("Adnotarea e salvată în PDF. Te întreb din nou la următoarea.", "The annotation is saved in the PDF. I'll ask again with the next one."), 6000); return true; }
+        if (first) await this.setTarget(pdf, ch);
+        if (ch === NONE) { if (first) this.noneNotice(pdf); return true; }
+        t = ch;
+      }
+      if (!t) return true;   // nicăieri: adnotarea rămâne doar în PDF
+      note = t;
+    } else {
       // PDF fără sursă: rândul se păstrează și intră în notă când îl adaugi ca sursă (oricând: colțul din dreapta-jos sau clic dreapta)
       this.keep(pdf, text);
       const c = this.S.conf(), sz = (c.hlSnooze = c.hlSnooze || {})[pdf.path];
@@ -608,6 +624,43 @@ class Highlights {
     const refs = new Set(this.S.lib.all().map(e => e.obsidianPath).filter(Boolean)), own = notes.filter(n => refs.has(n.path));
     return own.length === 1 ? own[0] : null;
   }
+  // unde intră adnotările noi din PDF: nota aleasă, null pentru „nicăieri”, undefined dacă nu ai ales încă
+  // (sau nota aleasă nu mai are PDF-ul în attachment)
+  target(pdf, notes = this.notesFor(pdf)) {
+    const t = this.S.conf().hlTarget?.[pdf.path];
+    if (t === NONE) return null;
+    return (t && notes.find(n => n.path === t)) || undefined;
+  }
+  // nota în care intră singure adnotările făcute în alte programe (la deschidere și la pornire): cea aleasă sau, până alegi, nota de lectură
+  autoNote(pdf, notes = this.notesFor(pdf)) { const t = this.target(pdf, notes); return t === undefined ? this.owner(pdf, notes) : t; }
+  async setTarget(pdf, ch) {
+    const c = this.S.conf(); (c.hlTarget = c.hlTarget || {})[pdf.path] = ch === NONE ? NONE : ch.path;
+    await this.S.save(); try { this.S._statusUpd?.(); } catch (e) {}
+  }
+  noneNotice(pdf) {
+    new Notice(this.T(`Adnotările din „${pdf.basename}” rămân doar în PDF. Le poți pune oricând într-o notă din bara de jos a PDF-ului sau cu clic dreapta pe notă → Texere → Importă adnotările din PDF.`,
+      `Annotations from “${pdf.basename}” stay in the PDF only. You can add them to a note anytime from the PDF's bottom bar, or right-click the note → Texere → Import annotations from PDF.`), 10000);
+  }
+  // din bara de jos sau din meniul PDF-ului: alegerea se schimbă; o notă aleasă se deschide și primește adnotările care nu sunt în nicio notă
+  async applyTarget(pdf, ch) {
+    if (!ch) return;
+    await this.setTarget(pdf, ch);
+    if (ch === NONE) { this.noneNotice(pdf); return; }
+    new Notice(this.T(`Adnotările noi din „${pdf.basename}” intră în „${ch.basename}”.`, `New annotations from “${pdf.basename}” go into “${ch.basename}”.`), 6000);
+    await this.showNote(ch, pdf);
+    try { const r = await this.importFromPdf(pdf, ch, { orphans: true }); this.report([{ ...r, note: ch }]); } catch (e) { console.warn("Texere: importul adnotărilor", e); }
+  }
+  async chooseFor(pdf) { const notes = this.notesFor(pdf); if (notes.length) await this.applyTarget(pdf, await this.chooseTarget(pdf, notes)); }
+  // adnotările de până acum din PDF într-una dintre notele lui (de ex. după ce ai ales „nicăieri”)
+  async addTo(pdf, note) {
+    const notes = this.notesFor(pdf); if (!notes.length) return;
+    note = note || (notes.length === 1 ? notes[0] : await this.chooseTarget(pdf, notes, { none: false }));
+    if (!note || note === NONE) return;
+    let r; try { r = await this.importFromPdf(pdf, note); } catch (e) { console.error("Texere: importul adnotărilor", e); new Notice(this.T("Nu am putut aduce adnotările din PDF: ", "Couldn't bring the annotations from the PDF: ") + (e?.message || e), 10000); return; }
+    await this.showNote(note, pdf);
+    this.report([{ ...r, note }]);
+    if (!r.added && !r.healed && !r.retagged) new Notice(this.T(`„${note.basename}” are deja toate adnotările tale din PDF.`, `“${note.basename}” already has all your annotations from the PDF.`), 7000);
+  }
   // PDF-urile unei note (din attachment)
   pdfsOf(note) {
     const mc = this.app.metadataCache, fm = mc.getFileCache(note)?.frontmatter, arr = v => Array.isArray(v) ? v : v ? [v] : [];
@@ -615,8 +668,8 @@ class Highlights {
   }
   // perechile { pdf, note } pentru fișierul deschis: o notă cu PDF-uri sau un PDF cu o singură notă
   pairsFor(f) {
-    if (f.extension === "md") return this.pdfsOf(f).filter(pdf => this.owner(pdf) === f).map(pdf => ({ pdf, note: f }));
-    if (f.extension === "pdf") { const n = this.owner(f); return n ? [{ pdf: f, note: n }] : []; }
+    if (f.extension === "md") return this.pdfsOf(f).filter(pdf => this.autoNote(pdf) === f).map(pdf => ({ pdf, note: f }));
+    if (f.extension === "pdf") { const n = this.autoNote(f); return n ? [{ pdf: f, note: n }] : []; }
     return [];
   }
   visible(leaf) {
@@ -628,19 +681,34 @@ class Highlights {
     const vis = [...new Set(this.app.workspace.getLeavesOfType("markdown").filter(l => this.visible(l) && notes.includes(l.view?.file)).map(l => l.view.file))];
     return vis.length === 1 ? vis[0] : null;
   }
-  rememberedFor(pdf, notes) { const p = this.remember.get(pdf.path); return notes.find(n => n.path === p) || null; }
 
-  pick(pdf, notes) {
-    const T = (a, b) => this.T(a, b), H = this;
+  // alegerea notei: notele care au PDF-ul în attachment (întâi cele care au deja adnotări din el) și, la final, „nicăieri”.
+  // Esc: nimic ales (null)
+  async chooseTarget(pdf, notes, { none = true } = {}) {
+    const T = (a, b) => this.T(a, b), cur = this.S.conf().hlTarget?.[pdf.path], count = new Map();
+    for (const n of notes) { try { count.set(n, this.idsIn(await this.app.vault.cachedRead(n), pdf, n.path).size); } catch (e) {} }
+    const items = [...notes].sort((a, b) => (count.get(b) || 0) - (count.get(a) || 0)); if (none) items.push(NONE);
+    const name = n => n === NONE ? T("Nicăieri: rămân doar în PDF", "Nowhere: they stay in the PDF only") : n.basename;
     return new Promise(res => {
       let chosen = null;
       const M = class extends SuggestModal {
-        getSuggestions(q) { const s = q.toLowerCase(); return notes.filter(n => n.basename.toLowerCase().includes(s)); }
-        renderSuggestion(n, el) { el.createDiv({ text: n.basename }); el.createDiv({ text: n.parent?.path || "", cls: "texere-pick-path" }); }
-        onChooseSuggestion(n) { chosen = n; H.remember.set(pdf.path, n.path); }
+        getSuggestions(q) { const s = q.toLowerCase(); return items.filter(n => name(n).toLowerCase().includes(s)); }
+        renderSuggestion(n, el) {
+          const now = n === NONE ? cur === NONE : n.path === cur;
+          el.createDiv({ text: name(n) + (none && now ? T("  ✓ acum", "  ✓ now") : "") });
+          const k = n === NONE ? 0 : count.get(n) || 0, dir = n === NONE ? "" : n.parent?.path && n.parent.path !== "/" ? n.parent.path : "";
+          const sub = n === NONE ? T("Le poți pune oricând într-o notă, din bara de jos a PDF-ului.", "You can add them to a note anytime, from the PDF's bottom bar.")
+            : [dir, k ? T(`are deja ${k} adnotări din acest PDF`, `already has ${k} annotations from this PDF`) : ""].filter(Boolean).join(" · ");
+          if (sub) el.createDiv({ text: sub, cls: "texere-pick-path" });
+        }
+        onChooseSuggestion(n) { chosen = n; }
         onClose() { setTimeout(() => res(chosen), 0); }
       };
-      const m = new M(this.app); m.setPlaceholder(T(`În ce notă intră adnotările din ${pdf.basename}?`, `Which note should annotations from ${pdf.basename} go into?`)); m.open();
+      const m = new M(this.app);
+      m.setPlaceholder(none ? T(`În ce notă intră adnotările din „${pdf.basename}”?`, `Which note should annotations from “${pdf.basename}” go into?`)
+        : T(`În ce notă pui adnotările din „${pdf.basename}”?`, `Which note should get the annotations from “${pdf.basename}”?`));
+      m.setInstructions?.([{ command: "↵", purpose: T("alege", "choose") }, { command: "esc", purpose: none ? T("întreabă-mă data viitoare", "ask me next time") : T("renunță", "cancel") }]);
+      m.open();
     });
   }
   askSource(pdf, stage) {
@@ -686,8 +754,12 @@ class Highlights {
   }
   // după ce PDF-ul are notă: toate rândurile păstrate intră în ea, fiecare la locul lui din PDF
   async flushPending(pdf, note) {
-    const c = this.S.conf(), list = c.hlPending?.[pdf.path]; if (!list?.length) return 0;
-    delete c.hlPending[pdf.path]; if (c.hlSnooze) delete c.hlSnooze[pdf.path]; await this.S.save();
+    const c = this.S.conf(), list = c.hlPending?.[pdf.path];
+    // ai adăugat PDF-ul ca referință: adnotările lui intră de acum în nota ei (fără să mai întrebe)
+    if (!c.hlTarget?.[pdf.path]) { (c.hlTarget = c.hlTarget || {})[pdf.path] = note.path; await this.S.save(); }
+    if (!list?.length) return 0;
+    delete c.hlPending[pdf.path]; if (c.hlSnooze) delete c.hlSnooze[pdf.path];
+    await this.S.save();
     const now = this.app.metadataCache.fileToLinktext(pdf, note.path, true);
     // cât PDF-ul n-a avut notă, PDF++ n-a știut cheia de citare și a pus numele PDF-ului: [@Vică et al. 2026 – …, p. 21] → [@vica_…_2026, p. 21]
     const id = await this.citekeyOf(note);
@@ -759,8 +831,7 @@ class Highlights {
       const ed0 = this.editorOf(note), cur = ed0 ? ed0.getValue() : await this.app.vault.read(note);
       if (this.idsIn(cur, pdf, note.path).has(id)) return false;
     }
-    // Settings → Texere → Referințe → „Deschide nota când evidențiezi”: fără bifă, nota nu se deschide (doar se scrie, sau se vede unde e deja)
-    const leaf = this.S.conf().hlOpenNote === false ? this.app.workspace.getLeavesOfType("markdown").find(l => l.view?.file === note) || null : await this.showNote(note, pdf);
+    const leaf = await this.showNote(note, pdf);   // nota aleasă se deschide lângă PDF și primește pasajul
     const ed = this.editorOf(note, leaf) || this.editorOf(note);
     const src = ed ? ed.getValue() : await this.app.vault.read(note);
     const L = src.split("\n"), at = await this.placeIn(L, pdf, text, note.path);
@@ -1191,6 +1262,8 @@ class Highlights {
     let props = { ...(this.app.metadataCache.getFileCache(note)?.frontmatter || {}) };
     const fmText = /^---\n([\s\S]*?)\n---/.exec(src)?.[1] || "", fmVal = k => new RegExp(`^${k}:\\s*["']?([^"'\\n]+?)["']?\\s*$`, "m").exec(fmText)?.[1];
     if (!props.id) props.id = fmVal("id") || await this.citekeyOf(note);
+    // o notă care nu e referința (de seminar, un eseu): citările din ea sunt tot ale referinței PDF-ului
+    if (!props.id) { const ref = this.owner(pdf); if (ref && ref !== note) props.id = await this.citekeyOf(ref); }
     if (props.page == null && fmVal("page")) props.page = fmVal("page");
     const safeLine = h => { try { return this.lineFor(h, pdf, note, list, props); } catch (e) { console.warn("Texere: rândul adnotării", h.id, e); return this.plainLine(h, pdf, note, list, props); } };
     const items = fresh.map(h => ({ h, line: safeLine(h), loc: { page: h.page, annot: h.id, key: keyOf.get(h.id) } }))
@@ -1252,7 +1325,7 @@ class Highlights {
     for (const note of this.app.vault.getMarkdownFiles()) {
       for (const pdf of this.pdfsOf(note)) {
         if (seen.has(pdf.path) || this.scanned(pdf)) continue; seen.add(pdf.path);
-        if (this.owner(pdf) === note) pairs.push({ pdf, note });
+        const to = this.autoNote(pdf); if (to) pairs.push({ pdf, note: to });
       }
     }
     // întâi culorile → etichetele din toate notele (o culoare veche dintr-un PDF se recunoaște din altul)
@@ -1282,8 +1355,9 @@ class Highlights {
   }
   // la cerere (comanda sau meniul): toate cele care lipsesc din notă
   async importManual(f) {
+    if (f.extension === "pdf") return this.addTo(f);
     const out = [];
-    for (const { pdf, note } of this.pairsFor(f)) {
+    for (const { pdf, note } of this.pdfsOf(f).map(pdf => ({ pdf, note: f }))) {
       try { const r = await this.importFromPdf(pdf, note); out.push({ ...r, note }); } catch (e) { console.error("Texere: importul adnotărilor", e); new Notice(this.T("Nu am putut aduce adnotările din PDF: ", "Couldn't bring the annotations from the PDF: ") + (e?.message || e), 10000); return; }
     }
     const did = out.some(r => r.added || r.healed || r.retagged);
@@ -1292,4 +1366,4 @@ class Highlights {
   }
 }
 
-module.exports = { renderTemplate, printedPage, install(S) { const H = new Highlights(S); S.highlights = H; H.start(); return H; }, Highlights, loc, readHighlights, nearestTag, sameAuthor, textIn, layout, quadsOf, similar, glyphRuns, mergeRuns, gutterOf, colOf, ordKey };
+module.exports = { NONE, renderTemplate, printedPage, install(S) { const H = new Highlights(S); S.highlights = H; H.start(); return H; }, Highlights, loc, readHighlights, nearestTag, sameAuthor, textIn, layout, quadsOf, similar, glyphRuns, mergeRuns, gutterOf, colOf, ordKey };

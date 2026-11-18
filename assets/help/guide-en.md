@@ -4,7 +4,7 @@ subtitle: Research in one place
 author: George Mihai
 lang: en
 version: "0.5.5"
-date: "Version 0.5.5 · 16 November 2026"
+date: "Version 0.5.5 · 18 November 2026"
 ---
 
 ## 1. Start
@@ -98,9 +98,9 @@ How it works:
 
 Each colour also has a shortcut, from **Alt+1** to **Alt+8** (**Option** on a Mac), in the order of the table. With text selected, it highlights it in that colour. Without a selection, it picks the colour for the next highlight.
 
-If you'd rather the reading note didn't open with each highlight, untick **Open the note when you highlight** in **Settings → Texere → References → Notes & citations**. The passage still goes into the note. A PDF can also be in the properties of other notes, such as a seminar note or an essay, and its highlights still go into its reading note.
+The first time you highlight in a PDF, Texere asks which note the passages go into: the reading note or another note the PDF is attached to, such as a seminar note or an essay. You can also choose **Nowhere**, and then the highlights stay only in the PDF. The note you chose opens beside the PDF and gets each passage. You change the choice from the PDF's bottom bar, where **Annotations →** shows the current note, or with a right-click on the PDF, **Texere** and **Where new annotations go…**. The highlights you left in the PDF you add later to any of its notes, from the same bar with **Import annotations into a note…**, or from the note itself, with a right-click, **Texere** and **Import annotations from PDF**.
 
-If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the PDF, **Texere** and **Import annotations from PDF**.
+If you only want to read, the **pointer** in the PDF's toolbar (or the **H** key) lets you select text to follow the line, without it being copied into the note. You delete a highlight either from the note or from the PDF, and it disappears from both. Annotations made in another app, such as Zotero, Preview or Acrobat, come into the note too, and the ones made later you bring in with a right-click on the note, **Texere** and **Import annotations from PDF**.
 
 ## 3. Writing
 
@@ -215,7 +215,7 @@ Open a new tab or **Settings → Texere**. Both show what is missing, with a but
 | a message about Better BibTeX | it comes from another plugin, such as Zotero Integration. Texere doesn't need it, and **How to fix it** in the message shows you the steps |
 | a highlight doesn't reach the note | the pointer is on: press **H** or choose a colour |
 | “PDF++: An error occurred while attempting to add an annotation” | the PDF is locked by its publisher. Texere unlocks it by itself when you open it, and if it has a password, it tells you what to do |
-| annotations are missing from the note | right-click on the PDF, **Texere** and **Import annotations from PDF** |
+| annotations are missing from the note | right-click on the note, **Texere** and **Import annotations from PDF** |
 | “limit reached” when searching | add a free key in **Settings → Texere → References → Catalogs** |
 | you can't find the exported file | check the export folder in **Settings → Texere → General → Folders** |
 
@@ -236,8 +236,8 @@ Texere looks for new versions by itself. When there is one, the home page shows 
 
 **0.5.5** · 18 November 2026
 - **Shortcuts for the colours:** Alt+1 to Alt+8, one for each highlight colour.
-- **A PDF linked from several notes** no longer stops highlighting, and the passages go into the reading note.
-- **The note doesn't have to open** with each highlight, if you untick it in the settings.
+- **You choose where highlights go:** at the first highlight in a PDF, into one of the notes it is attached to or nowhere. The chosen note opens beside the PDF, and you change the choice from the PDF's bottom bar.
+- **A PDF linked from several notes** no longer stops highlighting, and highlights left in the PDF can be added later to any of its notes.
 - **Names without a note:** see where each name is used, and words at the start of a sentence are no longer taken for names.
 
 **0.5.4** · 16 November 2026
