@@ -1,6 +1,6 @@
 # Texere
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24501798.svg)](https://doi.org/10.5281/zenodo.24501798)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24501798.svg)](https://doi.org/10.5281/zenodo.24501798) [![Cognitive Centered Design Oath: signed](https://raw.githubusercontent.com/gorgmihai92/ccd-oath/main/badges/ccd-oath-signed.svg)](https://github.com/gorgmihai92/ccd-oath/blob/main/SIGNATORIES.md)
 
 **Research in one place**, inside [Obsidian](https://obsidian.md). · [Română](README.ro.md)
 
