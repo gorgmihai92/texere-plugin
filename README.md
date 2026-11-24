@@ -1,5 +1,7 @@
 # Texere
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24501798.svg)](https://doi.org/10.5281/zenodo.24501798)
+
 **Research in one place**, inside [Obsidian](https://obsidian.md). · [Română](README.ro.md)
 
 Texere is a free Obsidian plugin that brings the references, the reading and the writing of a research paper together in one place.
