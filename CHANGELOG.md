@@ -2,6 +2,11 @@
 
 Version numbers: a big new feature raises the middle number (0.4 → 0.5), a change that alters how Texere works raises the first (0.x → 1.0), fixes raise the last (0.4.0 → 0.4.1). Earlier versions were renumbered: 4.0.0 is now 0.4.0, 3.x is 0.3.x, 2.x is 0.2.x, 1.x is 0.1.x.
 
+## 0.5.10 (27 November 2026)
+
+- **`@` search in Zotero is instant.** It asked Zotero at every key (`items/top?q=…&include=data,csljson`), and Zotero builds CSL for every result, so the list lagged behind the typing. Texere now keeps an index of the Zotero library (`zotero.js → index()`): read once in the background, 100 items per request and without CSL (Texere's own conversion), then only what changed (`?since=` the library version from `Last-Modified-Version`), and fully again every 10 minutes so deleted items drop out. If Zotero ignores `since`, the index is simply re-read every 10 minutes. Typing searches the index locally: exact and prefix matches first, typo matching only when nothing matches exactly (about 4 ms for 3,000 items instead of a round trip to Zotero). Until the first index is ready, the old direct search is used. When you pick a Zotero item, its CSL made by Zotero is fetched for that one item (waiting at most 2 s).
+- **LaTeX accents in Zotero names and titles** (`Vic\ua`) are decoded already in the list, not only when the reference is added.
+
 ## 0.5.9 (18 November 2026)
 
 - **Underlining stays in the PDF.** Removed the note side: Alt + 1…8 in a note (coloured `<u>`/`<mark>`), the *Underline* command (Ctrl/Cmd + U) and the coloured-underline export and CSS. Alt + U and its keyboard fallback now act only in a PDF. Notes that already have such tags keep them as ordinary HTML.

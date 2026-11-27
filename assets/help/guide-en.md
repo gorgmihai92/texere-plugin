@@ -3,8 +3,8 @@ title: Texere
 subtitle: Research in one place
 author: George Mihai
 lang: en
-version: "0.5.9"
-date: "Version 0.5.9 · 18 November 2026"
+version: "0.5.10"
+date: "Version 0.5.10 · 27 November 2026"
 ---
 
 ## 1. Start
@@ -260,6 +260,10 @@ If the setup couldn't do a step, you do it yourself, by hand:
 ## 7. What's new
 
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
+
+**0.5.10** · 27 November 2026
+- **Searching Zotero with `@` is instant.** Texere reads your Zotero library once, in the background, and searches it as you type, instead of asking Zotero at every key. After that it only asks Zotero what changed.
+- **Names written with LaTeX accents** in Zotero (such as „Vic\ua”) show properly („Vică”).
 
 **0.5.9** · 18 November 2026
 - **Underlining stays in the PDF.** Colours and underline in notes are gone, so a note keeps plain Markdown.

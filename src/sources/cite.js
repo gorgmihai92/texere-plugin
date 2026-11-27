@@ -5,6 +5,12 @@ const { LANG, isEn } = require("../shared/lang");
 
 // litere mici, fără diacritice: „Vică” se găsește și cu „vica”
 const fold = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+// o sursă din Zotero ca rând în lista din „@”
+const sug = x => {
+  const au = (x.authors || []).map(a => a.family || a.literal || "").filter(Boolean), year = x.year ? String(x.year) : "";
+  const hay = fold([au.join(" "), year, x.title].join(" "));
+  return { z: x, key: "", who: au.length > 2 ? au[0] + " et al." : au.join(" & "), year, title: x.title || "", first: fold(au[0] || ""), hay, words: hay.split(/[^\p{L}\p{N}]+/u).filter(Boolean) };
+};
 // distanța de editare, oprită devreme (ne interesează doar 0, 1 sau 2)
 function lev(a, b, max) {
   if (Math.abs(a.length - b.length) > max) return max + 1;
@@ -17,11 +23,11 @@ function lev(a, b, max) {
   return prev[b.length];
 }
 // cât de bine se potrivește un cuvânt scris cu o referință: 0 începutul unui cuvânt, 1 în interior, 2 cu o greșeală, 3 deloc
-function matchWord(it, w) {
+function matchWord(it, w, fuzzy = true) {
   if (!it.words) it.words = String(it.hay || "").split(/[^\p{L}\p{N}]+/u).filter(Boolean);
   if (it.words.some(x => x.startsWith(w))) return 0;
   if (it.hay.includes(w)) return 1;
-  if (w.length >= 3) {
+  if (fuzzy && w.length >= 3) {
     const max = w.length >= 7 ? 2 : 1;
     for (const x of it.words) {
       if (x.length < 3) continue;
@@ -62,6 +68,7 @@ class CiteSuggest extends EditorSuggest {
     // citekey deja complet (ex. imediat după ce l-ai ales): lista nu se mai deschide, poți scrie mai departe
     if (m[2] && (this.items || []).some(it => it.key === m[2])) return null;
     this.load();   // se încarcă în fundal; lista apare la tasta următoare dacă nu e gata
+    try { this.plugin?.sources?.zotero?.index(); } catch (e) {}   // biblioteca Zotero, la fel
     return { start: { line: cursor.line, ch: cursor.ch - m[2].length - 1 }, end: cursor, query: m[2] };
   }
   // cel mult 10, cele mai potrivite întâi: cheia sau primul autor care încep cu ce ai scris, apoi restul;
@@ -70,23 +77,32 @@ class CiteSuggest extends EditorSuggest {
   async getSuggestions(ctx) {
     const tok = this.tok = (this.tok || 0) + 1;
     const items = await this.load(), q = fold(ctx.query).split(/[\s_]+/).filter(Boolean), q0 = q[0] || "";
-    const score = list => list.map((it, i) => {
+    const score = (list, fuzzy = true) => list.map((it, i) => {
       let worst = 0;
-      for (const w of q) { const m = matchWord(it, w); if (m > worst) worst = m; if (worst > 2) break; }
+      for (const w of q) { const m = matchWord(it, w, fuzzy); if (m > worst) worst = m; if (worst > 2) break; }
       const start = !q0 || (it.key || "").toLowerCase().startsWith(q0) || it.first.startsWith(q0) ? 0 : 1;
       return [worst, start, i, it];
     }).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
     const found = score(items).filter(x => x[0] <= 2).map(x => x[3]);
     const z = await this.fromZotero(ctx.query);
     if (tok !== this.tok) return new Promise(() => {});   // între timp ai mai scris: contează doar lista nouă
-    const zs = score(z).map(x => x[3]), mine = found.slice(0, zs.length ? 6 : this.limit), out = [...mine, ...zs.slice(0, this.limit - mine.length)];
+    // biblioteca Zotero poate avea mii de surse: întâi potrivirile exacte (repede); greșelile de tastare doar dacă nu e niciuna
+    let zr = score(z, false).filter(x => x[0] <= 2); if (!zr.length) zr = score(z).filter(x => x[0] <= 2);
+    const zs = zr.map(x => x[3]), mine = found.slice(0, zs.length ? 6 : this.limit), out = [...mine, ...zs.slice(0, this.limit - mine.length)];
     return out;   // nimic potrivit: lista nu apare, iar Enter rămâne rând nou (un rând „Adaugă o referință” ar fura Enter-ul după orice „@nume”)
   }
-  // Zotero, căutat din mers: prin API-ul local (Zotero deschis) sau prin cheia ta (Zotero închis). Better BibTeX nu trebuie: cheia o face Texere.
-  // Fiecare căutare se ține minte un minut; un Zotero care răspunde încet nu ține lista pe loc (răspunsul lui intră la tasta următoare).
+  // Zotero: biblioteca ta e citită o dată, în fundal, și căutată pe loc la fiecare tastă (zotero.js → index); cu Zotero deschis
+  // sau cu cheia ta Zotero. Doar prima dată, până e gata indexul, se întreabă Zotero direct (răspunsul lui intră la tasta următoare).
   async fromZotero(query) {
     const S = this.plugin?.sources, Z = S?.zotero, q = String(query || "").replace(/[_]+/g, " ").trim();
     if (!Z || q.length < 2) return [];
+    if (!this.libIdx || Date.now() - this.libIdx.at > 5000) this.libIdx = { at: Date.now(), lib: S.library() };
+    const lib = this.libIdx.lib, I = Z.index();
+    if (I) {
+      // ce e în seif se scoate o dată pe versiune a indexului (și la 5 s pentru seif), nu la fiecare tastă
+      if (!this.zIdx || this.zIdx.rev !== I.rev || this.zIdx.lib !== lib) this.zIdx = { rev: I.rev, lib, list: [...I.items.values()].filter(x => x?.zotero && x.title && !lib.find(x)).map(sug) };
+      return this.zIdx.list;
+    }
     const cache = this.zc || (this.zc = new Map()), hit = cache.get(q.toLowerCase());
     let res = hit && Date.now() - hit.at < 60000 ? hit.items : null;
     if (!res) {
@@ -95,13 +111,7 @@ class CiteSuggest extends EditorSuggest {
       try { res = await Promise.race([run, new Promise(r => setTimeout(() => r(null), Z.state?.local === "on" ? 1500 : 3000))]); } catch (e) { res = null; }
       if (!res) return [];
     }
-    if (!this.libIdx || Date.now() - this.libIdx.at > 5000) this.libIdx = { at: Date.now(), lib: S.library() };
-    const lib = this.libIdx.lib;
-    return res.filter(x => x?.zotero?.csl && x.title && !lib.find(x)).map(x => {
-      const au = (x.authors || []).map(a => a.family || a.literal || "").filter(Boolean), year = x.year ? String(x.year) : "";
-      const hay = fold([au.join(" "), year, x.title].join(" "));
-      return { z: x, key: "", who: au.length > 2 ? au[0] + " et al." : au.join(" & "), year, title: x.title || "", first: fold(au[0] || ""), hay, words: hay.split(/[^\p{L}\p{N}]+/u).filter(Boolean) };
-    });
+    return res.filter(x => x?.zotero?.csl && x.title && !lib.find(x)).map(sug);
   }
   // un singur rând pe sursă: „Autor An – Titlu” (titlul se taie dacă e lung); cheia, în balon
   renderSuggestion(it, el) {
@@ -118,7 +128,10 @@ class CiteSuggest extends EditorSuggest {
   // o referință din Zotero: citarea se scrie imediat. Dacă în Zotero are PDF, alegi: doar referința (nota de lectură și bibliografia)
   // sau referința și PDF-ul, cu evidențierile și adnotările din Zotero. Fără PDF în Zotero: doar referința, fără întrebare.
   async pickZotero(it, ctx) {
-    const S = this.plugin.sources, Z = S.zotero, x = it.z, csl = x.zotero.csl, ed = ctx.editor, en = isEn();
+    const S = this.plugin.sources, Z = S.zotero, en = isEn();
+    // din index vine doar ce trebuie căutării; CSL-ul făcut de Zotero îl cerem acum (o singură sursă), dacă răspunde repede
+    if (!it.z.zotero.csljson) { const full = await Promise.race([Z.withCsl?.(it.z), new Promise(r => setTimeout(() => r(null), 2000))]); if (full?.zotero?.csl) it = { ...it, z: { ...full, zotero: { ...full.zotero, csljson: true } } }; }
+    const x = it.z, csl = x.zotero.csl, ed = ctx.editor;
     const T = (a, b) => (en ? b : a);
     let key; try { key = S.keyFor(csl); } catch (e) { key = null; }
     if (!key) { new Notice(T("N-am putut face cheia de citare pentru această referință.", "Couldn't make a citation key for this reference.")); return; }

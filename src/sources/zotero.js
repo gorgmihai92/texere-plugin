@@ -272,6 +272,43 @@ class Zotero {
     return (Array.isArray(json) ? json : []).filter(r => r?.data && !["note", "attachment", "annotation"].includes(r.data.itemType)).map(r => this.result(r, mode))
       .filter(x => f?.type === "all" || !f?.type || this.S.kind(x.type) === f.type);
   }
+  // ——— biblioteca Zotero ținută minte, pentru căutarea din „@” ———
+  // Căutarea prin Zotero la fiecare tastă e lentă (Zotero face CSL pentru fiecare rezultat). Așa că Texere citește biblioteca o dată,
+  // în fundal (100 de surse pe cerere, fără CSL), și caută în ea pe loc. După aceea cere doar ce s-a schimbat (Zotero spune versiunea
+  // bibliotecii, iar ?since= dă sursele noi sau modificate); o dată la 10 minute o citește din nou toată, ca să iasă și cele șterse.
+  // index() întoarce pe loc ce are (null prima dată) și pornește actualizarea dacă e cazul.
+  index() {
+    const I = this._zi, fresh = I && Date.now() - I.at < (I.version && !I.noSince ? 20000 : 600000);   // fără versiune: doar din 10 în 10 minute
+    if (!fresh && !this._ziP) this._ziP = this.mode().then(mode => mode ? this.buildIndex(mode, I && I.mode === mode && Date.now() - I.full < 600000 ? I : null) : (this._zi = null))
+      .catch(e => { console.warn("Texere: biblioteca Zotero", e?.message || e); return null; }).finally(() => { this._ziP = null; });
+    return I || null;
+  }
+  // așteaptă indexul (prima dată), cel mult ms milisecunde
+  async indexReady(ms = 4000) { const I = this.index(); if (I || !this._ziP) return I; return Promise.race([this._ziP, new Promise(r => setTimeout(() => r(null), ms))]); }
+  async buildIndex(mode, old) {
+    if (old && (!old.version || old.noSince)) old = null;   // fără „ce s-a schimbat”: o citire întreagă
+    const items = new Map(old ? old.items : []), since = old ? `&since=${old.version}` : "";
+    let version = old?.version || 0, start = 0, changed = !old;
+    for (;;) {
+      const { json, headers } = await this.get(`items/top?include=data&limit=100&start=${start}${since}`, mode);
+      const arr = Array.isArray(json) ? json : [], v = +(headers?.["last-modified-version"] || headers?.["Last-Modified-Version"] || 0);
+      // nimic nou de la versiunea știută, dar Zotero dă totuși o pagină plină: nu știe „since”; de acum, citire întreagă din 10 în 10 minute
+      if (old && start === 0 && v && v === old.version && arr.length >= 100) return (this._zi = { ...old, at: Date.now(), noSince: true });
+      if (v) version = v;
+      for (const r of arr) {
+        const d = r?.data; if (!d || ["note", "attachment", "annotation"].includes(d.itemType)) continue;
+        if (d.deleted) items.delete(r.key || d.key); else items.set(r.key || d.key, this.result({ key: r.key || d.key, data: d, meta: r.meta }, mode));
+        changed = true;
+      }
+      if (arr.length < 100 || start > 100000) break;
+      start += 100;
+    }
+    return (this._zi = { mode, items, version, at: Date.now(), full: old ? old.full : Date.now(), rev: changed ? (old?.rev || 0) + 1 : old.rev });
+  }
+  // o sursă din index, cu CSL-ul făcut de Zotero (indexul are doar datele, transformate de Texere); null dacă Zotero nu răspunde
+  async withCsl(x) {
+    try { const z = x?.zotero; if (!z?.key) return null; const { json } = await this.get(`items/${z.key}?include=data,csljson`, z.mode); return json?.data ? this.result(json, z.mode) : null; } catch (e) { return null; }
+  }
   // dosarul de date al lui Zotero: cel din setări, apoi ~/Zotero
   dataDirs() { const os = this.node("os"), path = this.node("path"); return [this.conf().zoteroDataDir, os && path && path.join(os.homedir(), "Zotero")].filter(Boolean); }
   needsPage(item) { const c = toCsl(item || {}); return ["title", "container-title", "publisher", "publisher-place"].some(k => typeof c[k] === "string" && MOJI.test(c[k])) || (c.author || []).concat(c.editor || []).some(p => MOJI.test(`${p.family || ""} ${p.given || ""} ${p.literal || ""}`)); }
@@ -341,6 +378,9 @@ class Zotero {
   }
   result(r, mode) {
     const csl = this.cslOf(r), d = r.data || {};
+    // diacriticele scrise în LaTeX de unele situri („Vic\\ua” → „Vică”), ca să arate bine în listă și să le găsești căutând
+    for (const k of ["title", "container-title", "publisher"]) if (typeof csl[k] === "string") csl[k] = deLatex(csl[k]);
+    for (const p of [...(csl.author || []), ...(csl.editor || [])]) for (const part of ["family", "given", "literal"]) if (typeof p[part] === "string") p[part] = deLatex(p[part]);
     return { title: csl.title || d.title, year: csl.issued?.["date-parts"]?.[0]?.[0] || null, type: csl.type, authors: csl.author || csl.editor || [],
       venue: csl["container-title"] || "", publisher: csl.publisher || "", doi: csl.DOI || null, isbn: csl.ISBN || null, url: csl.URL || null,
       volume: csl.volume, issue: csl.issue, page: csl.page, abstract: csl.abstract, cited: null, oa: false, pdf: [],
