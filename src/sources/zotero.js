@@ -274,37 +274,40 @@ class Zotero {
   }
   // ——— biblioteca Zotero ținută minte, pentru căutarea din „@” ———
   // Căutarea prin Zotero la fiecare tastă e lentă (Zotero face CSL pentru fiecare rezultat). Așa că Texere citește biblioteca o dată,
-  // în fundal (100 de surse pe cerere, fără CSL), și caută în ea pe loc. După aceea cere doar ce s-a schimbat (Zotero spune versiunea
-  // bibliotecii, iar ?since= dă sursele noi sau modificate); o dată la 10 minute o citește din nou toată, ca să iasă și cele șterse.
-  // Se citește la ~6 s după ce se deschide Obsidian și când pornește Zotero; index() întoarce pe loc ce are (null prima dată)
-  // și pornește actualizarea dacă e cazul.
-  index() {
-    const I = this._zi, fresh = I && Date.now() - I.at < (I.version && !I.noSince ? 20000 : 600000);   // fără versiune: doar din 10 în 10 minute
-    if (!fresh && !this._ziP) this._ziP = this.mode().then(mode => mode ? this.buildIndex(mode, I && I.mode === mode && Date.now() - I.full < 600000 ? I : null) : (this._zi = null))
+  // în fundal (100 de surse pe cerere, fără CSL), și caută în ea pe loc. Ce adaugi sau schimbi în Zotero după aceea vine cu o cerere
+  // mică: sursele cele mai recent modificate, până la prima pe care indexul o are deja în aceeași versiune (de obicei, o singură cerere).
+  // O dată la 10 minute biblioteca se citește din nou toată, ca să iasă și sursele șterse.
+  // Când: la ~6 s după ce se deschide Obsidian, când pornește Zotero, când revii în Obsidian (de ex. din Zotero, unde ai adăugat ceva),
+  // când Texere vede o sursă nouă în Zotero și la fiecare „@” (dacă indexul are peste 5 s). index() întoarce pe loc ce are
+  // (null prima dată) și pornește actualizarea dacă e cazul; fresh() așteaptă puțin actualizarea, ca sursa nouă să apară chiar acum.
+  index(maxAge = 5000) {
+    const I = this._zi;
+    if ((!I || Date.now() - I.at >= maxAge) && !this._ziP) this._ziP = this.mode().then(mode => mode ? this.buildIndex(mode, I && I.mode === mode && Date.now() - I.full < 600000 ? I : null) : (this._zi = null))
       .catch(e => { console.warn("Texere: biblioteca Zotero", e?.message || e); return null; }).finally(() => { this._ziP = null; });
     return I || null;
   }
+  // indexul la zi: pornește actualizarea și o așteaptă cel mult ms milisecunde (altfel, ce e)
+  async fresh(ms = 700) { const I = this.index(); if (!this._ziP) return this._zi || I; const r = await Promise.race([this._ziP, new Promise(r => setTimeout(() => r(undefined), ms))]); return r === undefined ? I : this._zi; }
   // așteaptă indexul (prima dată), cel mult ms milisecunde
   async indexReady(ms = 4000) { const I = this.index(); if (I || !this._ziP) return I; return Promise.race([this._ziP, new Promise(r => setTimeout(() => r(null), ms))]); }
   async buildIndex(mode, old) {
-    if (old && (!old.version || old.noSince)) old = null;   // fără „ce s-a schimbat”: o citire întreagă
-    const items = new Map(old ? old.items : []), since = old ? `&since=${old.version}` : "";
-    let version = old?.version || 0, start = 0, changed = !old;
+    const SKIP = ["note", "attachment", "annotation"], items = new Map(old ? old.items : []), ver = new Map(old ? old.ver : []);
+    let changed = !old, start = 0;
+    const per = old ? 25 : 100;
     for (;;) {
-      const { json, headers } = await this.get(`items/top?include=data&limit=100&start=${start}${since}`, mode);
-      const arr = Array.isArray(json) ? json : [], v = +(headers?.["last-modified-version"] || headers?.["Last-Modified-Version"] || 0);
-      // nimic nou de la versiunea știută, dar Zotero dă totuși o pagină plină: nu știe „since”; de acum, citire întreagă din 10 în 10 minute
-      if (old && start === 0 && v && v === old.version && arr.length >= 100) return (this._zi = { ...old, at: Date.now(), noSince: true });
-      if (v) version = v;
+      // la o actualizare: cele mai recent modificate întâi, până la una știută în aceeași versiune
+      const { json } = await this.get(`items/top?include=data&limit=${per}&start=${start}${old ? "&sort=dateModified&direction=desc" : ""}`, mode);
+      const arr = Array.isArray(json) ? json : []; let known = false;
       for (const r of arr) {
-        const d = r?.data; if (!d || ["note", "attachment", "annotation"].includes(d.itemType)) continue;
-        if (d.deleted) items.delete(r.key || d.key); else items.set(r.key || d.key, this.result({ key: r.key || d.key, data: d, meta: r.meta }, mode));
+        const d = r?.data, key = r?.key || d?.key; if (!d || !key || SKIP.includes(d.itemType)) continue;
+        if (old && ver.get(key) === d.version) { known = true; break; }
+        if (d.deleted) { items.delete(key); ver.delete(key); } else { items.set(key, this.result({ key, data: d, meta: r.meta }, mode)); ver.set(key, d.version); }
         changed = true;
       }
-      if (arr.length < 100 || start > 100000) break;
-      start += 100;
+      if (known || arr.length < per || start > (old ? 1000 : 100000)) break;
+      start += per;
     }
-    return (this._zi = { mode, items, version, at: Date.now(), full: old ? old.full : Date.now(), rev: changed ? (old?.rev || 0) + 1 : old.rev });
+    return (this._zi = { mode, items, ver, at: Date.now(), full: old ? old.full : Date.now(), rev: changed ? (old?.rev || 0) + 1 : old.rev });
   }
   // o sursă din index, cu CSL-ul făcut de Zotero (indexul are doar datele, transformate de Texere); null dacă Zotero nu răspunde
   async withCsl(x) {
@@ -840,6 +843,7 @@ class Zotero {
       const { json } = await this.localJson("items/top?sort=dateAdded&direction=desc&limit=10&include=data,csljson");
       const fresh = (Array.isArray(json) ? json : []).filter(r => r?.data && !["note", "attachment", "annotation"].includes(r.data.itemType) && Date.parse(r.data.dateAdded) > since && !this.taking.has(r.key));
       if (!fresh.length) return;
+      this.index(0);   // o sursă nouă în Zotero: intră și în căutarea din „@”
       c.zoteroSeen = new Date(Math.max(...fresh.map(r => Date.parse(r.data.dateAdded)))).toISOString(); await this.S.save();
       if (fresh.length > 3) {   // multe deodată (ex. un import în Zotero): nu fac zeci de note fără să întreb
         const frag = document.createDocumentFragment(); frag.append(T(`${fresh.length}+ referințe noi în Zotero. `, `${fresh.length}+ new references in Zotero. `));
@@ -1338,6 +1342,8 @@ module.exports = {
     S.app.workspace.onLayoutReady?.(() => later(() => Z.tick().catch(() => {}).finally(() => Z.schedule()), 2000));
     // biblioteca Zotero pentru căutarea din „@”: citită în fundal la scurt timp după ce se deschide Obsidian, ca prima căutare să fie deja pe loc
     S.app.workspace.onLayoutReady?.(() => later(() => { if (!Z.dead) Z.index(); }, 6000));
+    // revii în Obsidian (de obicei din Zotero, unde ai adăugat sau ai schimbat ceva): ce e nou intră în index
+    h.registerDomEvent?.(window, "focus", () => { if (!Z.dead && Z._zi) Z.index(3000); });
     h.register(() => { Z.dead = true; unlater(Z._tt); Z.stopConnector(); });
     try { h.register(Z.hintNotices()); } catch (e) { console.warn("Texere Zotero: mesajele despre Better BibTeX", e); }   // „…Better BibTeX plugin is installed” (de la alt plugin): cum se rezolvă
     return Z;

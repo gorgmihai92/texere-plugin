@@ -97,7 +97,7 @@ class CiteSuggest extends EditorSuggest {
     const S = this.plugin?.sources, Z = S?.zotero, q = String(query || "").replace(/[_]+/g, " ").trim();
     if (!Z || q.length < 2) return [];
     if (!this.libIdx || Date.now() - this.libIdx.at > 5000) this.libIdx = { at: Date.now(), lib: S.library() };
-    const lib = this.libIdx.lib, I = Z.index();
+    const lib = this.libIdx.lib, I = await Z.fresh();   // ce ai adăugat de curând în Zotero apare chiar la tasta asta
     if (I) {
       // ce e în seif se scoate o dată pe versiune a indexului (și la 5 s pentru seif), nu la fiecare tastă
       if (!this.zIdx || this.zIdx.rev !== I.rev || this.zIdx.lib !== lib) this.zIdx = { rev: I.rev, lib, list: [...I.items.values()].filter(x => x?.zotero && x.title && !lib.find(x)).map(sug) };

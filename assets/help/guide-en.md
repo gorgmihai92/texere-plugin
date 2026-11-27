@@ -262,7 +262,7 @@ If the setup couldn't do a step, you do it yourself, by hand:
 Texere looks for new versions by itself. When there is one, the home page shows it, and you install it with **Update** and **Reload**. What a version brings for your vault, for example a new template, is only offered to you, with **Add** or **Not now**. Every version is on [Texere's page](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
 **0.5.10** · 27 November 2026
-- **Searching Zotero with `@` is instant.** Texere reads your Zotero library once, in the background, as soon as Obsidian opens, and searches it as you type, instead of asking Zotero at every key. After that it only asks Zotero what changed.
+- **Searching Zotero with `@` is instant.** Texere reads your Zotero library once, in the background, as soon as Obsidian opens, and searches it as you type, instead of asking Zotero at every key. After that it only asks Zotero what changed, so a reference you have just added in Zotero shows up at once.
 - **Names written with LaTeX accents** in Zotero (such as „Vic\ua”) show properly („Vică”).
 
 **0.5.9** · 18 November 2026
