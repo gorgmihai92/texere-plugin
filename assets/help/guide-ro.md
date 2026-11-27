@@ -262,7 +262,7 @@ Dacă configurarea nu a putut face un pas, îl faci tu, de mână:
 Texere caută singur versiunile noi. Când apare una, pagina de pornire ți-o arată, iar tu o instalezi cu **Actualizează** și **Reîncarcă**. Ce aduce o versiune pentru seif, de exemplu un șablon nou, doar ți se propune, cu **Adaugă** sau **Nu acum**. Toate versiunile sunt pe [pagina Texere](https://github.com/gorgmihai92/texere-plugin/blob/main/CHANGELOG.md).
 
 **0.5.10** · 27 noiembrie 2026
-- **Căutarea în Zotero cu `@` e pe loc.** Texere citește biblioteca ta Zotero o dată, în fundal, și caută în ea pe măsură ce scrii, în loc să întrebe Zotero la fiecare tastă. După aceea, îl întreabă doar ce s-a schimbat.
+- **Căutarea în Zotero cu `@` e pe loc.** Texere citește biblioteca ta Zotero o dată, în fundal, imediat ce se deschide Obsidian, și caută în ea pe măsură ce scrii, în loc să întrebe Zotero la fiecare tastă. După aceea, îl întreabă doar ce s-a schimbat.
 - **Numele scrise cu accente LaTeX** în Zotero (de exemplu „Vic\ua”) apar corect („Vică”).
 
 **0.5.9** · 18 noiembrie 2026

@@ -276,7 +276,8 @@ class Zotero {
   // Căutarea prin Zotero la fiecare tastă e lentă (Zotero face CSL pentru fiecare rezultat). Așa că Texere citește biblioteca o dată,
   // în fundal (100 de surse pe cerere, fără CSL), și caută în ea pe loc. După aceea cere doar ce s-a schimbat (Zotero spune versiunea
   // bibliotecii, iar ?since= dă sursele noi sau modificate); o dată la 10 minute o citește din nou toată, ca să iasă și cele șterse.
-  // index() întoarce pe loc ce are (null prima dată) și pornește actualizarea dacă e cazul.
+  // Se citește la ~6 s după ce se deschide Obsidian și când pornește Zotero; index() întoarce pe loc ce are (null prima dată)
+  // și pornește actualizarea dacă e cazul.
   index() {
     const I = this._zi, fresh = I && Date.now() - I.at < (I.version && !I.noSince ? 20000 : 600000);   // fără versiune: doar din 10 în 10 minute
     if (!fresh && !this._ziP) this._ziP = this.mode().then(mode => mode ? this.buildIndex(mode, I && I.mode === mode && Date.now() - I.full < 600000 ? I : null) : (this._zi = null))
@@ -790,7 +791,7 @@ class Zotero {
       if (!this.wantConnector()) return;
       // după ce Zotero a dat semne că pornește, nu mai luăm portul cel puțin un minut (să-l găsească liber)
       if (p.running === false && !this.server && st.zotero === "closed" && Date.now() - (this.zoteroStarting || 0) > 60000) { await this.startConnector(); st = await this.refresh(p); }
-      if (st.zotero === "on") await this.watch();
+      if (st.zotero === "on") { await this.watch(); if (!this._zi) this.index(); }   // Zotero pornit mai târziu: îi citim biblioteca acum
     } catch (e) { console.warn("Texere Zotero", e); }
     finally { this._ticking = false; }
   }
@@ -1335,6 +1336,8 @@ module.exports = {
     h.addCommand({ id: "sources-zotero-import", name: S.T("Importă din Zotero", "Import from Zotero"), callback: () => Z.openImport() });
     // butonul din browser și starea lui Zotero: verificate la câteva secunde (doar cât timp butonul e pornit)
     S.app.workspace.onLayoutReady?.(() => later(() => Z.tick().catch(() => {}).finally(() => Z.schedule()), 2000));
+    // biblioteca Zotero pentru căutarea din „@”: citită în fundal la scurt timp după ce se deschide Obsidian, ca prima căutare să fie deja pe loc
+    S.app.workspace.onLayoutReady?.(() => later(() => { if (!Z.dead) Z.index(); }, 6000));
     h.register(() => { Z.dead = true; unlater(Z._tt); Z.stopConnector(); });
     try { h.register(Z.hintNotices()); } catch (e) { console.warn("Texere Zotero: mesajele despre Better BibTeX", e); }   // „…Better BibTeX plugin is installed” (de la alt plugin): cum se rezolvă
     return Z;
